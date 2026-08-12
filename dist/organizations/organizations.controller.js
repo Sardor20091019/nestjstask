@@ -37,7 +37,7 @@ let OrganizationsController = class OrganizationsController {
 };
 exports.OrganizationsController = OrganizationsController;
 __decorate([
-    (0, common_1.Post)(),
+    (0, common_1.Post)("create"),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -50,30 +50,30 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], OrganizationsController.prototype, "findAll", null);
 __decorate([
-    (0, common_1.Post)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Post)(":id"),
+    __param(0, (0, common_1.Param)("id")),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], OrganizationsController.prototype, "update", null);
 __decorate([
-    (0, common_1.Post)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Post)("remove/:id"),
+    __param(0, (0, common_1.Param)("id")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], OrganizationsController.prototype, "remove", null);
 __decorate([
-    (0, common_1.Post)(':id/assign-user'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Post)(":id/assign-user"),
+    __param(0, (0, common_1.Param)("id")),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], OrganizationsController.prototype, "assignUser", null);
 exports.OrganizationsController = OrganizationsController = __decorate([
-    (0, common_1.Controller)('organizations'),
+    (0, common_1.Controller)("organizations"),
     __metadata("design:paramtypes", [organizations_service_1.OrganizationsService])
 ], OrganizationsController);
 //# sourceMappingURL=organizations.controller.js.map

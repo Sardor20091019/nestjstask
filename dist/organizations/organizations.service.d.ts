@@ -1,4 +1,4 @@
-import { OrganizationsRepo } from './organizations.repo';
+import { OrganizationsRepo } from "./organizations.repo";
 export declare class OrganizationsService {
     private readonly organizationsRepo;
     constructor(organizationsRepo: OrganizationsRepo);

@@ -1,15 +1,16 @@
+import { Role } from "../enum/role.enum";
 export declare class UsersRepo {
     create(data: {
         name: string;
-        role: number;
+        role: Role;
         created_by?: number;
     }): Promise<any>;
     findAll(): Promise<any[]>;
     findOne(id: number): Promise<any>;
     update(id: number, data: {
         name?: string;
-        role?: number;
+        role?: Role;
         created_by?: number;
     }): Promise<any>;
-    remove(id: number): Promise<number>;
+    remove(id: number): Promise<boolean>;
 }

@@ -1,4 +1,4 @@
-import { OrganizationsService } from './organizations.service';
+import { OrganizationsService } from "./organizations.service";
 export declare class OrganizationsController {
     private readonly organizationsService;
     constructor(organizationsService: OrganizationsService);

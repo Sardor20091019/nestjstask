@@ -36,36 +36,36 @@ let ProjectsController = class ProjectsController {
 };
 exports.ProjectsController = ProjectsController;
 __decorate([
-    (0, common_1.Post)(),
+    (0, common_1.Post)("create"),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], ProjectsController.prototype, "create", null);
 __decorate([
-    (0, common_1.Post)(),
-    __param(0, (0, common_1.Query)('org_id')),
+    (0, common_1.Post)("update"),
+    __param(0, (0, common_1.Query)("org_id")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], ProjectsController.prototype, "findByOrg", null);
 __decorate([
-    (0, common_1.Post)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Post)(":id"),
+    __param(0, (0, common_1.Param)("id")),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], ProjectsController.prototype, "update", null);
 __decorate([
-    (0, common_1.Post)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Post)("remove/:id"),
+    __param(0, (0, common_1.Param)("id")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], ProjectsController.prototype, "remove", null);
 exports.ProjectsController = ProjectsController = __decorate([
-    (0, common_1.Controller)('projects'),
+    (0, common_1.Controller)("projects"),
     __metadata("design:paramtypes", [projects_service_1.ProjectsService])
 ], ProjectsController);
 //# sourceMappingURL=projects.controller.js.map

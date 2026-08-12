@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { OrganizationsRepo } from './organizations.repo';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { OrganizationsRepo } from "./organizations.repo";
 
 @Injectable()
 export class OrganizationsService {

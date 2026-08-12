@@ -11,30 +11,30 @@ const common_1 = require("@nestjs/common");
 const db_1 = require("../database/db");
 let OrganizationsRepo = class OrganizationsRepo {
     async insert(data) {
-        const [org] = await (0, db_1.db1)('organizations').insert(data).returning('*');
+        const [org] = await (0, db_1.db1)("organizations").insert(data).returning("*");
         return org;
     }
     async findAll() {
-        return (0, db_1.db1)('organizations').select('*');
+        return (0, db_1.db1)("organizations").select("*");
     }
     async findById(id) {
-        return (0, db_1.db1)('organizations').where({ id }).first();
+        return (0, db_1.db1)("organizations").where({ id }).first();
     }
     async update(id, data) {
-        const [updated] = await (0, db_1.db1)('organizations')
+        const [updated] = await (0, db_1.db1)("organizations")
             .where({ id })
             .update(data)
-            .returning('*');
+            .returning("*");
         return updated;
     }
     async remove(id) {
-        await (0, db_1.db1)('organizations').where({ id }).delete();
+        await (0, db_1.db1)("organizations").where({ id }).delete();
         return { deleted: true };
     }
     async assignUser(orgId, userId) {
-        const [relation] = await (0, db_1.db1)('organization_user')
+        const [relation] = await (0, db_1.db1)("organization_user")
             .insert({ org_id: orgId, user_id: userId })
-            .returning('*');
+            .returning("*");
         return relation;
     }
 };

@@ -1,4 +1,4 @@
-import { ProjectsRepo } from './projects.repo';
+import { ProjectsRepo } from "./projects.repo";
 export declare class ProjectsService {
     private readonly projectsRepo;
     constructor(projectsRepo: ProjectsRepo);

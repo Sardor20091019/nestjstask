@@ -18,10 +18,10 @@ let HttpExceptionFilter = class HttpExceptionFilter {
             : common_1.HttpStatus.INTERNAL_SERVER_ERROR;
         const errorResponse = exception instanceof common_1.HttpException
             ? exception.getResponse()
-            : { message: 'Internal server error' };
-        const message = typeof errorResponse === 'object' &&
+            : { message: "Internal server error" };
+        const message = typeof errorResponse === "object" &&
             errorResponse !== null &&
-            'message' in errorResponse
+            "message" in errorResponse
             ? errorResponse.message
             : errorResponse;
         response.status(status).json({

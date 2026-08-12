@@ -6,10 +6,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.db2 = exports.db1 = void 0;
 const knex_1 = __importDefault(require("knex"));
 require("dotenv/config");
+const process_1 = require("process");
 exports.db1 = (0, knex_1.default)({
-    client: 'pg',
+    client: "pg",
     connection: {
-        connectionString: process.env.DATABASE_URL,
+        connectionString: process_1.env.DATABASE_URL,
     },
     pool: {
         min: 2,

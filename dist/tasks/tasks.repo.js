@@ -12,47 +12,47 @@ const db_1 = require("../database/db");
 let TasksRepo = class TasksRepo {
     async updateStatus(id, status) {
         const updateData = { status };
-        if (status === 'DONE') {
+        if (status === "DONE") {
             updateData.done_at = db_1.db1.fn.now();
         }
         else {
             updateData.done_at = null;
         }
-        const [updated] = await (0, db_1.db1)('tasks')
+        const [updated] = await (0, db_1.db1)("tasks")
             .where({ id })
             .update(updateData)
-            .returning('*');
+            .returning("*");
         return updated;
     }
     async findById(id) {
-        return (0, db_1.db1)('tasks').where({ id }).first();
+        return (0, db_1.db1)("tasks").where({ id }).first();
     }
     async insert(data) {
-        const [task] = await (0, db_1.db1)('tasks')
+        const [task] = await (0, db_1.db1)("tasks")
             .insert({
             ...data,
-            status: data.status || 'CREATED',
+            status: data.status || "CREATED",
         })
-            .returning('*');
+            .returning("*");
         return task;
     }
     async findByWorker(workerUserId) {
-        return (0, db_1.db1)('tasks').where({ worker_user_id: workerUserId }).select('*');
+        return (0, db_1.db1)("tasks").where({ worker_user_id: workerUserId }).select("*");
     }
     async findByTask() {
-        return await (0, db_1.db1)('tasks').select('id');
+        return await (0, db_1.db1)("tasks").select("id");
     }
     async findByStatus(status) {
-        return await (0, db_1.db1)('tasks').where({ status });
+        return await (0, db_1.db1)("tasks").where({ status });
     }
     async findByProject() {
-        return await (0, db_1.db1)('tasks').select('project_id');
+        return await (0, db_1.db1)("tasks").select("project_id");
     }
     async findAll() {
-        return (0, db_1.db1)('tasks').select('*');
+        return (0, db_1.db1)("tasks").select("*");
     }
     async remove(id) {
-        await (0, db_1.db1)('tasks').where({ id }).delete();
+        await (0, db_1.db1)("tasks").where({ id }).delete();
         return { deleted: true };
     }
 };

@@ -1,4 +1,5 @@
-import { TasksService } from './tasks.service';
+import { TasksService } from "./tasks.service";
+import { TaskStatus } from "../enum/task-status.enum";
 export declare class TasksController {
     private readonly tasksService;
     constructor(tasksService: TasksService);
@@ -8,16 +9,16 @@ export declare class TasksController {
         title: string;
         due_date: string;
         created_by: number;
-    }): Promise<unknown>;
-    findAll(workerUserId?: string, projectId?: string, status?: string): Promise<any[]> | Promise<void>;
+    }): Promise<any>;
+    findAll(workerUserId?: string, projectId?: string, status?: TaskStatus): Promise<any[]>;
     findByWorker(workerUserId?: string): Promise<any[]>;
-    findByProject(projectId?: string): Promise<void>;
-    status(status?: string): Promise<any[]>;
+    findByProject(projectId?: string): Promise<any[]>;
+    status(status?: TaskStatus): Promise<any[]>;
     updateStatus(id: string, body: {
-        status: 'CREATED' | 'IN_PROCESS' | 'DONE';
+        status: TaskStatus;
     }): Promise<any>;
     remove(id: string): Promise<{
         deleted: boolean;
     }>;
-    findOne(id: string): Promise<unknown>;
+    findOne(id: string): Promise<any>;
 }

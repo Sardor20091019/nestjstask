@@ -1,56 +1,48 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Put,
-  Delete,
-  ParseIntPipe,
-} from '@nestjs/common';
-import { UsersService } from './users.service';
+import { Controller, Post, Body, Param, ParseIntPipe } from "@nestjs/common";
+import { UsersService } from "./users.service";
+import { Role } from "../enum/role.enum";
 
-@Controller('users')
+@Controller("users")
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
+  @Post("create")
   create(
     @Body()
     body: {
       name: string;
-      role: number;
+      role: Role;
       created_by?: number;
     },
   ) {
     return this.usersService.create(body);
   }
 
-  @Post()
+  @Post("findall")
   findAll() {
     return this.usersService.findAll();
   }
 
-  @Post(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.findOne(id);
-  }
-
-  @Post(':id')
+  @Post("update/:id")
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param("id", ParseIntPipe) id: number,
     @Body()
     body: {
       name?: string;
-      role?: number;
+      role?: Role;
       created_by?: number;
     },
   ) {
     return this.usersService.update(id, body);
   }
 
-  @Post('remove/:id')
-  remove(@Param('id', ParseIntPipe) id: number) {
+  @Post("remove/:id")
+  remove(@Param("id", ParseIntPipe) id: number) {
     return this.usersService.remove(id);
+  }
+
+  @Post(":id")
+  findOne(@Param("id", ParseIntPipe) id: number) {
+    return this.usersService.findOne(id);
   }
 }

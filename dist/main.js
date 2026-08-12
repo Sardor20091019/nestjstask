@@ -12,14 +12,14 @@ const http_exception_filter_1 = require("./http-exception.filter");
 async function sardor() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     const config = new swagger_1.DocumentBuilder()
-        .setTitle('Users example')
-        .setDescription('The users API description')
+        .setTitle("Users example")
+        .setDescription("The users API description")
         .addBearerAuth()
-        .setVersion('1.4.1')
-        .addTag('users')
+        .setVersion("1.4.1")
+        .addTag("users")
         .build();
     const documentFactory = () => swagger_1.SwaggerModule.createDocument(app, config);
-    swagger_1.SwaggerModule.setup('sardor', app, documentFactory);
+    swagger_1.SwaggerModule.setup("sardor", app, documentFactory);
     app.useGlobalPipes(new common_1.ValidationPipe({
         whitelist: true,
         forbidNonWhitelisted: true,
@@ -28,7 +28,6 @@ async function sardor() {
     app.useGlobalFilters(new http_exception_filter_1.HttpExceptionFilter());
     app.use((0, helmet_1.default)());
     await app.listen(3000);
-    console.log('Hello');
 }
 void sardor();
 //# sourceMappingURL=main.js.map

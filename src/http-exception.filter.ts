@@ -1,13 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   ExceptionFilter,
   Catch,
   ArgumentsHost,
   HttpException,
   HttpStatus,
-} from '@nestjs/common';
-import { Request, Response } from 'express';
+} from "@nestjs/common";
+import { Request, Response } from "express";
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -24,12 +22,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const errorResponse =
       exception instanceof HttpException
         ? exception.getResponse()
-        : { message: 'Internal server error' };
+        : { message: "Internal server error" };
 
     const message =
-      typeof errorResponse === 'object' &&
+      typeof errorResponse === "object" &&
       errorResponse !== null &&
-      'message' in errorResponse
+      "message" in errorResponse
         ? (errorResponse as any).message
         : errorResponse;
 

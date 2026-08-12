@@ -1,11 +1,11 @@
-// import { Module } from '@nestjs/common';
-// import { StatisticsController } from './statistics.controller';
-// import { StatisticsService } from './statistics.service';
-// import { StatisticsRepo } from './statistics.repo';
+import { Module } from "@nestjs/common";
+import { StatisticsController } from "./statistics.controller";
+import { StatisticsService } from "./statistics.service";
+import { StatisticsRepo } from "./statistics.repo";
 
-// @Module({
-//   controllers: [StatisticsController],
-//   providers: [StatisticsService, StatisticsRepo],
-//   exports: [StatisticsService],
-// })
-// export class StatisticsModule {}
+@Module({
+  controllers: [StatisticsController],
+  providers: [StatisticsService, StatisticsRepo],
+  exports: [StatisticsService],
+})
+export class StatisticsModule {}

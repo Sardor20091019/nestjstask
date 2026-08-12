@@ -1,11 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { UsersRepo } from './users.repo';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { UsersRepo } from "./users.repo";
+import { Role } from "../enum/role.enum";
 
 @Injectable()
 export class UsersService {
   constructor(private readonly usersRepo: UsersRepo) {}
 
-  async create(data: { name: string; role: number; created_by?: number }) {
+  async create(data: { name: string; role: Role; created_by?: number }) {
     return await this.usersRepo.create(data);
   }
 
@@ -23,9 +24,13 @@ export class UsersService {
 
   async update(
     id: number,
-    data: { name?: string; role?: number; created_by?: number },
+    data: {
+      name?: string;
+      role?: Role;
+      created_by?: number;
+    },
   ) {
-    await this.findOne(id); 
+    await this.findOne(id);
     return await this.usersRepo.update(id, data);
   }
 

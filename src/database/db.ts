@@ -1,10 +1,11 @@
-import knex from 'knex';
-import 'dotenv/config';
+import knex from "knex";
+import "dotenv/config";
+import { env } from "process";
 
 export const db1 = knex({
-  client: 'pg',
+  client: "pg",
   connection: {
-    connectionString: process.env.DATABASE_URL,
+    connectionString: env.DATABASE_URL,
   },
   pool: {
     min: 2,

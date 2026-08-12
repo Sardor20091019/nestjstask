@@ -1,17 +1,18 @@
-import { UsersRepo } from './users.repo';
+import { UsersRepo } from "./users.repo";
+import { Role } from "../enum/role.enum";
 export declare class UsersService {
     private readonly usersRepo;
     constructor(usersRepo: UsersRepo);
     create(data: {
         name: string;
-        role: number;
+        role: Role;
         created_by?: number;
     }): Promise<any>;
     findAll(): Promise<any[]>;
     findOne(id: number): Promise<any>;
     update(id: number, data: {
         name?: string;
-        role?: number;
+        role?: Role;
         created_by?: number;
     }): Promise<any>;
     remove(id: number): Promise<{

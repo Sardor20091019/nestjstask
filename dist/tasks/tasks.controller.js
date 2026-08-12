@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TasksController = void 0;
 const common_1 = require("@nestjs/common");
 const tasks_service_1 = require("./tasks.service");
+const task_status_enum_1 = require("../enum/task-status.enum");
 let TasksController = class TasksController {
     constructor(tasksService) {
         this.tasksService = tasksService;
@@ -26,9 +27,7 @@ let TasksController = class TasksController {
             worker_user_id: body.worker_user_id,
             due_date: new Date(body.due_date),
             created_by: body.created_by,
-            created_at: Date.now(),
-            status: 'CREATED',
-            done_at: new Date(0),
+            status: task_status_enum_1.TaskStatus.CREATED,
         });
     }
     findAll(workerUserId, projectId, status) {
@@ -39,7 +38,7 @@ let TasksController = class TasksController {
             return this.tasksService.findByProject(+projectId);
         }
         if (status) {
-            return this.tasksService.findByStatus(String(status));
+            return this.tasksService.findByStatus(status);
         }
         return this.tasksService.findAll();
     }
@@ -50,7 +49,7 @@ let TasksController = class TasksController {
         return this.tasksService.findByProject(projectId ? +projectId : 0);
     }
     status(status) {
-        return this.tasksService.findByStatus(String(status));
+        return this.tasksService.findByStatus(status);
     }
     updateStatus(id, body) {
         return this.tasksService.updateStatus(+id, body.status);
@@ -64,66 +63,66 @@ let TasksController = class TasksController {
 };
 exports.TasksController = TasksController;
 __decorate([
-    (0, common_1.Post)(),
+    (0, common_1.Post)("create"),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], TasksController.prototype, "create", null);
 __decorate([
-    (0, common_1.Post)('findall'),
-    __param(0, (0, common_1.Query)('worker_user_id')),
-    __param(1, (0, common_1.Query)('project_id')),
-    __param(2, (0, common_1.Query)('status')),
+    (0, common_1.Post)("findall"),
+    __param(0, (0, common_1.Query)("worker_user_id")),
+    __param(1, (0, common_1.Query)("project_id")),
+    __param(2, (0, common_1.Query)("status")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String, String]),
     __metadata("design:returntype", void 0)
 ], TasksController.prototype, "findAll", null);
 __decorate([
-    (0, common_1.Post)('findByWorker'),
-    __param(0, (0, common_1.Query)('worker_user_id')),
+    (0, common_1.Post)("findByWorker"),
+    __param(0, (0, common_1.Query)("worker_user_id")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], TasksController.prototype, "findByWorker", null);
 __decorate([
-    (0, common_1.Post)('findByProject'),
-    __param(0, (0, common_1.Query)('project_id')),
+    (0, common_1.Post)("findByProject"),
+    __param(0, (0, common_1.Query)("project_id")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], TasksController.prototype, "findByProject", null);
 __decorate([
-    (0, common_1.Post)('status'),
-    __param(0, (0, common_1.Query)('status')),
+    (0, common_1.Post)("status"),
+    __param(0, (0, common_1.Query)("status")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], TasksController.prototype, "status", null);
 __decorate([
-    (0, common_1.Post)('updatestatus/:id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Post)("updatestatus/:id"),
+    __param(0, (0, common_1.Param)("id")),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], TasksController.prototype, "updateStatus", null);
 __decorate([
-    (0, common_1.Post)('remove/:id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Post)("remove/:id"),
+    __param(0, (0, common_1.Param)("id")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], TasksController.prototype, "remove", null);
 __decorate([
-    (0, common_1.Post)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Post)(":id"),
+    __param(0, (0, common_1.Param)("id")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], TasksController.prototype, "findOne", null);
 exports.TasksController = TasksController = __decorate([
-    (0, common_1.Controller)('tasks'),
+    (0, common_1.Controller)("tasks"),
     __metadata("design:paramtypes", [tasks_service_1.TasksService])
 ], TasksController);
 //# sourceMappingURL=tasks.controller.js.map

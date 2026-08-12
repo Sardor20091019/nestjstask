@@ -12,12 +12,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TasksService = void 0;
 const common_1 = require("@nestjs/common");
 const tasks_repo_1 = require("./tasks.repo");
+const task_status_enum_1 = require("../enum/task-status.enum");
 let TasksService = class TasksService {
     constructor(tasksRepo) {
         this.tasksRepo = tasksRepo;
     }
     async create(data) {
-        return this.tasksRepo.insert(data);
+        const taskData = {
+            ...data,
+            status: data.status || task_status_enum_1.TaskStatus.CREATED,
+        };
+        return this.tasksRepo.insert(taskData);
     }
     async findByWorker(workerUserId) {
         return this.tasksRepo.findByWorker(workerUserId);
@@ -29,30 +34,29 @@ let TasksService = class TasksService {
         return this.tasksRepo.findByStatus(status);
     }
     async findAll() {
-        try {
-            return await this.tasksRepo.findAll();
-        }
-        catch (error) {
-            console.error('CRASH ERROR:', error);
-            throw error;
-        }
+        return await this.tasksRepo.findAll();
     }
     async findOne(id) {
-        const task = (await this.tasksRepo.findById(id));
+        const task = await this.tasksRepo.findById(id);
         if (!task) {
-            throw new common_1.NotFoundException(`task with ID ${id} not found`);
+            throw new common_1.NotFoundException(`Task with ID ${id} not found`);
         }
         return task;
     }
     async findByProject(id) {
         const task = await this.tasksRepo.findByProject();
         if (!task) {
-            throw new common_1.NotFoundException(`that project id inst foiund therefore there mustnt be one there`);
+            throw new common_1.NotFoundException(`Project with ID ${id} not found`);
         }
+        return task;
     }
     async updateStatus(id, status) {
         await this.findOne(id);
-        return this.tasksRepo.updateStatus(id, status);
+        const updatePayload = { status };
+        if (status === task_status_enum_1.TaskStatus.DONE) {
+            updatePayload.done_at = new Date();
+        }
+        return this.tasksRepo.updateStatus(id, updatePayload);
     }
     async remove(id) {
         await this.findOne(id);

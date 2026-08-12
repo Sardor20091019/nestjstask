@@ -20,9 +20,9 @@ export default [
       prettier: prettierPlugin,
     },
     rules: {
-      ...tsPlugin.configs.recommended.rules,
-      ...prettierConfig.rules,
-      'prettier/error': 'warn',
+      ...tsPlugin.configs.recommended.rules, 
+      ...prettierConfig.rules, 
+      'prettier/prettier': 'warn', 
       '@typescript-eslint/interface-name-prefix': 'off',
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',

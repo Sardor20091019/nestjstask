@@ -11,27 +11,27 @@ const common_1 = require("@nestjs/common");
 const db_1 = require("../database/db");
 let ProjectsRepo = class ProjectsRepo {
     async insert(data) {
-        const [project] = await (0, db_1.db1)('projects').insert(data).returning('*');
+        const [project] = await (0, db_1.db1)("projects").insert(data).returning("*");
         return project;
     }
     async findAll() {
-        return (0, db_1.db1)('projects').select('*');
+        return (0, db_1.db1)("projects").select("*");
     }
     async findByOrg(orgId) {
-        return (0, db_1.db1)('projects').where({ org_id: orgId }).select('*');
+        return (0, db_1.db1)("projects").where({ org_id: orgId }).select("*");
     }
     async findById(id) {
-        return (0, db_1.db1)('projects').where({ id }).first();
+        return (0, db_1.db1)("projects").where({ id }).first();
     }
     async update(id, data) {
-        const [updated] = await (0, db_1.db1)('projects')
+        const [updated] = await (0, db_1.db1)("projects")
             .where({ id })
             .update(data)
-            .returning('*');
+            .returning("*");
         return updated;
     }
     async remove(id) {
-        await (0, db_1.db1)('projects').where({ id }).delete();
+        await (0, db_1.db1)("projects").where({ id }).delete();
         return { deleted: true };
     }
 };
