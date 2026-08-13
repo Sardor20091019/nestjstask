@@ -8,7 +8,7 @@ const swagger_1 = require("@nestjs/swagger");
 const app_module_1 = require("./app.module");
 const common_1 = require("@nestjs/common");
 const helmet_1 = __importDefault(require("helmet"));
-const http_exception_filter_1 = require("./http-exception.filter");
+const http_exception_filter_1 = require("./shared/http-exception.filter");
 async function sardor() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     const config = new swagger_1.DocumentBuilder()

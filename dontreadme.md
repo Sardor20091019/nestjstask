@@ -54,5 +54,5 @@ hullas faqat create, find, remove ishlavatti boldi , i users/update ishlavatti l
 QUESTION:
 logger qoshish keremi?
 bir hil nomli organizations bosa boladimi yoki bomasli keremi
-
+tin unique + name + uniqe
 FUTURE UPDATES: BETTER ERROR HANDLING

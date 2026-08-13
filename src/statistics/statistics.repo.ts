@@ -4,21 +4,23 @@ import { db1 } from "../database/db";
 @Injectable()
 export class StatisticsRepo {
   async getOrganizationsStatistics() {
-    const organizationss = await new Promise(
-      db1("organizations").count("id as count").first(),
-    );
+    const organizationss = await db1("organizations")
+      .count("id as count")
+      .first();
+    const totalorganizations = Number(organizationss.count);
+    const organizations = await db1("organizations").select("*");
     return {
-      organizations: db1("organizations").select("*"),
-      total_organizations: Number(organizationss.count),
+      organizations: organizations,
+      total_organizations: totalorganizations,
     };
   }
   async getTaskStatistics() {
-    const tasks = await new Promise(
-      db1("tasks").count("id as count").first(),
-    );
+    const tasks = await db1("tasks").count("id as count").first();
+    const totaltasks = Number(tasks.count);
+    const tasks1 = await db1("tasks").select("*");
     return {
-      tasks: db1("tasks").select("*"),
-      total_tasks: Number(tasks.count),
+      tasks: tasks1,
+      total_tasks: totaltasks,
     };
   }
   async getOverallstatistics() {

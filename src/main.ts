@@ -3,7 +3,7 @@ import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { AppModule } from "./app.module";
 import { ValidationPipe } from "@nestjs/common";
 import helmet from "helmet";
-import { HttpExceptionFilter } from "./http-exception.filter";
+import { HttpExceptionFilter } from "./shared/http-exception.filter";
 
 async function sardor() {
   const app = await NestFactory.create(AppModule);

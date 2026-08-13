@@ -11,17 +11,23 @@ const common_1 = require("@nestjs/common");
 const db_1 = require("../database/db");
 let StatisticsRepo = class StatisticsRepo {
     async getOrganizationsStatistics() {
-        const organizationss = await new Promise((0, db_1.db1)("organizations").count("id as count").first());
+        const organizationss = await (0, db_1.db1)("organizations")
+            .count("id as count")
+            .first();
+        const totalorganizations = Number(organizationss.count);
+        const organizations = await (0, db_1.db1)("organizations").select("*");
         return {
-            organizations: (0, db_1.db1)("organizations").select("*"),
-            total_organizations: Number(organizationss.count),
+            organizations: organizations,
+            total_organizations: totalorganizations,
         };
     }
     async getTaskStatistics() {
-        const tasks = await new Promise((0, db_1.db1)("tasks").count("id as count").first());
+        const tasks = await (0, db_1.db1)("tasks").count("id as count").first();
+        const totaltasks = Number(tasks.count);
+        const tasks1 = await (0, db_1.db1)("tasks").select("*");
         return {
-            tasks: (0, db_1.db1)("tasks").select("*"),
-            total_tasks: Number(tasks.count),
+            tasks: tasks1,
+            total_tasks: totaltasks,
         };
     }
     async getOverallstatistics() {

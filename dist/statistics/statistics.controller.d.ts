@@ -3,27 +3,11 @@ export declare class StatisticsController {
     private readonly statisticsService;
     constructor(statisticsService: StatisticsService);
     getOrganizations(): Promise<{
-        organizations: import("knex").Knex.QueryBuilder<any, {
-            _base: any;
-            _hasSelection: false;
-            _keys: string;
-            _aliases: {};
-            _single: false;
-            _intersectProps: {};
-            _unionProps: never;
-        }[]>;
+        organizations: any[];
         total_organizations: number;
     }>;
     getTasks(): Promise<{
-        tasks: import("knex").Knex.QueryBuilder<any, {
-            _base: any;
-            _hasSelection: false;
-            _keys: string;
-            _aliases: {};
-            _single: false;
-            _intersectProps: {};
-            _unionProps: never;
-        }[]>;
+        tasks: any[];
         total_tasks: number;
     }>;
     getOverallstatistics(): Promise<{

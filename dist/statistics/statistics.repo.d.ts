@@ -1,26 +1,10 @@
 export declare class StatisticsRepo {
     getOrganizationsStatistics(): Promise<{
-        organizations: import("knex").Knex.QueryBuilder<any, {
-            _base: any;
-            _hasSelection: false;
-            _keys: string;
-            _aliases: {};
-            _single: false;
-            _intersectProps: {};
-            _unionProps: never;
-        }[]>;
+        organizations: any[];
         total_organizations: number;
     }>;
     getTaskStatistics(): Promise<{
-        tasks: import("knex").Knex.QueryBuilder<any, {
-            _base: any;
-            _hasSelection: false;
-            _keys: string;
-            _aliases: {};
-            _single: false;
-            _intersectProps: {};
-            _unionProps: never;
-        }[]>;
+        tasks: any[];
         total_tasks: number;
     }>;
     getOverallstatistics(): Promise<{
