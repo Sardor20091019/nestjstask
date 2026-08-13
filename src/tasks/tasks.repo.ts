@@ -1,20 +1,15 @@
 import { Injectable } from "@nestjs/common";
 import { db1 } from "../database/db";
 import { TaskStatus } from "../enum/task-status.enum";
-import { UpdateStatusDto } from "./dto/update-status.dto";
 
 @Injectable()
 export class TasksRepo {
   async updateStatus(id: number, status: TaskStatus) {
-    const updateData: { status: TaskStatus; done_at?: any } = { status };
+    const done_at = status === "DONE" ? db1.fn.now() : null;
 
-    if ( status === "DONE") {
-      UpdateStatusDto.done_at = 
-    }
-    
     const [updated] = await db1("tasks")
       .where({ id })
-      .update(updateData)
+      .update({ done_at: done_at })
       .returning("*");
 
     return updated;

@@ -1,4 +1,4 @@
-import { IsOptional, IsEnum, IsEmpty, IsDate } from "class-validator";
+import { IsOptional, IsEnum, IsEmpty } from "class-validator";
 import { TaskStatus } from "../../enum/task-status.enum";
 
 export class UpdateStatusDto {
@@ -7,6 +7,6 @@ export class UpdateStatusDto {
   status: TaskStatus;
 
   @IsEmpty()
-  @IsDate()
-  done_at?: Date;
+  done_at?: any;
+  static done_at: null;
 }

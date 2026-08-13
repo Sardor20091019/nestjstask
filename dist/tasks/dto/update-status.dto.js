@@ -22,7 +22,6 @@ __decorate([
 ], UpdateStatusDto.prototype, "status", void 0);
 __decorate([
     (0, class_validator_1.IsEmpty)(),
-    (0, class_validator_1.IsDate)(),
-    __metadata("design:type", Date)
+    __metadata("design:type", Object)
 ], UpdateStatusDto.prototype, "done_at", void 0);
 //# sourceMappingURL=update-status.dto.js.map
