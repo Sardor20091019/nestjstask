@@ -1,5 +1,5 @@
-import { CreateOrganizationDto } from "../dto/create-organization.dto";
-import { UpdateOrganizationDto } from "../dto/update-organization.dto";
+import { CreateOrganizationDto } from "./dto/create-organization.dto";
+import { UpdateOrganizationDto } from "./dto/update-organization.dto";
 export declare class OrganizationsRepo {
     insert(data: CreateOrganizationDto): Promise<any>;
     findAll(): Promise<any[]>;

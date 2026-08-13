@@ -56,14 +56,7 @@ export class TasksService {
   }
 
   async updateStatus(id: number, status: TaskStatus) {
-    await this.findOne(id);
-
-    const updatePayload: any = { status };
-    if (status === TaskStatus.DONE) {
-      updatePayload.done_at = new Date();
-    }
-
-    return this.tasksRepo.updateStatus(id, updatePayload);
+    return this.tasksRepo.updateStatus(id, status);
   }
 
   async remove(id: number) {

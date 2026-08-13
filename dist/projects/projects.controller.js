@@ -15,8 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProjectsController = void 0;
 const common_1 = require("@nestjs/common");
 const projects_service_1 = require("./projects.service");
-const create_projects_dto_1 = require("../dto/create-projects.dto");
-const update_projects_dto_1 = require("../dto/update-projects.dto");
+const create_projects_dto_1 = require("./dto/create-projects.dto");
+const update_projects_dto_1 = require("./dto/update-projects.dto");
 let ProjectsController = class ProjectsController {
     constructor(projectsService) {
         this.projectsService = projectsService;
@@ -24,10 +24,11 @@ let ProjectsController = class ProjectsController {
     create(body) {
         return this.projectsService.create(body);
     }
+    findAll() {
+        return this.projectsService.findAll();
+    }
     findByOrg(orgId) {
-        return orgId
-            ? this.projectsService.findByOrg(+orgId)
-            : this.projectsService.findAll();
+        return this.projectsService.findByOrg(+orgId);
     }
     update(id, body) {
         return this.projectsService.update(+id, body);
@@ -45,14 +46,20 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ProjectsController.prototype, "create", null);
 __decorate([
-    (0, common_1.Post)("update"),
+    (0, common_1.Post)("findAll"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], ProjectsController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Post)("findByOrg"),
     __param(0, (0, common_1.Query)("org_id")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], ProjectsController.prototype, "findByOrg", null);
 __decorate([
-    (0, common_1.Post)(":id"),
+    (0, common_1.Post)("update/:id"),
     __param(0, (0, common_1.Param)("id")),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),

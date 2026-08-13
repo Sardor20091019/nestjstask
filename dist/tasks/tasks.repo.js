@@ -9,14 +9,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TasksRepo = void 0;
 const common_1 = require("@nestjs/common");
 const db_1 = require("../database/db");
+const update_status_dto_1 = require("./dto/update-status.dto");
 let TasksRepo = class TasksRepo {
     async updateStatus(id, status) {
         const updateData = { status };
         if (status === "DONE") {
-            updateData.done_at = db_1.db1.fn.now();
-        }
-        else {
-            updateData.done_at = null;
+            update_status_dto_1.UpdateStatusDto.done_at =
+            ;
         }
         const [updated] = await (0, db_1.db1)("tasks")
             .where({ id })

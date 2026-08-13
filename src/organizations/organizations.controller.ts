@@ -1,7 +1,7 @@
 import { Controller, Post, Body, Param } from "@nestjs/common";
 import { OrganizationsService } from "./organizations.service";
-import { CreateOrganizationDto } from "../dto/create-organization.dto";
-import { UpdateOrganizationDto } from "../dto/update-organization.dto";
+import { CreateOrganizationDto } from "./dto/create-organization.dto";
+import { UpdateOrganizationDto } from "./dto/update-organization.dto";
 
 @Controller("organizations")
 export class OrganizationsController {
@@ -12,12 +12,17 @@ export class OrganizationsController {
     return this.organizationsService.create(body);
   }
 
-  @Post()
+  @Post("findall")
   findAll() {
     return this.organizationsService.findAll();
   }
 
-  @Post(":id")
+  @Post("assign-user/:id")
+  assignUser(@Param("id") id: string, @Body() body: { userId: number }) {
+    return this.organizationsService.assignUser(+id, body.userId);
+  }
+
+  @Post("update/:id")
   update(@Param("id") id: string, @Body() body: UpdateOrganizationDto) {
     return this.organizationsService.update(+id, body);
   }
@@ -27,8 +32,8 @@ export class OrganizationsController {
     return this.organizationsService.remove(+id);
   }
 
-  @Post(":id/assign-user")
-  assignUser(@Param("id") id: string, @Body() body: { userId: number }) {
-    return this.organizationsService.assignUser(+id, body.userId);
+  @Post(":id")
+  findOne(@Param("id") id: string) {
+    return this.organizationsService.findOne(+id);
   }
 }

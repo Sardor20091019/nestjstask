@@ -32,10 +32,10 @@ let OrganizationsRepo = class OrganizationsRepo {
         return { deleted: true };
     }
     async assignUser(orgId, userId) {
-        const [relation] = await (0, db_1.db1)("organization_user")
+        const [assign] = await (0, db_1.db1)("organization_user")
             .insert({ org_id: orgId, user_id: userId })
             .returning("*");
-        return relation;
+        return assign;
     }
 };
 exports.OrganizationsRepo = OrganizationsRepo;

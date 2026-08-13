@@ -1,6 +1,6 @@
 import { OrganizationsRepo } from "./organizations.repo";
-import { CreateOrganizationDto } from "../dto/create-organization.dto";
-import { UpdateOrganizationDto } from "../dto/update-organization.dto";
+import { CreateOrganizationDto } from "./dto/create-organization.dto";
+import { UpdateOrganizationDto } from "./dto/update-organization.dto";
 export declare class OrganizationsService {
     private readonly organizationsRepo;
     constructor(organizationsRepo: OrganizationsRepo);

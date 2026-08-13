@@ -16,32 +16,38 @@ ENTITIES
 
 
 
-POST http://localhost:3000/organizations/create working✅ WITH BUGS⚠️⚠️⚠️⚠️⚠️
-POST http://localhost:3000/organizations/findall NOT working ❌❌❌
-POST http://localhost:3000/organizations/1 get  NOT working ❌❌❌
-POST http://localhost:3000/organizations/update/{id} working ✅
-POST http://localhost:3000/organizations/remove/{id} working ✅
-POST http://localhost:3000/organizations/assign  NOT working ❌❌❌
-POST http://localhost:3000/projects/create working✅ WITH BUGS⚠️⚠️⚠️⚠️⚠️
-POST http://localhost:3000/projects/findall NOT working❌❌❌
-POST http://localhost:3000/projects/findByOrg NOT working❌❌❌
+POST http://localhost:3000/organizations/create working✅
+POST http://localhost:3000/organizations/1 get   working✅
+POST http://localhost:3000/organizations/update/{id} working✅
+POST http://localhost:3000/organizations/remove/{id} working✅
+POST http://localhost:3000/organizations/assign-user/{id} working✅
+
+
+POST http://localhost:3000/projects/create working✅ 
+POST http://localhost:3000/projects/findall working✅
+POST http://localhost:3000/projects/findByOrg  working✅
 POST http://localhost:3000/projects/1 working✅
-POST http://localhost:3000/projects/update/{id}   NOT working❌❌❌
+POST http://localhost:3000/projects/update/{id}  working✅
 POST http://localhost:3000/projects/remove/{id}  working✅
-POST http://localhost:3000/tasks working✅ WITH BUGS⚠️⚠️⚠️⚠️⚠️
+
+
+POST http://localhost:3000/tasks working✅ 
 POST http://localhost:3000/tasks/findall working✅
-POST http://localhost:3000/tasks/{id}  working ✅
-POST http://localhost:3000/tasks/{id}/status  NOT working❌❌❌
-POST http://localhost:3000/tasks/updatestatus/{id}   NOT working❌❌❌
-POST http://localhost:3000/tasks/remove/{id}  working ✅
-POST http://localhost:3000/users/create working✅ WITH BUGS⚠️⚠️⚠️⚠️⚠️
+POST http://localhost:3000/tasks/{id}  working✅
+POST http://localhost:3000/tasks/updatestatus/{id}  NOT working❌❌❌
+POST http://localhost:3000/tasks/remove/{id}  working✅
+
+
+POST http://localhost:3000/users/create working✅ 
 POST http://localhost:3000/users/findall working✅
 POST http://localhost:3000/users/{id} working✅
-POST http://localhost:3000/users/{id}  update working ✅ WITH BUGS⚠️⚠️⚠️⚠️⚠️
-POST http://localhost:3000/users/remove/{id} workng✅
+POST http://localhost:3000/users/{id}  update working✅
+POST http://localhost:3000/users/remove/{id} working✅
+
+
 POST http://localhost:3000/statistics/organizations  NOT working❌❌❌
 POST http://localhost:3000/statistics/tasks  NOT working❌❌❌
-POST http://localhost:3000/statistics/overallstatistics  NOT working❌❌❌
+POST http://localhost:3000/statistics/overallstatistics   working✅
 
 - Tashkilot kesmida statistika: (tashkilot nomi, loyihalar soni, umumiy vazifalar soni)
 - Tashkilotning loyihalari kesmida: (tashkilot nomi, loyiha nomi, loyiha vazifalari soni)

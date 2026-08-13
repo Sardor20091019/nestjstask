@@ -1,6 +1,6 @@
 import { ProjectsRepo } from "./projects.repo";
-import { CreateProjectsDto } from "../dto/create-projects.dto";
-import { UpdateProjectsDto } from "../dto/update-projects.dto";
+import { CreateProjectsDto } from "./dto/create-projects.dto";
+import { UpdateProjectsDto } from "./dto/update-projects.dto";
 export declare class ProjectsService {
     private readonly projectsRepo;
     constructor(projectsRepo: ProjectsRepo);

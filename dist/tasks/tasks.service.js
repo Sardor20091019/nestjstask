@@ -51,12 +51,7 @@ let TasksService = class TasksService {
         return task;
     }
     async updateStatus(id, status) {
-        await this.findOne(id);
-        const updatePayload = { status };
-        if (status === task_status_enum_1.TaskStatus.DONE) {
-            updatePayload.done_at = new Date();
-        }
-        return this.tasksRepo.updateStatus(id, updatePayload);
+        return this.tasksRepo.updateStatus(id, status);
     }
     async remove(id) {
         await this.findOne(id);

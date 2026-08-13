@@ -1,17 +1,17 @@
 import { Injectable } from "@nestjs/common";
 import { db1 } from "../database/db";
+import { TaskStatus } from "../enum/task-status.enum";
+import { UpdateStatusDto } from "./dto/update-status.dto";
 
 @Injectable()
 export class TasksRepo {
-  async updateStatus(id: number, status: string) {
-    const updateData: { status: string; done_at?: any } = { status };
+  async updateStatus(id: number, status: TaskStatus) {
+    const updateData: { status: TaskStatus; done_at?: any } = { status };
 
-    if (status === "DONE") {
-      updateData.done_at = db1.fn.now();
-    } else {
-      updateData.done_at = null;
+    if ( status === "DONE") {
+      UpdateStatusDto.done_at = 
     }
-
+    
     const [updated] = await db1("tasks")
       .where({ id })
       .update(updateData)
@@ -29,7 +29,7 @@ export class TasksRepo {
     due_date: Date;
     worker_user_id: number;
     status?: string;
-    created_at?: number | Date;
+    created_at?: Date;
     done_at?: Date;
   }) {
     const [task] = await db1("tasks")

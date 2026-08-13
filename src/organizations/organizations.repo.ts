@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { db1 } from "../database/db";
-import { CreateOrganizationDto } from "../dto/create-organization.dto";
-import { UpdateOrganizationDto } from "../dto/update-organization.dto";
+import { CreateOrganizationDto } from "./dto/create-organization.dto";
+import { UpdateOrganizationDto } from "./dto/update-organization.dto";
 
 @Injectable()
 export class OrganizationsRepo {
@@ -32,9 +32,9 @@ export class OrganizationsRepo {
   }
 
   async assignUser(orgId: number, userId: number) {
-    const [relation] = await db1("organization_user")
+    const [assign] = await db1("organization_user")
       .insert({ org_id: orgId, user_id: userId })
       .returning("*");
-    return relation;
+    return assign;
   }
 }

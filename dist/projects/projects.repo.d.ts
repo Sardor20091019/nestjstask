@@ -1,5 +1,5 @@
-import { CreateProjectsDto } from "../dto/create-projects.dto";
-import { UpdateProjectsDto } from "../dto/update-projects.dto";
+import { CreateProjectsDto } from "./dto/create-projects.dto";
+import { UpdateProjectsDto } from "./dto/update-projects.dto";
 export declare class ProjectsRepo {
     insert(data: CreateProjectsDto): Promise<any>;
     findAll(): Promise<any[]>;

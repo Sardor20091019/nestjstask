@@ -15,8 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrganizationsController = void 0;
 const common_1 = require("@nestjs/common");
 const organizations_service_1 = require("./organizations.service");
-const create_organization_dto_1 = require("../dto/create-organization.dto");
-const update_organization_dto_1 = require("../dto/update-organization.dto");
+const create_organization_dto_1 = require("./dto/create-organization.dto");
+const update_organization_dto_1 = require("./dto/update-organization.dto");
 let OrganizationsController = class OrganizationsController {
     constructor(organizationsService) {
         this.organizationsService = organizationsService;
@@ -27,14 +27,17 @@ let OrganizationsController = class OrganizationsController {
     findAll() {
         return this.organizationsService.findAll();
     }
+    assignUser(id, body) {
+        return this.organizationsService.assignUser(+id, body.userId);
+    }
     update(id, body) {
         return this.organizationsService.update(+id, body);
     }
     remove(id) {
         return this.organizationsService.remove(+id);
     }
-    assignUser(id, body) {
-        return this.organizationsService.assignUser(+id, body.userId);
+    findOne(id) {
+        return this.organizationsService.findOne(+id);
     }
 };
 exports.OrganizationsController = OrganizationsController;
@@ -46,13 +49,21 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], OrganizationsController.prototype, "create", null);
 __decorate([
-    (0, common_1.Post)(),
+    (0, common_1.Post)("findall"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], OrganizationsController.prototype, "findAll", null);
 __decorate([
-    (0, common_1.Post)(":id"),
+    (0, common_1.Post)("assign-user/:id"),
+    __param(0, (0, common_1.Param)("id")),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], OrganizationsController.prototype, "assignUser", null);
+__decorate([
+    (0, common_1.Post)("update/:id"),
     __param(0, (0, common_1.Param)("id")),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -67,13 +78,12 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], OrganizationsController.prototype, "remove", null);
 __decorate([
-    (0, common_1.Post)(":id/assign-user"),
+    (0, common_1.Post)(":id"),
     __param(0, (0, common_1.Param)("id")),
-    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
-], OrganizationsController.prototype, "assignUser", null);
+], OrganizationsController.prototype, "findOne", null);
 exports.OrganizationsController = OrganizationsController = __decorate([
     (0, common_1.Controller)("organizations"),
     __metadata("design:paramtypes", [organizations_service_1.OrganizationsService])

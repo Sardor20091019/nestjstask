@@ -1,7 +1,7 @@
 import { Controller, Post, Body, Param, Query } from "@nestjs/common";
 import { ProjectsService } from "./projects.service";
-import { CreateProjectsDto } from "../dto/create-projects.dto";
-import { UpdateProjectsDto } from "../dto/update-projects.dto";
+import { CreateProjectsDto } from "./dto/create-projects.dto";
+import { UpdateProjectsDto } from "./dto/update-projects.dto";
 
 @Controller("projects")
 export class ProjectsController {
@@ -12,14 +12,17 @@ export class ProjectsController {
     return this.projectsService.create(body);
   }
 
-  @Post("update")
-  findByOrg(@Query("org_id") orgId?: string) {
-    return orgId
-      ? this.projectsService.findByOrg(+orgId)
-      : this.projectsService.findAll();
+  @Post("findAll")
+  findAll() {
+    return this.projectsService.findAll();
   }
 
-  @Post(":id")
+  @Post("findByOrg")
+  findByOrg(@Query("org_id") orgId?: string) {
+    return this.projectsService.findByOrg(+orgId);
+  }
+
+  @Post("update/:id")
   update(@Param("id") id: string, @Body() body: UpdateProjectsDto) {
     return this.projectsService.update(+id, body);
   }
