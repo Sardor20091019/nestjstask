@@ -6,7 +6,6 @@ import { TaskStatus } from "../enum/task-status.enum";
 export class TasksRepo {
   async updateStatus(id: number, status: TaskStatus) {
     const done_at = status === "DONE" ? db1.fn.now() : null;
-
     const [updated] = await db1("tasks")
       .where({ id })
       .update({ done_at: done_at })
