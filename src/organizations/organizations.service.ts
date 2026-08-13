@@ -1,11 +1,13 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { OrganizationsRepo } from "./organizations.repo";
+import { CreateOrganizationDto } from "../dto/create-organization.dto";
+import { UpdateOrganizationDto } from "../dto/update-organization.dto";
 
 @Injectable()
 export class OrganizationsService {
   constructor(private readonly organizationsRepo: OrganizationsRepo) {}
 
-  async create(data: { name: string; created_by: number }) {
+  async create(data: CreateOrganizationDto) {
     return this.organizationsRepo.insert(data);
   }
 
@@ -21,7 +23,7 @@ export class OrganizationsService {
     return org;
   }
 
-  async update(id: number, data: { name: string }) {
+  async update(id: number, data: UpdateOrganizationDto) {
     await this.findOne(id);
     return this.organizationsRepo.update(id, data);
   }

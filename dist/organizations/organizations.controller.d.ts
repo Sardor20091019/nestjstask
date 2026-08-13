@@ -1,15 +1,12 @@
 import { OrganizationsService } from "./organizations.service";
+import { CreateOrganizationDto } from "../dto/create-organization.dto";
+import { UpdateOrganizationDto } from "../dto/update-organization.dto";
 export declare class OrganizationsController {
     private readonly organizationsService;
     constructor(organizationsService: OrganizationsService);
-    create(body: {
-        name: string;
-        created_by: number;
-    }): Promise<any>;
+    create(body: CreateOrganizationDto): Promise<any>;
     findAll(): Promise<any[]>;
-    update(id: string, body: {
-        name: string;
-    }): Promise<any>;
+    update(id: string, body: UpdateOrganizationDto): Promise<any>;
     remove(id: string): Promise<{
         deleted: boolean;
     }>;

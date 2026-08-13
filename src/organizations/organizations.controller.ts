@@ -1,12 +1,14 @@
 import { Controller, Post, Body, Param } from "@nestjs/common";
 import { OrganizationsService } from "./organizations.service";
+import { CreateOrganizationDto } from "../dto/create-organization.dto";
+import { UpdateOrganizationDto } from "../dto/update-organization.dto";
 
 @Controller("organizations")
 export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}
 
   @Post("create")
-  create(@Body() body: { name: string; created_by: number }) {
+  create(@Body() body: CreateOrganizationDto) {
     return this.organizationsService.create(body);
   }
 
@@ -16,7 +18,7 @@ export class OrganizationsController {
   }
 
   @Post(":id")
-  update(@Param("id") id: string, @Body() body: { name: string }) {
+  update(@Param("id") id: string, @Body() body: UpdateOrganizationDto) {
     return this.organizationsService.update(+id, body);
   }
 

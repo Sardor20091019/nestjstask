@@ -10,6 +10,7 @@ import { UsersModule } from "./users/users.module";
 import { OrganizationsModule } from "./organizations/organizations.module";
 import { ProjectsModule } from "./projects/projects.module";
 import { TasksModule } from "./tasks/tasks.module";
+import { StatisticsModule } from "./statistics/statistics.module";
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { TasksModule } from "./tasks/tasks.module";
     OrganizationsModule,
     ProjectsModule,
     TasksModule,
+    StatisticsModule,
   ],
   controllers: [AppController],
   providers: [

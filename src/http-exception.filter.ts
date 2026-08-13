@@ -22,7 +22,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const errorResponse =
       exception instanceof HttpException
         ? exception.getResponse()
-        : { message: "Internal server error" };
+        : { message: "Internal server error🤣🤣🤣" };
 
     const message =
       typeof errorResponse === "object" &&

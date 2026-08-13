@@ -10,19 +10,31 @@ exports.StatisticsRepo = void 0;
 const common_1 = require("@nestjs/common");
 const db_1 = require("../database/db");
 let StatisticsRepo = class StatisticsRepo {
-    async getOrganizations() {
-        return await (0, db_1.db1)("organizations as o ")
-            .select("*")
-            .leftJoin;
+    async getOrganizationsStatistics() {
+        const organizationss = await new Promise((0, db_1.db1)("organizations").count("id as count").first());
+        return {
+            organizations: (0, db_1.db1)("organizations").select("*"),
+            total_organizations: Number(organizationss.count),
+        };
     }
-    async getTasks() {
-        return await (0, db_1.db1)("projects as p")
-            .select("*")
-            .leftJoin;
+    async getTaskStatistics() {
+        const tasks = await new Promise((0, db_1.db1)("tasks").count("id as count").first());
+        return {
+            tasks: (0, db_1.db1)("tasks").select("*"),
+            total_tasks: Number(tasks.count),
+        };
     }
     async getOverallstatistics() {
-        return await (0, db_1.db1)("statistics")
-            .select("*");
+        const [organizationss, projectss, taskss] = await Promise.all([
+            (0, db_1.db1)("organizations").count("id as count").first(),
+            (0, db_1.db1)("projects").count("id as count").first(),
+            (0, db_1.db1)("tasks").count("id as count").first(),
+        ]);
+        return {
+            total_organizations: Number(organizationss.count),
+            total_projects: Number(projectss.count),
+            total_tasks: Number(taskss.count),
+        };
     }
 };
 exports.StatisticsRepo = StatisticsRepo;

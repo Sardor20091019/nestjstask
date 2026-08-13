@@ -5,11 +5,11 @@ export class StatisticsService {
   constructor(private readonly statisticsRepo: StatisticsRepo) {}
 
   async getOrganizations() {
-    return await this.statisticsRepo.getOrganizations();
+    return await this.statisticsRepo.getOrganizationsStatistics();
   }
 
   async getTasks() {
-    return await this.statisticsRepo.getTasks();
+    return await this.statisticsRepo.getTaskStatistics();
   }
 
   async getOverallstatistics() {

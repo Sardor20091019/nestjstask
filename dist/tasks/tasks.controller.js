@@ -16,6 +16,7 @@ exports.TasksController = void 0;
 const common_1 = require("@nestjs/common");
 const tasks_service_1 = require("./tasks.service");
 const task_status_enum_1 = require("../enum/task-status.enum");
+const create_task_dto_1 = require("../dto/create-task.dto");
 let TasksController = class TasksController {
     constructor(tasksService) {
         this.tasksService = tasksService;
@@ -66,7 +67,7 @@ __decorate([
     (0, common_1.Post)("create"),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [create_task_dto_1.CreateTaskDto]),
     __metadata("design:returntype", void 0)
 ], TasksController.prototype, "create", null);
 __decorate([

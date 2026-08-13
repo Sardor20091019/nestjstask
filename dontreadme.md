@@ -37,11 +37,11 @@ POST http://localhost:3000/tasks/remove/{id}  working ✅
 POST http://localhost:3000/users/create working✅ WITH BUGS⚠️⚠️⚠️⚠️⚠️
 POST http://localhost:3000/users/findall working✅
 POST http://localhost:3000/users/{id} working✅
-POST http://localhost:3000/users/{id}  update working ✅
+POST http://localhost:3000/users/{id}  update working ✅ WITH BUGS⚠️⚠️⚠️⚠️⚠️
 POST http://localhost:3000/users/remove/{id} workng✅
-POST http://localhost:3000/statistics/organizations NOT IMPLEMENTED YET❌❌❌❌❌❌
-POST http://localhost:3000/statistics/tasks NOT IMPLEMENTED YET❌❌❌❌❌❌
-POST http://localhost:3000/statistics/overallstatistics NOT IMPLEMENTED YET❌❌❌❌❌❌
+POST http://localhost:3000/statistics/organizations  NOT working❌❌❌
+POST http://localhost:3000/statistics/tasks  NOT working❌❌❌
+POST http://localhost:3000/statistics/overallstatistics  NOT working❌❌❌
 
 - Tashkilot kesmida statistika: (tashkilot nomi, loyihalar soni, umumiy vazifalar soni)
 - Tashkilotning loyihalari kesmida: (tashkilot nomi, loyiha nomi, loyiha vazifalari soni)
@@ -51,4 +51,8 @@ POST http://localhost:3000/statistics/overallstatistics NOT IMPLEMENTED YET❌�
 BUGS:
 hullas faqat create, find, remove ishlavatti boldi , i users/update ishlavatti lekin qogan hich qaysi ishlamayabti ❌🆘⛔️🚫💢⭕️
 
-USER_CHANGES YA'NI OLD VALUE I NEW VALUE La SAQLIDIGAN HALI QOSHILMAGAN
+QUESTION:
+logger qoshish keremi?
+bir hil nomli organizations bosa boladimi yoki bomasli keremi
+
+FUTURE UPDATES: BETTER ERROR HANDLING

@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrganizationsController = void 0;
 const common_1 = require("@nestjs/common");
 const organizations_service_1 = require("./organizations.service");
+const create_organization_dto_1 = require("../dto/create-organization.dto");
+const update_organization_dto_1 = require("../dto/update-organization.dto");
 let OrganizationsController = class OrganizationsController {
     constructor(organizationsService) {
         this.organizationsService = organizationsService;
@@ -40,7 +42,7 @@ __decorate([
     (0, common_1.Post)("create"),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [create_organization_dto_1.CreateOrganizationDto]),
     __metadata("design:returntype", void 0)
 ], OrganizationsController.prototype, "create", null);
 __decorate([
@@ -54,7 +56,7 @@ __decorate([
     __param(0, (0, common_1.Param)("id")),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [String, update_organization_dto_1.UpdateOrganizationDto]),
     __metadata("design:returntype", void 0)
 ], OrganizationsController.prototype, "update", null);
 __decorate([

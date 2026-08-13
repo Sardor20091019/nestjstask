@@ -17,6 +17,7 @@ const users_module_1 = require("./users/users.module");
 const organizations_module_1 = require("./organizations/organizations.module");
 const projects_module_1 = require("./projects/projects.module");
 const tasks_module_1 = require("./tasks/tasks.module");
+const statistics_module_1 = require("./statistics/statistics.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -38,6 +39,7 @@ exports.AppModule = AppModule = __decorate([
             organizations_module_1.OrganizationsModule,
             projects_module_1.ProjectsModule,
             tasks_module_1.TasksModule,
+            statistics_module_1.StatisticsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

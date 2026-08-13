@@ -3,18 +3,34 @@ import { db1 } from "../database/db";
 
 @Injectable()
 export class StatisticsRepo {
-    async getOrganizations() {
-        return await db1("organizations as o ")
-        .select("*")
-        .leftJoin
-    }
-    async getTasks() {
-        return await db1("projects as p")
-        .select("*")
-        .leftJoin
-    }
-    async getOverallstatistics() {
-        return await db1("statistics")
-        .select("*")
-    }
+  async getOrganizationsStatistics() {
+    const organizationss = await new Promise(
+      db1("organizations").count("id as count").first(),
+    );
+    return {
+      organizations: db1("organizations").select("*"),
+      total_organizations: Number(organizationss.count),
+    };
+  }
+  async getTaskStatistics() {
+    const tasks = await new Promise(
+      db1("tasks").count("id as count").first(),
+    );
+    return {
+      tasks: db1("tasks").select("*"),
+      total_tasks: Number(tasks.count),
+    };
+  }
+  async getOverallstatistics() {
+    const [organizationss, projectss, taskss] = await Promise.all([
+      db1("organizations").count("id as count").first(),
+      db1("projects").count("id as count").first(),
+      db1("tasks").count("id as count").first(),
+    ]);
+    return {
+      total_organizations: Number(organizationss.count),
+      total_projects: Number(projectss.count),
+      total_tasks: Number(taskss.count),
+    };
+  }
 }

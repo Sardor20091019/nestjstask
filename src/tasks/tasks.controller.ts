@@ -1,6 +1,7 @@
 import { Controller, Post, Body, Param, Query } from "@nestjs/common";
 import { TasksService } from "./tasks.service";
 import { TaskStatus } from "../enum/task-status.enum";
+import { CreateTaskDto } from "../dto/create-task.dto";
 
 @Controller("tasks")
 export class TasksController {
@@ -9,13 +10,7 @@ export class TasksController {
   @Post("create")
   create(
     @Body()
-    body: {
-      project_id: number;
-      worker_user_id: number;
-      title: string;
-      due_date: string;
-      created_by: number;
-    },
+    body: CreateTaskDto,
   ) {
     return this.tasksService.create({
       title: body.title,

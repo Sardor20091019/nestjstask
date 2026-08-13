@@ -17,10 +17,10 @@ let StatisticsService = class StatisticsService {
         this.statisticsRepo = statisticsRepo;
     }
     async getOrganizations() {
-        return await this.statisticsRepo.getOrganizations();
+        return await this.statisticsRepo.getOrganizationsStatistics();
     }
     async getTasks() {
-        return await this.statisticsRepo.getTasks();
+        return await this.statisticsRepo.getTaskStatistics();
     }
     async getOverallstatistics() {
         return await this.statisticsRepo.getOverallstatistics();

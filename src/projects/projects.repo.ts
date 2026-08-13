@@ -1,9 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { db1 } from "../database/db";
+import { CreateProjectsDto } from "../dto/create-projects.dto";
+import { UpdateProjectsDto } from "../dto/update-projects.dto";
 
 @Injectable()
 export class ProjectsRepo {
-  async insert(data: { name: string; org_id: number; created_by: number }) {
+  async insert(data: CreateProjectsDto) {
     const [project] = await db1("projects").insert(data).returning("*");
     return project;
   }
@@ -20,7 +22,7 @@ export class ProjectsRepo {
     return db1("projects").where({ id }).first();
   }
 
-  async update(id: number, data: { name: string }) {
+  async update(id: number, data: UpdateProjectsDto) {
     const [updated] = await db1("projects")
       .where({ id })
       .update(data)
