@@ -1,0 +1,78 @@
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
+import { db1 } from "../database/db";
+import { TaskStatus } from "../enum/task-status.enum";
+
+@Injectable()
+export class TasksRepo {
+  async updateStatus(id: number, status: TaskStatus, workerUserId: number) {
+    const done_at = status === "DONE" ? db1.fn.now() : null;
+
+    const [updated] = await db1("tasks")
+      .where({ id, worker_user_id: workerUserId })
+      .update({ status: status, done_at: done_at })
+      .returning("*");
+
+    return updated;
+  }
+  async findById(id: number) {
+    return db1("tasks").where({ id }).first();
+  }
+  async insert(data: {
+    title?: string;
+    created_by: number;
+    project_id: number;
+    due_date: Date;
+    worker_user_id: number;
+    status?: string;
+    created_at?: Date;
+    done_at?: Date;
+  }) {
+    const [task] = await db1("tasks")
+      .insert({
+        ...data,
+        status: data.status || "CREATED",
+      })
+      .returning("*");
+    return task;
+  }
+
+  async findByWorker(workerUserId: number) {
+    return db1("tasks").where({ worker_user_id: workerUserId }).select("*");
+  }
+
+  async findByTask() {
+    return await db1("tasks").select("id");
+  }
+
+  async findByStatus(status: string) {
+    return await db1("tasks").where({ status });
+  }
+
+  async findByProject(projectId: number) {
+    if (!projectId) {
+      throw new BadRequestException("Project ID is required");
+    }
+
+    const tasks = await db1("tasks")
+      .where({ project_id: projectId })
+      .select("*");
+
+    if (!tasks || tasks.length === 0) {
+      throw new NotFoundException(`No tasks found for project ID ${projectId}`);
+    }
+
+    return tasks;
+  }
+  async findAll() {
+    return db1("tasks").select("*");
+  }
+
+  async remove(id: number) {
+    await db1("tasks").where({ id }).delete();
+    return { deleted: true };
+  }
+}
