@@ -1,14 +1,27 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { ProjectsRepo } from "./projects.repo";
 import { CreateProjectsDto } from "./dto/create-projects.dto";
 import { UpdateProjectsDto } from "./dto/update-projects.dto";
+import { db1 } from "../database/db";
 
 @Injectable()
 export class ProjectsService {
   constructor(private readonly projectsRepo: ProjectsRepo) {}
 
-  async create(data: CreateProjectsDto) {
-    return this.projectsRepo.insert(data);
+   async verifyManagerOrAdmin(userId: number) {
+    const requester = await db1("users").where({ id: userId }).first();
+    if (!requester) {
+      throw new NotFoundException("Requester user not found via user_id header");
+    }
+    if (requester.role !== 1 && requester.role !== 2) {
+      throw new ForbiddenException("Only Admins and Managers can manage projects");
+    }
+    return requester;
+  }
+
+  async create(userId: number, data: CreateProjectsDto) {
+    await this.verifyManagerOrAdmin(userId);
+    return this.projectsRepo.insert({ ...data, created_by: userId });
   }
 
   async findAll() {
@@ -27,12 +40,14 @@ export class ProjectsService {
     return project;
   }
 
-  async update(id: number, data: UpdateProjectsDto) {
+  async update(userId: number, id: number, data: UpdateProjectsDto) {
+    await this.verifyManagerOrAdmin(userId);
     await this.findOne(id);
     return this.projectsRepo.update(id, data);
   }
 
-  async remove(id: number) {
+  async remove(userId: number, id: number) {
+    await this.verifyManagerOrAdmin(userId);
     await this.findOne(id);
     return this.projectsRepo.remove(id);
   }

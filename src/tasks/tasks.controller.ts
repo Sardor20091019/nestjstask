@@ -16,17 +16,12 @@ export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Post("create")
-  create(
-    @Headers() headers: any,
-    @Body()
-    body: CreateTaskDto,
-  ) {
+  create(@Headers() headers: any, @Body() body: CreateTaskDto) {
     return this.tasksService.create(headers.user_id, {
       title: body.title,
       project_id: body.project_id,
       worker_user_id: body.worker_user_id,
       due_date: new Date(body.due_date),
-      created_by: body.created_by,
       status: TaskStatus.CREATED,
     });
   }
@@ -66,23 +61,20 @@ export class TasksController {
 
   @Post("update-status/:id")
   updateStatus(
+    @Headers() headers: any,
     @Param("id", ParseIntPipe) id: number,
-    @Body() body: { status: string; worker_user_id: number },
+    @Body() body: { status: TaskStatus },
   ) {
-    return this.tasksService.updateStatus(
-      id,
-      body.status as TaskStatus,
-      body.worker_user_id,
-    );
+    return this.tasksService.updateStatus(headers.user_id, id, body.status);
   }
 
   @Post("remove/:id")
-  remove(@Param("id") id: string) {
-    return this.tasksService.remove(+id);
+  remove(@Headers() headers: any, @Param("id", ParseIntPipe) id: number) {
+    return this.tasksService.remove(headers.user_id, id);
   }
 
   @Post(":id")
-  findOne(@Param("id") id: string) {
-    return this.tasksService.findOne(+id);
+  findOne(@Param("id", ParseIntPipe) id: number) {
+    return this.tasksService.findOne(id);
   }
 }
