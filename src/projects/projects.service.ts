@@ -8,10 +8,13 @@ import { db1 } from "../database/db";
 export class ProjectsService {
   constructor(private readonly projectsRepo: ProjectsRepo) {}
 
-   async verifyManagerOrAdmin(userId: number) {
+  private async verifyManagerOrAdmin(userId: number) {
+    if (!userId || isNaN(userId)) {
+      throw new NotFoundException("Missing user_id header");
+    }
     const requester = await db1("users").where({ id: userId }).first();
     if (!requester) {
-      throw new NotFoundException("Requester user not found via user_id header");
+      throw new NotFoundException("Requester user not found");
     }
     if (requester.role !== 1 && requester.role !== 2) {
       throw new ForbiddenException("Only Admins and Managers can manage projects");

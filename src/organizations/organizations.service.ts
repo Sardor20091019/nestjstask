@@ -8,20 +8,17 @@ import { db1 } from "../database/db";
 export class OrganizationsService {
   constructor(private readonly organizationsRepo: OrganizationsRepo) {}
 
-
-   async verifyAdmin(userId: number) {
-    const requester = await db1("users").where({ id: userId }).first();
-
-    if (!requester) {
-      throw new NotFoundException(
-        "Requester user not found, pass your user ID in the header as user_id",
-      );
+  private async verifyAdmin(userId: number) {
+    if (!userId || isNaN(userId)) {
+      throw new NotFoundException("Missing user_id header");
     }
-
+    const requester = await db1("users").where({ id: userId }).first();
+    if (!requester) {
+      throw new NotFoundException("Requester user not found");
+    }
     if (requester.role !== 1) {
       throw new ForbiddenException("Only admins can perform this action");
     }
-
     return requester;
   }
 
@@ -57,13 +54,10 @@ export class OrganizationsService {
   async assignUser(adminId: number, orgId: number, userId: number) {
     await this.verifyAdmin(adminId);
     await this.findOne(orgId);
-
-
     const targetUser = await db1("users").where({ id: userId }).first();
     if (!targetUser) {
-      throw new NotFoundException(`User with ID ${userId} not found to assign`);
+      throw new NotFoundException(`User with ID ${userId} not found`);
     }
-
     return this.organizationsRepo.assignUser(orgId, userId);
   }
 }
