@@ -9,12 +9,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TasksRepo = void 0;
 const common_1 = require("@nestjs/common");
 const db_1 = require("../database/db");
+const task_status_enum_1 = require("../enum/task-status.enum");
 let TasksRepo = class TasksRepo {
     async updateStatus(id, status) {
         const done_at = status === "DONE" ? db_1.db1.fn.now() : null;
+        if (status !== "CREATED") {
+            status = task_status_enum_1.TaskStatus.IN_PROCESS;
+        }
         const [updated] = await (0, db_1.db1)("tasks")
             .where({ id })
-            .update({ done_at: done_at })
+            .update({ status: status, done_at: done_at })
             .returning("*");
         return updated;
     }
@@ -39,8 +43,17 @@ let TasksRepo = class TasksRepo {
     async findByStatus(status) {
         return await (0, db_1.db1)("tasks").where({ status });
     }
-    async findByProject() {
-        return await (0, db_1.db1)("tasks").select("project_id");
+    async findByProject(projectId) {
+        if (!projectId) {
+            throw new common_1.BadRequestException("Project ID is required");
+        }
+        const tasks = await (0, db_1.db1)("tasks")
+            .where({ project_id: projectId })
+            .select("*");
+        if (!tasks || tasks.length === 0) {
+            throw new common_1.NotFoundException(`No tasks found for project ID ${projectId}`);
+        }
+        return tasks;
     }
     async findAll() {
         return (0, db_1.db1)("tasks").select("*");

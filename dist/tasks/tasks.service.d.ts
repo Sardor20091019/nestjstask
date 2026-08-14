@@ -3,7 +3,7 @@ import { TaskStatus } from "../enum/task-status.enum";
 export declare class TasksService {
     private readonly tasksRepo;
     constructor(tasksRepo: TasksRepo);
-    create(data: {
+    create(isadminornotID: number, data: {
         title: string;
         created_by: number;
         created_at?: Date;
@@ -18,7 +18,7 @@ export declare class TasksService {
     findByStatus(status: TaskStatus): Promise<any[]>;
     findAll(): Promise<any[]>;
     findOne(id: number): Promise<any>;
-    findByProject(id: number): Promise<any[]>;
+    findByProject(projectId: number): Promise<any[]>;
     updateStatus(id: number, status: TaskStatus): Promise<any>;
     remove(id: number): Promise<{
         deleted: boolean;

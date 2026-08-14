@@ -2,5 +2,4 @@ import { TaskStatus } from "../../enum/task-status.enum";
 export declare class UpdateStatusDto {
     status: TaskStatus;
     done_at?: any;
-    static done_at: null;
 }

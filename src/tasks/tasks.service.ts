@@ -1,24 +1,43 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { TasksRepo } from "./tasks.repo";
 import { TaskStatus } from "../enum/task-status.enum";
+import { db1 } from "../database/db";
 
 @Injectable()
 export class TasksService {
   constructor(private readonly tasksRepo: TasksRepo) {}
 
-  async create(data: {
-    title: string;
-    created_by: number;
-    created_at?: Date;
-    project_id: number;
-    due_date: Date;
-    worker_user_id: number;
-    status?: TaskStatus;
-    done_at?: Date;
-  }) {
+  async create(
+    isadminornotID: number,
+    data: {
+      title: string;
+      created_by: number;
+      created_at?: Date;
+      project_id: number;
+      due_date: Date;
+      worker_user_id: number;
+      status?: TaskStatus;
+      done_at?: Date;
+    },
+  ) {
+    const requester = await db1("users").where({ id: isadminornotID }).first();
+
+    if (!requester) {
+      throw new NotFoundException(
+        "Requester user not found, write ur user ID in HEADER section KEY shoudl be user-id and value should be your userID ",
+      );
+    }
+
+    if (requester.role !== 1) {
+      throw new ForbiddenException("Only admins can create users");
+    }
     const taskData = {
       ...data,
-      status: data.status || TaskStatus.CREATED,
+      status: TaskStatus.CREATED,
     };
     return this.tasksRepo.insert(taskData);
   }
@@ -47,12 +66,8 @@ export class TasksService {
     return task;
   }
 
-  async findByProject(id: number) {
-    const task = await this.tasksRepo.findByProject();
-    if (!task) {
-      throw new NotFoundException(`Project with ID ${id} not found`);
-    }
-    return task;
+  async findByProject(projectId: number) {
+    return await this.tasksRepo.findByProject(projectId);
   }
 
   async updateStatus(id: number, status: TaskStatus) {

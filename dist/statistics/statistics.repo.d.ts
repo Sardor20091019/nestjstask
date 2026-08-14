@@ -1,12 +1,6 @@
 export declare class StatisticsRepo {
-    getOrganizationsStatistics(): Promise<{
-        organizations: any[];
-        total_organizations: number;
-    }>;
-    getTaskStatistics(): Promise<{
-        tasks: any[];
-        total_tasks: number;
-    }>;
+    getOrganizationsStatistics(): Promise<any[]>;
+    getTaskStatistics(): Promise<any[]>;
     getOverallstatistics(): Promise<{
         total_organizations: number;
         total_projects: number;

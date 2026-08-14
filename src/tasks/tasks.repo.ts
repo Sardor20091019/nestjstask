@@ -1,14 +1,21 @@
-import { Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { db1 } from "../database/db";
 import { TaskStatus } from "../enum/task-status.enum";
 
 @Injectable()
 export class TasksRepo {
   async updateStatus(id: number, status: TaskStatus) {
-    const done_at = status === "DONE" ? db1.fn.now() : null;
+    const done_at = status === "DONE" ? db1.fn.now() : null
+    if (status !== "CREATED") {
+      status = TaskStatus.IN_PROCESS;
+    }
     const [updated] = await db1("tasks")
       .where({ id })
-      .update({ done_at: done_at })
+      .update({ status: status, done_at: done_at })
       .returning("*");
 
     return updated;
@@ -47,10 +54,21 @@ export class TasksRepo {
     return await db1("tasks").where({ status });
   }
 
-  async findByProject() {
-    return await db1("tasks").select("project_id");
-  }
+  async findByProject(projectId: number) {
+    if (!projectId) {
+      throw new BadRequestException("Project ID is required");
+    }
 
+    const tasks = await db1("tasks")
+      .where({ project_id: projectId })
+      .select("*");
+
+    if (!tasks || tasks.length === 0) {
+      throw new NotFoundException(`No tasks found for project ID ${projectId}`);
+    }
+
+    return tasks;
+  }
   async findAll() {
     return db1("tasks").select("*");
   }

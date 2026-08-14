@@ -1,42 +1,45 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  Injectable,
+  ForbiddenException,
+  NotFoundException,
+} from "@nestjs/common";
 import { UsersRepo } from "./users.repo";
 import { Role } from "../enum/role.enum";
+import { db1 } from "../database/db";
 
 @Injectable()
 export class UsersService {
   constructor(private readonly usersRepo: UsersRepo) {}
 
-  async create(data: { name: string; role: Role; created_by?: number }) {
-    return await this.usersRepo.create(data);
+  async create(isadminornotID: number, body: { name: string; role: Role }) {
+    const requester = await db1("users").where({ id: isadminornotID }).first();
+
+    if (!requester) {
+      throw new NotFoundException(
+        "Requester user not found, write ur user ID in HEADER section KEY shoudl be user-id and value should be your userID ",
+      );
+    }
+
+    if (requester.role !== 1) {
+      throw new ForbiddenException("Only admins can create users");
+    }
+
+    return this.usersRepo.create(body);
   }
 
   async findAll() {
-    return await this.usersRepo.findAll();
+    return this.usersRepo.findAll();
   }
 
   async findOne(id: number) {
-    const user = await this.usersRepo.findOne(id);
-    if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
-    }
-    return user;
+    return this.usersRepo.findOne(id);
   }
 
-  async update(
-    id: number,
-    data: {
-      name?: string;
-      role?: Role;
-      created_by?: number;
-    },
-  ) {
-    await this.findOne(id);
-    return await this.usersRepo.update(id, data);
+  async update(id: number, body: { name?: string; role?: Role }) {
+    return this.usersRepo.update(id, body);
   }
 
   async remove(id: number) {
-    await this.findOne(id);
-    await this.usersRepo.remove(id);
-    return { message: `User with ID ${id} successfully deleted` };
+    return this.usersRepo.remove(id);
   }
 }

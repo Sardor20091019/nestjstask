@@ -12,31 +12,32 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
 const users_repo_1 = require("./users.repo");
+const db_1 = require("../database/db");
 let UsersService = class UsersService {
     constructor(usersRepo) {
         this.usersRepo = usersRepo;
     }
-    async create(data) {
-        return await this.usersRepo.create(data);
+    async create(isadminornotID, body) {
+        const requester = await (0, db_1.db1)("users").where({ id: isadminornotID }).first();
+        if (!requester) {
+            throw new common_1.NotFoundException("Requester user not found, write ur user ID in HEADER section KEY shoudl be user-id and value should be your userID ");
+        }
+        if (requester.role !== 1) {
+            throw new common_1.ForbiddenException("Only admins can create users");
+        }
+        return this.usersRepo.create(body);
     }
     async findAll() {
-        return await this.usersRepo.findAll();
+        return this.usersRepo.findAll();
     }
     async findOne(id) {
-        const user = await this.usersRepo.findOne(id);
-        if (!user) {
-            throw new common_1.NotFoundException(`User with ID ${id} not found`);
-        }
-        return user;
+        return this.usersRepo.findOne(id);
     }
-    async update(id, data) {
-        await this.findOne(id);
-        return await this.usersRepo.update(id, data);
+    async update(id, body) {
+        return this.usersRepo.update(id, body);
     }
     async remove(id) {
-        await this.findOne(id);
-        await this.usersRepo.remove(id);
-        return { message: `User with ID ${id} successfully deleted` };
+        return this.usersRepo.remove(id);
     }
 };
 exports.UsersService = UsersService;

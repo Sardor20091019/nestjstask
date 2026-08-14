@@ -19,8 +19,8 @@ let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
     }
-    create(body) {
-        return this.usersService.create(body);
+    create(headers, body) {
+        return this.usersService.create(headers.user_id, body);
     }
     findAll() {
         return this.usersService.findAll();
@@ -38,9 +38,10 @@ let UsersController = class UsersController {
 exports.UsersController = UsersController;
 __decorate([
     (0, common_1.Post)("create"),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Headers)()),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "create", null);
 __decorate([

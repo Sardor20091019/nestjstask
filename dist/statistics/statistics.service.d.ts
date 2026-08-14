@@ -2,14 +2,8 @@ import { StatisticsRepo } from "./statistics.repo";
 export declare class StatisticsService {
     private readonly statisticsRepo;
     constructor(statisticsRepo: StatisticsRepo);
-    getOrganizations(): Promise<{
-        organizations: any[];
-        total_organizations: number;
-    }>;
-    getTasks(): Promise<{
-        tasks: any[];
-        total_tasks: number;
-    }>;
+    getOrganizations(): Promise<any[]>;
+    getTasks(): Promise<any[]>;
     getOverallstatistics(): Promise<{
         total_organizations: number;
         total_projects: number;

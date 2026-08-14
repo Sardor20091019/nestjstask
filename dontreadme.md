@@ -16,29 +16,30 @@ ENTITIES
 
 
 
-POST http://localhost:3000/organizations/create working✅ with  BUGS⚠️‼️☢️☣️⛔️
+POST http://localhost:3000/organizations/create working✅
 POST http://localhost:3000/organizations/1 get   working✅
 POST http://localhost:3000/organizations/update/{id} working✅
 POST http://localhost:3000/organizations/remove/{id} working✅
 POST http://localhost:3000/organizations/assign-user/{id} working✅
 
 
-POST http://localhost:3000/projects/create working✅ with  BUGS⚠️‼️☢️☣️⛔️
+POST http://localhost:3000/projects/create working✅
 POST http://localhost:3000/projects/findall working✅
 POST http://localhost:3000/projects/findByOrg  working✅
-POST http://localhost:3000/projects/1 working✅
+POST http://localhost:3000/projects/1 working✅ 
 POST http://localhost:3000/projects/update/{id}  working✅
 POST http://localhost:3000/projects/remove/{id}  working✅
 
 
-POST http://localhost:3000/tasks working✅ with  BUGS⚠️‼️☢️☣️⛔️
+POST http://localhost:3000/tasks working✅
 POST http://localhost:3000/tasks/findall working✅
 POST http://localhost:3000/tasks/{id}  working✅
-POST http://localhost:3000/tasks/updatestatus/{id}  working✅ with  BUGS⚠️‼️☢️☣️⛔️
+POST http://localhost:3000/tasks/findByProject?project_id={id}
+POST http://localhost:3000/tasks/updatestatus/{id}  working✅
 POST http://localhost:3000/tasks/remove/{id}  working✅
 
 
-POST http://localhost:3000/users/create working✅ with  BUGS⚠️‼️☢️☣️⛔️
+POST http://localhost:3000/users/create working✅
 POST http://localhost:3000/users/findall working✅
 POST http://localhost:3000/users/{id} working✅
 POST http://localhost:3000/users/{id}  update working✅

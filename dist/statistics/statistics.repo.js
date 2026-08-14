@@ -11,24 +11,18 @@ const common_1 = require("@nestjs/common");
 const db_1 = require("../database/db");
 let StatisticsRepo = class StatisticsRepo {
     async getOrganizationsStatistics() {
-        const organizationss = await (0, db_1.db1)("organizations")
-            .count("id as count")
-            .first();
-        const totalorganizations = Number(organizationss.count);
-        const organizations = await (0, db_1.db1)("organizations").select("*");
-        return {
-            organizations: organizations,
-            total_organizations: totalorganizations,
-        };
+        return (0, db_1.db1)("organizations as o")
+            .leftJoin("projects as p", "p.org_id", "o.id")
+            .leftJoin("tasks as t", "t.project_id", "p.id")
+            .select("o.name as organization_name", db_1.db1.raw("COUNT(DISTINCT p.id) as projects_count"), db_1.db1.raw("COUNT(t.id) as total_tasks"))
+            .groupBy("o.id", "o.name");
     }
     async getTaskStatistics() {
-        const tasks = await (0, db_1.db1)("tasks").count("id as count").first();
-        const totaltasks = Number(tasks.count);
-        const tasks1 = await (0, db_1.db1)("tasks").select("*");
-        return {
-            tasks: tasks1,
-            total_tasks: totaltasks,
-        };
+        return (0, db_1.db1)("projects as p")
+            .join("organizations as o", "o.id", "p.org_id")
+            .leftJoin("tasks as t", "t.project_id", "p.id")
+            .select("o.name as organization_name", "p.name as project_name", db_1.db1.raw("COUNT(t.id) as project_tasks_count"))
+            .groupBy("o.id", "o.name", "p.id", "p.name");
     }
     async getOverallstatistics() {
         const [organizationss, projectss, taskss] = await Promise.all([

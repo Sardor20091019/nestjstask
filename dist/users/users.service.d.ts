@@ -3,19 +3,15 @@ import { Role } from "../enum/role.enum";
 export declare class UsersService {
     private readonly usersRepo;
     constructor(usersRepo: UsersRepo);
-    create(data: {
+    create(isadminornotID: number, body: {
         name: string;
         role: Role;
-        created_by?: number;
     }): Promise<any>;
     findAll(): Promise<any[]>;
     findOne(id: number): Promise<any>;
-    update(id: number, data: {
+    update(id: number, body: {
         name?: string;
         role?: Role;
-        created_by?: number;
     }): Promise<any>;
-    remove(id: number): Promise<{
-        message: string;
-    }>;
+    remove(id: number): Promise<boolean>;
 }

@@ -3,19 +3,15 @@ import { Role } from "../enum/role.enum";
 export declare class UsersController {
     private readonly usersService;
     constructor(usersService: UsersService);
-    create(body: {
+    create(headers: any, body: {
         name: string;
         role: Role;
-        created_by?: number;
     }): Promise<any>;
     findAll(): Promise<any[]>;
     update(id: number, body: {
         name?: string;
         role?: Role;
-        created_by?: number;
     }): Promise<any>;
-    remove(id: number): Promise<{
-        message: string;
-    }>;
+    remove(id: number): Promise<boolean>;
     findOne(id: number): Promise<any>;
 }

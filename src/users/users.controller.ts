@@ -1,4 +1,11 @@
-import { Controller, Post, Body, Param, ParseIntPipe } from "@nestjs/common";
+import {
+  Controller,
+  Post,
+  Body,
+  Param,
+  ParseIntPipe,
+  Headers,
+} from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { Role } from "../enum/role.enum";
 
@@ -8,14 +15,14 @@ export class UsersController {
 
   @Post("create")
   create(
+    @Headers() headers: any,
     @Body()
     body: {
       name: string;
       role: Role;
-      created_by?: number;
     },
   ) {
-    return this.usersService.create(body);
+    return this.usersService.create(headers.user_id, body);
   }
 
   @Post("findall")
@@ -30,7 +37,6 @@ export class UsersController {
     body: {
       name?: string;
       role?: Role;
-      created_by?: number;
     },
   ) {
     return this.usersService.update(id, body);

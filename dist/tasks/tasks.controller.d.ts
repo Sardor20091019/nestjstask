@@ -5,7 +5,7 @@ import { UpdateStatusDto } from "./dto/update-status.dto";
 export declare class TasksController {
     private readonly tasksService;
     constructor(tasksService: TasksService);
-    create(body: CreateTaskDto): Promise<any>;
+    create(headers: any, body: CreateTaskDto): Promise<any>;
     findAll(workerUserId?: string, projectId?: string, status?: TaskStatus): Promise<any[]>;
     findByWorker(workerUserId?: string): Promise<any[]>;
     findByProject(projectId?: string): Promise<any[]>;

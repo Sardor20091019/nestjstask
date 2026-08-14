@@ -5,6 +5,7 @@ import {
   Param,
   Query,
   ParseIntPipe,
+  Headers,
 } from "@nestjs/common";
 import { TasksService } from "./tasks.service";
 import { TaskStatus } from "../enum/task-status.enum";
@@ -17,10 +18,11 @@ export class TasksController {
 
   @Post("create")
   create(
+    @Headers() headers: any,
     @Body()
     body: CreateTaskDto,
   ) {
-    return this.tasksService.create({
+    return this.tasksService.create(headers.user_id, {
       title: body.title,
       project_id: body.project_id,
       worker_user_id: body.worker_user_id,

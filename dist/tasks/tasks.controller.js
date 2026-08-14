@@ -22,8 +22,8 @@ let TasksController = class TasksController {
     constructor(tasksService) {
         this.tasksService = tasksService;
     }
-    create(body) {
-        return this.tasksService.create({
+    create(headers, body) {
+        return this.tasksService.create(headers.user_id, {
             title: body.title,
             project_id: body.project_id,
             worker_user_id: body.worker_user_id,
@@ -66,9 +66,10 @@ let TasksController = class TasksController {
 exports.TasksController = TasksController;
 __decorate([
     (0, common_1.Post)("create"),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Headers)()),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_task_dto_1.CreateTaskDto]),
+    __metadata("design:paramtypes", [Object, create_task_dto_1.CreateTaskDto]),
     __metadata("design:returntype", void 0)
 ], TasksController.prototype, "create", null);
 __decorate([

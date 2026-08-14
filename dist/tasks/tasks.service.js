@@ -13,14 +13,22 @@ exports.TasksService = void 0;
 const common_1 = require("@nestjs/common");
 const tasks_repo_1 = require("./tasks.repo");
 const task_status_enum_1 = require("../enum/task-status.enum");
+const db_1 = require("../database/db");
 let TasksService = class TasksService {
     constructor(tasksRepo) {
         this.tasksRepo = tasksRepo;
     }
-    async create(data) {
+    async create(isadminornotID, data) {
+        const requester = await (0, db_1.db1)("users").where({ id: isadminornotID }).first();
+        if (!requester) {
+            throw new common_1.NotFoundException("Requester user not found, write ur user ID in HEADER section KEY shoudl be user-id and value should be your userID ");
+        }
+        if (requester.role !== 1) {
+            throw new common_1.ForbiddenException("Only admins can create users");
+        }
         const taskData = {
             ...data,
-            status: data.status || task_status_enum_1.TaskStatus.CREATED,
+            status: task_status_enum_1.TaskStatus.CREATED,
         };
         return this.tasksRepo.insert(taskData);
     }
@@ -43,12 +51,8 @@ let TasksService = class TasksService {
         }
         return task;
     }
-    async findByProject(id) {
-        const task = await this.tasksRepo.findByProject();
-        if (!task) {
-            throw new common_1.NotFoundException(`Project with ID ${id} not found`);
-        }
-        return task;
+    async findByProject(projectId) {
+        return await this.tasksRepo.findByProject(projectId);
     }
     async updateStatus(id, status) {
         return this.tasksRepo.updateStatus(id, status);

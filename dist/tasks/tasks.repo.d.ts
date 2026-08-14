@@ -15,7 +15,7 @@ export declare class TasksRepo {
     findByWorker(workerUserId: number): Promise<any[]>;
     findByTask(): Promise<any[]>;
     findByStatus(status: string): Promise<any[]>;
-    findByProject(): Promise<any[]>;
+    findByProject(projectId: number): Promise<any[]>;
     findAll(): Promise<any[]>;
     remove(id: number): Promise<{
         deleted: boolean;
