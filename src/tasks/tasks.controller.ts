@@ -11,7 +11,6 @@ import { TasksService } from "./tasks.service";
 import { TaskStatus } from "../enum/task-status.enum";
 import { CreateTaskDto } from "./dto/create-task.dto";
 
-
 @Controller("tasks")
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}

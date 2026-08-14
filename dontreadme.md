@@ -34,7 +34,7 @@ POST http://localhost:3000/projects/remove/{id}  working✅
 POST http://localhost:3000/tasks working✅
 POST http://localhost:3000/tasks/findall working✅
 POST http://localhost:3000/tasks/{id}  working✅
-POST http://localhost:3000/tasks/findByProject?project_id={id}
+POST http://localhost:3000/tasks/findByProject?project_id={id} working✅
 POST http://localhost:3000/tasks/updatestatus/{id}  working✅
 POST http://localhost:3000/tasks/remove/{id}  working✅
 
@@ -46,8 +46,8 @@ POST http://localhost:3000/users/{id}  update working✅
 POST http://localhost:3000/users/remove/{id} working✅
 
 
-POST http://localhost:3000/statistics/organizations  NOT working❌❌❌
-POST http://localhost:3000/statistics/tasks  NOT working❌❌❌
+POST http://localhost:3000/statistics/organizations  working✅
+POST http://localhost:3000/statistics/tasks  working✅
 POST http://localhost:3000/statistics/overallstatistics   working✅
 
 - Tashkilot kesmida statistika: (tashkilot nomi, loyihalar soni, umumiy vazifalar soni)
@@ -55,11 +55,6 @@ POST http://localhost:3000/statistics/overallstatistics   working✅
 - Umumiy statistika (umumiy tashkilotlar soni, umumiy loyihalar soni, umumiy vazifalar soni)
 
 
-BUGS:
-hullas faqat create, find, remove ishlavatti boldi , i users/update ishlavatti lekin qogan hich qaysi ishlamayabti ❌🆘⛔️🚫💢⭕️
 
-QUESTION:
-logger qoshish keremi?
-bir hil nomli organizations bosa boladimi yoki bomasli keremi
-tin unique + name + uniqe
-FUTURE UPDATES: BETTER ERROR HANDLING
+
+BUGS: ERROR HANDLING HALI YAXSHIMAS
