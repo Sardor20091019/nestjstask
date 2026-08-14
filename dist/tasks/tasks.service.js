@@ -54,8 +54,8 @@ let TasksService = class TasksService {
     async findByProject(projectId) {
         return await this.tasksRepo.findByProject(projectId);
     }
-    async updateStatus(id, status) {
-        return this.tasksRepo.updateStatus(id, status);
+    async updateStatus(id, status, worker_user_id) {
+        return this.tasksRepo.updateStatus(id, status, worker_user_id);
     }
     async remove(id) {
         await this.findOne(id);

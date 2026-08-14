@@ -8,13 +8,11 @@ import { TaskStatus } from "../enum/task-status.enum";
 
 @Injectable()
 export class TasksRepo {
-  async updateStatus(id: number, status: TaskStatus) {
-    const done_at = status === "DONE" ? db1.fn.now() : null
-    if (status !== "CREATED") {
-      status = TaskStatus.IN_PROCESS;
-    }
+  async updateStatus(id: number, status: TaskStatus, workerUserId: number) {
+    const done_at = status === "DONE" ? db1.fn.now() : null;
+
     const [updated] = await db1("tasks")
-      .where({ id })
+      .where({ id, worker_user_id: workerUserId })
       .update({ status: status, done_at: done_at })
       .returning("*");
 

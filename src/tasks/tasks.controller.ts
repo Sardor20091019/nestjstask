@@ -10,7 +10,7 @@ import {
 import { TasksService } from "./tasks.service";
 import { TaskStatus } from "../enum/task-status.enum";
 import { CreateTaskDto } from "./dto/create-task.dto";
-import { UpdateStatusDto } from "./dto/update-status.dto";
+
 
 @Controller("tasks")
 export class TasksController {
@@ -65,12 +65,16 @@ export class TasksController {
     return this.tasksService.findByStatus(status);
   }
 
-  @Post("updatestatus/:id")
+  @Post("update-status/:id")
   updateStatus(
     @Param("id", ParseIntPipe) id: number,
-    @Body() body: UpdateStatusDto,
+    @Body() body: { status: string; worker_user_id: number },
   ) {
-    return this.tasksService.updateStatus(id, body.status);
+    return this.tasksService.updateStatus(
+      id,
+      body.status as TaskStatus,
+      body.worker_user_id,
+    );
   }
 
   @Post("remove/:id")

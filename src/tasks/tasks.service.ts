@@ -70,8 +70,8 @@ export class TasksService {
     return await this.tasksRepo.findByProject(projectId);
   }
 
-  async updateStatus(id: number, status: TaskStatus) {
-    return this.tasksRepo.updateStatus(id, status);
+  async updateStatus(id: number, status: TaskStatus, worker_user_id: number) {
+    return this.tasksRepo.updateStatus(id, status, worker_user_id);
   }
 
   async remove(id: number) {

@@ -1,6 +1,6 @@
 import { TaskStatus } from "../enum/task-status.enum";
 export declare class TasksRepo {
-    updateStatus(id: number, status: TaskStatus): Promise<any>;
+    updateStatus(id: number, status: TaskStatus, workerUserId: number): Promise<any>;
     findById(id: number): Promise<any>;
     insert(data: {
         title?: string;

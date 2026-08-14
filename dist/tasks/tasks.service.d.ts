@@ -19,7 +19,7 @@ export declare class TasksService {
     findAll(): Promise<any[]>;
     findOne(id: number): Promise<any>;
     findByProject(projectId: number): Promise<any[]>;
-    updateStatus(id: number, status: TaskStatus): Promise<any>;
+    updateStatus(id: number, status: TaskStatus, worker_user_id: number): Promise<any>;
     remove(id: number): Promise<{
         deleted: boolean;
     }>;

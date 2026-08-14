@@ -9,15 +9,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TasksRepo = void 0;
 const common_1 = require("@nestjs/common");
 const db_1 = require("../database/db");
-const task_status_enum_1 = require("../enum/task-status.enum");
 let TasksRepo = class TasksRepo {
-    async updateStatus(id, status) {
+    async updateStatus(id, status, workerUserId) {
         const done_at = status === "DONE" ? db_1.db1.fn.now() : null;
-        if (status !== "CREATED") {
-            status = task_status_enum_1.TaskStatus.IN_PROCESS;
-        }
         const [updated] = await (0, db_1.db1)("tasks")
-            .where({ id })
+            .where({ id, worker_user_id: workerUserId })
             .update({ status: status, done_at: done_at })
             .returning("*");
         return updated;
