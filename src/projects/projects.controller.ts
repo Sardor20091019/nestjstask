@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Param, Query } from "@nestjs/common";
+import { Controller, Post, Body, Param, Query, Headers, ParseIntPipe } from "@nestjs/common";
 import { ProjectsService } from "./projects.service";
 import { CreateProjectsDto } from "./dto/create-projects.dto";
 import { UpdateProjectsDto } from "./dto/update-projects.dto";
@@ -8,8 +8,8 @@ export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
   @Post("create")
-  create(@Body() body: CreateProjectsDto) {
-    return this.projectsService.create(body);
+  create(@Headers('user_id') userId: string, @Body() body: CreateProjectsDto) {
+    return this.projectsService.create(+userId, body);
   }
 
   @Post("findAll")
@@ -19,16 +19,23 @@ export class ProjectsController {
 
   @Post("findByOrg")
   findByOrg(@Query("org_id") orgId?: string) {
-    return this.projectsService.findByOrg(+orgId);
+    return this.projectsService.findByOrg(orgId ? +orgId : 0);
   }
 
   @Post("update/:id")
-  update(@Param("id") id: string, @Body() body: UpdateProjectsDto) {
-    return this.projectsService.update(+id, body);
+  update(
+    @Headers('user_id') userId: string,
+    @Param("id", ParseIntPipe) id: number,
+    @Body() body: UpdateProjectsDto,
+  ) {
+    return this.projectsService.update(+userId, id, body);
   }
 
   @Post("remove/:id")
-  remove(@Param("id") id: string) {
-    return this.projectsService.remove(+id);
+  remove(
+    @Headers('user_id') userId: string,
+    @Param("id", ParseIntPipe) id: number
+  ) {
+    return this.projectsService.remove(+userId, id);
   }
 }

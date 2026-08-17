@@ -12,31 +12,28 @@ export class TasksService {
   constructor(private readonly tasksRepo: TasksRepo) {}
 
   async create(
-    isadminornotID: number,
+    userId: number,
     data: {
       title: string;
-      created_by: number;
-      created_at?: Date;
       project_id: number;
       due_date: Date;
       worker_user_id: number;
       status?: TaskStatus;
-      done_at?: Date;
     },
   ) {
-    const requester = await db1("users").where({ id: isadminornotID }).first();
+    const requester = await db1("users").where({ id: userId }).first();
 
     if (!requester) {
-      throw new NotFoundException(
-        "Requester user not found, write ur user ID in HEADER section KEY shoudl be user-id and value should be your userID ",
-      );
+      throw new NotFoundException("Requester user not found via user_id header");
     }
 
-    if (requester.role !== 1) {
-      throw new ForbiddenException("Only admins can create users");
+    if (requester.role !== 1 && requester.role !== 2) {
+      throw new ForbiddenException("Only admins and managers can create tasks");
     }
+
     const taskData = {
       ...data,
+      created_by: userId,
       status: TaskStatus.CREATED,
     };
     return this.tasksRepo.insert(taskData);
@@ -44,10 +41,6 @@ export class TasksService {
 
   async findByWorker(workerUserId: number) {
     return this.tasksRepo.findByWorker(workerUserId);
-  }
-
-  async findByTask() {
-    return this.tasksRepo.findByTask();
   }
 
   async findByStatus(status: TaskStatus) {
@@ -70,11 +63,42 @@ export class TasksService {
     return await this.tasksRepo.findByProject(projectId);
   }
 
-  async updateStatus(id: number, status: TaskStatus, worker_user_id: number) {
-    return this.tasksRepo.updateStatus(id, status, worker_user_id);
+  async updateStatus(userId: number, id: number, status: TaskStatus) {
+    const requester = await db1("users").where({ id: userId }).first();
+    if (!requester) {
+      throw new NotFoundException("Requester user not found via user_id header");
+    }
+
+    const task = await this.findOne(id);
+
+
+    if (requester.role === 3) {
+      if (task.worker_user_id !== userId) {
+        throw new ForbiddenException("Employees can only update their own assigned tasks");
+      }
+    }
+
+
+    const updateData: any = { status };
+    if (status === TaskStatus.DONE || status === ('COMPLETED' as any)) {
+      updateData.done_at = new Date();
+    } else {
+      updateData.done_at = null;
+    }
+
+    return db1("tasks").where({ id }).update(updateData).returning("*");
   }
 
-  async remove(id: number) {
+  async remove(userId: number, id: number) {
+    const requester = await db1("users").where({ id: userId }).first();
+    if (!requester) {
+      throw new NotFoundException("Requester user not found via user_id header");
+    }
+
+    if (requester.role !== 1 && requester.role !== 2) {
+      throw new ForbiddenException("Only admins and managers can delete tasks");
+    }
+
     await this.findOne(id);
     return this.tasksRepo.remove(id);
   }

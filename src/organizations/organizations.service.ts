@@ -1,13 +1,29 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { OrganizationsRepo } from "./organizations.repo";
 import { CreateOrganizationDto } from "./dto/create-organization.dto";
 import { UpdateOrganizationDto } from "./dto/update-organization.dto";
+import { db1 } from "../database/db";
 
 @Injectable()
 export class OrganizationsService {
   constructor(private readonly organizationsRepo: OrganizationsRepo) {}
 
-  async create(data: CreateOrganizationDto) {
+  private async verifyAdmin(userId: number) {
+    if (!userId || isNaN(userId)) {
+      throw new NotFoundException("Missing user_id header");
+    }
+    const requester = await db1("users").where({ id: userId }).first();
+    if (!requester) {
+      throw new NotFoundException("Requester user not found");
+    }
+    if (requester.role !== 1) {
+      throw new ForbiddenException("Only admins can perform this action");
+    }
+    return requester;
+  }
+
+  async create(adminId: number, data: CreateOrganizationDto) {
+    await this.verifyAdmin(adminId);
     return this.organizationsRepo.insert(data);
   }
 
@@ -23,18 +39,25 @@ export class OrganizationsService {
     return org;
   }
 
-  async update(id: number, data: UpdateOrganizationDto) {
+  async update(adminId: number, id: number, data: UpdateOrganizationDto) {
+    await this.verifyAdmin(adminId);
     await this.findOne(id);
     return this.organizationsRepo.update(id, data);
   }
 
-  async remove(id: number) {
+  async remove(adminId: number, id: number) {
+    await this.verifyAdmin(adminId);
     await this.findOne(id);
     return this.organizationsRepo.remove(id);
   }
 
-  async assignUser(orgId: number, userId: number) {
+  async assignUser(adminId: number, orgId: number, userId: number) {
+    await this.verifyAdmin(adminId);
     await this.findOne(orgId);
+    const targetUser = await db1("users").where({ id: userId }).first();
+    if (!targetUser) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
     return this.organizationsRepo.assignUser(orgId, userId);
   }
 }
