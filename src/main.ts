@@ -25,7 +25,11 @@ async function sardor() {
     }),
   );
 
+<<<<<<< HEAD
   app.useGlobalFilters(new HttpExceptionFilter());
+=======
+  // app.useGlobalFilters(new HttpExceptionFilter());
+>>>>>>> 44051d48b0af79751ebf9b2d2082fde7ba78b24c
   app.use(helmet());
   await app.listen(3000);
 }
