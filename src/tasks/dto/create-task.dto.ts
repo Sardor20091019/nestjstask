@@ -26,12 +26,6 @@ export class CreateTaskDto {
     description: "The due date of the task in ISO format",
   })
   due_date: string;
-
-  @IsNumber()
   @IsEmpty()
-  @ApiProperty({
-    example: 1,
-    description: "The ID of the user creating the task",
-  })
-  created_by: number;
+  created_by?: number;
 }

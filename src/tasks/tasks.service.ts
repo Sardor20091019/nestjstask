@@ -27,14 +27,13 @@ export class TasksService {
         "Requester user not found via user_id header",
       );
     }
-
     if (requester.role !== 1 && requester.role !== 2) {
       throw new ForbiddenException("Only admins and managers can create tasks");
     }
 
     const taskData = {
       ...data,
-      created_by: requester,
+      created_by: requester.id,
       status: TaskStatus.CREATED,
     };
     return this.tasksRepo.insert(taskData);
