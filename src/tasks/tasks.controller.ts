@@ -48,7 +48,7 @@ export class TasksController {
   @Post("update-status/:id")
   updateStatus(
     @Headers("user_id") userId: string,
-    @Body() body: { id: number, status: TaskStatus },
+    @Body() body: { id: number; status: TaskStatus },
   ) {
     return this.tasksService.updateStatus(+userId, body.id, body.status);
   }
