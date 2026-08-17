@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Param,
-  Headers,
-  ParseIntPipe,
-} from "@nestjs/common";
+import { Controller, Post, Body, Headers } from "@nestjs/common";
 import { OrganizationsService } from "./organizations.service";
 import { CreateOrganizationDto } from "./dto/create-organization.dto";
 import { UpdateOrganizationDto } from "./dto/update-organization.dto";
@@ -27,34 +20,33 @@ export class OrganizationsController {
     return this.organizationsService.findAll();
   }
 
-  @Post("assign-user/:id")
+  @Post("assign-user")
   assignUser(
     @Headers("user_id") userId: string,
-    @Param("id", ParseIntPipe) id: number,
-    @Body() body: { userId: number },
+    @Body() body: { id: number; userId: number },
   ) {
-    return this.organizationsService.assignUser(+userId, id, body.userId);
+    return this.organizationsService.assignUser(+userId, body.id, body.userId);
   }
 
-  @Post("update/:id")
+  @Post("update")
   update(
     @Headers("user_id") userId: string,
-    @Param("id", ParseIntPipe) id: number,
-    @Body() body: UpdateOrganizationDto,
+    @Body() body: { id: number } & UpdateOrganizationDto,
   ) {
-    return this.organizationsService.update(+userId, id, body);
+    return this.organizationsService.update(
+      +userId,
+      body.id,
+      UpdateOrganizationDto,
+    );
   }
 
-  @Post("remove/:id")
-  remove(
-    @Headers("user_id") userId: string,
-    @Param("id", ParseIntPipe) id: number,
-  ) {
-    return this.organizationsService.remove(+userId, id);
+  @Post("remove")
+  remove(@Headers("user_id") userId: string, @Body() body: { id: number }) {
+    return this.organizationsService.remove(+userId, body.id);
   }
 
-  @Post(":id")
-  findOne(@Param("id", ParseIntPipe) id: number) {
+  @Post("findone")
+  findOne(@Body() id: number) {
     return this.organizationsService.findOne(id);
   }
 }

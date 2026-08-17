@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -61,6 +62,11 @@ export class OrganizationsService {
     const targetUser = await db1("users").where({ id: userId }).first();
     if (!targetUser) {
       throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+    if (targetUser.role == 1 && 2) {
+      throw new BadRequestException(
+        "you are trying to asssing task to  either admin ro manager, therefore you only can assign tasks to users",
+      );
     }
     return this.organizationsRepo.assignUser(orgId, userId);
   }

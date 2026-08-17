@@ -79,6 +79,14 @@ export class TasksService {
           "Employees can only update their own assigned tasks",
         );
       }
+    } else if (requester.role === 2) {
+      throw new ForbiddenException(
+        "You are Manager, therefore you cant do tasks, tasks are only for employees, if you still have tasks attached to your account you should assign them to employees",
+      );
+    } else if (requester.role === 1) {
+      throw new ForbiddenException(
+        "Yuo are Admin, therefore you can't do tasks , tasks are only for empployees, if you still have tasks attached to your account you should assign them to employees",
+      );
     }
 
     const updateData: any = { status };
@@ -90,7 +98,9 @@ export class TasksService {
 
     return db1("tasks").where({ id }).update(updateData).returning("*");
   }
-
+  async getEmployeeTasksSummary(workerUserId: number) {
+    return this.tasksRepo.getEmployeeTasksSummary(workerUserId);
+  }
   async remove(userId: number, id: number) {
     const requester = await db1("users").where({ id: userId }).first();
     if (!requester) {

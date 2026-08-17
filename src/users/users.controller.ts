@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Param,
-  ParseIntPipe,
-  Headers,
-} from "@nestjs/common";
+import { Controller, Post, Body, Headers } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { Role } from "../enum/role.enum";
 
@@ -30,25 +23,25 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Post("update/:id")
+  @Post("update")
   update(
-    @Param("id", ParseIntPipe) id: number,
     @Body()
     body: {
+      id: number;
       name?: string;
       role?: Role;
     },
   ) {
-    return this.usersService.update(id, body);
+    return this.usersService.update(body.id, body);
   }
 
-  @Post("remove/:id")
-  remove(@Param("id", ParseIntPipe) id: number) {
-    return this.usersService.remove(id);
+  @Post("remove")
+  remove(@Body() body: { id: number }) {
+    return this.usersService.remove(body.id);
   }
 
-  @Post(":id")
-  findOne(@Param("id", ParseIntPipe) id: number) {
-    return this.usersService.findOne(id);
+  @Post("findone")
+  findOne(@Body() body: { id: number }) {
+    return this.usersService.findOne(body.id);
   }
 }

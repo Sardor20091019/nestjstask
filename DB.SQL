@@ -1,0 +1,98 @@
+
+-- SQL
+-- TABLE LANI YARATISH UCHUN
+
+
+
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) UNIQUE NOT NULL,
+    role INTEGER NOT NULL DEFAULT 2,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT check_role CHECK (role IN (1, 2, 3))
+);
+
+
+
+
+
+CREATE TABLE user_changes (
+    id SERIAL PRIMARY KEY,
+    main_id INTEGER NOT NULL,
+    new_values JSONB NOT NULL,
+    old_values JSONB NOT NULL,
+    modified_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+
+
+
+CREATE TABLE IF NOT EXISTS organizations (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    created_by INTEGER REFERENCES users(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS organization_user (
+    id SERIAL PRIMARY KEY,
+    org_id INTEGER NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS projects (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    org_id INTEGER NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+    created_by INTEGER REFERENCES users(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS tasks (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    worker_user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'CREATED',
+    due_date TIMESTAMPTZ,
+    done_at TIMESTAMPTZ,
+    created_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+
+
+
+
+
+
+
+-- SQL
+-- ADMIN USER QOSHISH UCHUN
+
+
+INSERT INTO users (name, role)
+VALUES ('AdminUser', 1);
+select * from users;
+
+
+
+
+
+
+
+
+
+
+-- SQL
+-- TABLE LANI OCHIRISH UCHUN
+
+
+
+
+DROP TABLE IF EXISTS user_changes;
+DROP TABLE IF EXISTS tasks;
+DROP TABLE IF EXISTS projects;
+DROP TABLE IF EXISTS organization_user;
+DROP TABLE IF EXISTS organizations;
+DROP TABLE IF EXISTS users;

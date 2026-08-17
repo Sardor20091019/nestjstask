@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Param,
-  Query,
-  ParseIntPipe,
-  Headers,
-} from "@nestjs/common";
+import { Controller, Post, Body, Query, Headers } from "@nestjs/common";
 import { TasksService } from "./tasks.service";
 import { TaskStatus } from "../enum/task-status.enum";
 import { CreateTaskDto } from "./dto/create-task.dto";
@@ -34,7 +26,12 @@ export class TasksController {
   findByWorker(@Query("worker_user_id") workerUserId?: string) {
     return this.tasksService.findByWorker(workerUserId ? +workerUserId : 0);
   }
-
+  @Post("findByStatus")
+  getEmployeeTasksSummary(@Query("worker_user_id") workerUserId?: string) {
+    return this.tasksService.getEmployeeTasksSummary(
+      workerUserId ? +workerUserId : 0,
+    );
+  }
   @Post("findByProject")
   findByProject(@Query("project_id") projectId?: string) {
     return this.tasksService.findByProject(projectId ? +projectId : 0);
@@ -45,7 +42,7 @@ export class TasksController {
     return this.tasksService.findByStatus(status);
   }
 
-  @Post("update-status/:id")
+  @Post("update-status")
   updateStatus(
     @Headers("user_id") userId: string,
     @Body() body: { id: number; status: TaskStatus },
@@ -53,16 +50,13 @@ export class TasksController {
     return this.tasksService.updateStatus(+userId, body.id, body.status);
   }
 
-  @Post("remove/:id")
-  remove(
-    @Headers("user_id") userId: string,
-    @Param("id", ParseIntPipe) id: number,
-  ) {
-    return this.tasksService.remove(+userId, id);
+  @Post("remove")
+  remove(@Headers("user_id") userId: string, @Body() body: { id: number }) {
+    return this.tasksService.remove(+userId, body.id);
   }
 
-  @Post(":id")
-  findOne(@Param("id", ParseIntPipe) id: number) {
-    return this.tasksService.findOne(id);
+  @Post("findone")
+  findOne(@Body() body: { id: number }) {
+    return this.tasksService.findOne(body.id);
   }
 }

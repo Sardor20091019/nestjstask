@@ -34,7 +34,7 @@ export class TasksRepo {
     const [task] = await db1("tasks")
       .insert({
         ...data,
-        status: data.status || "CREATED",
+        status: "CREATED",
       })
       .returning("*");
     return task;
@@ -70,7 +70,66 @@ export class TasksRepo {
   async findAll() {
     return db1("tasks").select("*");
   }
+  async getEmployeeTasksSummary(workerUserId: number) {
+    if (!workerUserId || isNaN(workerUserId)) {
+      throw new NotFoundException("Valid worker_user_id is required");
+    }
 
+    const employee = await db1("users").where({ id: workerUserId }).first();
+    if (!employee) {
+      throw new NotFoundException(`Employee with ID ${workerUserId} not found`);
+    }
+
+    const tasks = await db1("tasks").where({ worker_user_id: workerUserId });
+    const currentDate = new Date();
+
+    const categorized = {
+      new: [],
+      in_progress: [],
+      completed: [],
+      overdue: [],
+    };
+
+    for (const task of tasks) {
+      const dueDate = task.due_date ? new Date(task.due_date) : null;
+      const isOverdue =
+        dueDate && dueDate < currentDate && task.status !== "DONE";
+
+      if (isOverdue) {
+        categorized.overdue.push({
+          id: task.id,
+          title: task.title,
+          deadline: task.due_date,
+        });
+      } else if (task.status === "DONE") {
+        categorized.completed.push({
+          id: task.id,
+          title: task.title,
+          completed_at: task.done_at,
+        });
+      } else if (task.status === "IN_PROCESS") {
+        categorized.in_progress.push({
+          id: task.id,
+          title: task.title,
+          deadline: task.due_date,
+        });
+      } else {
+        categorized.new.push({
+          id: task.id,
+          title: task.title,
+          deadline: task.due_date,
+        });
+      }
+    }
+
+    return {
+      employee: {
+        id: employee.id,
+        name: employee.name,
+      },
+      tasks: categorized,
+    };
+  }
   async remove(id: number) {
     await db1("tasks").where({ id }).delete();
     return { deleted: true };
