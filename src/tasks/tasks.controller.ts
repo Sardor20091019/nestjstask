@@ -22,25 +22,11 @@ export class TasksController {
       project_id: body.project_id,
       worker_user_id: body.worker_user_id,
       due_date: new Date(body.due_date),
-      status: TaskStatus.CREATED,
     });
   }
 
   @Post("findall")
-  findAll(
-    @Query("worker_user_id") workerUserId?: string,
-    @Query("project_id") projectId?: string,
-    @Query("status") status?: TaskStatus,
-  ) {
-    if (workerUserId) {
-      return this.tasksService.findByWorker(+workerUserId);
-    }
-    if (projectId) {
-      return this.tasksService.findByProject(+projectId);
-    }
-    if (status) {
-      return this.tasksService.findByStatus(status);
-    }
+  findAll() {
     return this.tasksService.findAll();
   }
 

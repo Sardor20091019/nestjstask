@@ -18,7 +18,6 @@ export class TasksService {
       project_id: number;
       due_date: Date;
       worker_user_id: number;
-      status?: TaskStatus;
     },
   ) {
     const requester = await db1("users").where({ id: userId }).first();
