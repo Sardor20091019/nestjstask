@@ -34,7 +34,7 @@ export class TasksService {
 
     const taskData = {
       ...data,
-      created_by: userId,
+      created_by: requester,
       status: TaskStatus.CREATED,
     };
     return this.tasksRepo.insert(taskData);
