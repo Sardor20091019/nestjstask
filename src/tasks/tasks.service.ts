@@ -82,7 +82,7 @@ export class TasksService {
     }
 
     const updateData: any = { status };
-    if (status === TaskStatus.DONE || status === ("COMPLETED" as any)) {
+    if (status === TaskStatus.DONE) {
       updateData.done_at = new Date();
     } else {
       updateData.done_at = null;

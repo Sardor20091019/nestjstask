@@ -48,10 +48,9 @@ export class TasksController {
   @Post("update-status/:id")
   updateStatus(
     @Headers("user_id") userId: string,
-    @Param("id", ParseIntPipe) id: number,
-    @Body() body: { status: TaskStatus },
+    @Body() body: { id: number, status: TaskStatus },
   ) {
-    return this.tasksService.updateStatus(+userId, id, body.status);
+    return this.tasksService.updateStatus(+userId, body.id, body.status);
   }
 
   @Post("remove/:id")
