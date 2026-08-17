@@ -2,6 +2,13 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsDateString, IsNumber, IsString } from "class-validator";
 
 export class CreateTaskDto {
+  @IsString()
+  @ApiProperty({
+    example: "Build login page",
+    description: "The title of the task",
+  })
+  title: string;
+
   @IsNumber()
   @ApiProperty({ example: 1, description: "The ID of the project" })
   project_id: number;
@@ -12,13 +19,6 @@ export class CreateTaskDto {
     description: "The ID of the worker assigned to the task",
   })
   worker_user_id: number;
-
-  @IsString()
-  @ApiProperty({
-    example: "Build login page",
-    description: "The title of the task",
-  })
-  title: string;
 
   @IsDateString()
   @ApiProperty({

@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { OrganizationsRepo } from "./organizations.repo";
 import { CreateOrganizationDto } from "./dto/create-organization.dto";
 import { UpdateOrganizationDto } from "./dto/update-organization.dto";

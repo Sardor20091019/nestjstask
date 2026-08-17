@@ -1,4 +1,11 @@
-import { Controller, Post, Body, Param, Headers, ParseIntPipe } from "@nestjs/common";
+import {
+  Controller,
+  Post,
+  Body,
+  Param,
+  Headers,
+  ParseIntPipe,
+} from "@nestjs/common";
 import { OrganizationsService } from "./organizations.service";
 import { CreateOrganizationDto } from "./dto/create-organization.dto";
 import { UpdateOrganizationDto } from "./dto/update-organization.dto";
@@ -8,7 +15,10 @@ export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}
 
   @Post("create")
-  create(@Headers('user_id') userId: string, @Body() body: CreateOrganizationDto) {
+  create(
+    @Headers("user_id") userId: string,
+    @Body() body: CreateOrganizationDto,
+  ) {
     return this.organizationsService.create(+userId, body);
   }
 
@@ -19,7 +29,7 @@ export class OrganizationsController {
 
   @Post("assign-user/:id")
   assignUser(
-    @Headers('user_id') userId: string,
+    @Headers("user_id") userId: string,
     @Param("id", ParseIntPipe) id: number,
     @Body() body: { userId: number },
   ) {
@@ -28,7 +38,7 @@ export class OrganizationsController {
 
   @Post("update/:id")
   update(
-    @Headers('user_id') userId: string,
+    @Headers("user_id") userId: string,
     @Param("id", ParseIntPipe) id: number,
     @Body() body: UpdateOrganizationDto,
   ) {
@@ -37,8 +47,8 @@ export class OrganizationsController {
 
   @Post("remove/:id")
   remove(
-    @Headers('user_id') userId: string,
-    @Param("id", ParseIntPipe) id: number
+    @Headers("user_id") userId: string,
+    @Param("id", ParseIntPipe) id: number,
   ) {
     return this.organizationsService.remove(+userId, id);
   }

@@ -16,7 +16,7 @@ export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Post("create")
-  create(@Headers('user_id') userId: string, @Body() body: CreateTaskDto) {
+  create(@Headers("user_id") userId: string, @Body() body: CreateTaskDto) {
     return this.tasksService.create(+userId, {
       title: body.title,
       project_id: body.project_id,
@@ -61,7 +61,7 @@ export class TasksController {
 
   @Post("update-status/:id")
   updateStatus(
-    @Headers('user_id') userId: string,
+    @Headers("user_id") userId: string,
     @Param("id", ParseIntPipe) id: number,
     @Body() body: { status: TaskStatus },
   ) {
@@ -69,7 +69,10 @@ export class TasksController {
   }
 
   @Post("remove/:id")
-  remove(@Headers('user_id') userId: string, @Param("id", ParseIntPipe) id: number) {
+  remove(
+    @Headers("user_id") userId: string,
+    @Param("id", ParseIntPipe) id: number,
+  ) {
     return this.tasksService.remove(+userId, id);
   }
 

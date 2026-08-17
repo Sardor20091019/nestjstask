@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Param, Query, Headers, ParseIntPipe } from "@nestjs/common";
+import {
+  Controller,
+  Post,
+  Body,
+  Param,
+  Query,
+  Headers,
+  ParseIntPipe,
+} from "@nestjs/common";
 import { ProjectsService } from "./projects.service";
 import { CreateProjectsDto } from "./dto/create-projects.dto";
 import { UpdateProjectsDto } from "./dto/update-projects.dto";
@@ -8,7 +16,7 @@ export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
   @Post("create")
-  create(@Headers('user_id') userId: string, @Body() body: CreateProjectsDto) {
+  create(@Headers("user_id") userId: string, @Body() body: CreateProjectsDto) {
     return this.projectsService.create(+userId, body);
   }
 
@@ -24,7 +32,7 @@ export class ProjectsController {
 
   @Post("update/:id")
   update(
-    @Headers('user_id') userId: string,
+    @Headers("user_id") userId: string,
     @Param("id", ParseIntPipe) id: number,
     @Body() body: UpdateProjectsDto,
   ) {
@@ -33,8 +41,8 @@ export class ProjectsController {
 
   @Post("remove/:id")
   remove(
-    @Headers('user_id') userId: string,
-    @Param("id", ParseIntPipe) id: number
+    @Headers("user_id") userId: string,
+    @Param("id", ParseIntPipe) id: number,
   ) {
     return this.projectsService.remove(+userId, id);
   }

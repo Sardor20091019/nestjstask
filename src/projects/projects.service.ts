@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { ProjectsRepo } from "./projects.repo";
 import { CreateProjectsDto } from "./dto/create-projects.dto";
 import { UpdateProjectsDto } from "./dto/update-projects.dto";
@@ -17,7 +21,9 @@ export class ProjectsService {
       throw new NotFoundException("Requester user not found");
     }
     if (requester.role !== 1 && requester.role !== 2) {
-      throw new ForbiddenException("Only Admins and Managers can manage projects");
+      throw new ForbiddenException(
+        "Only Admins and Managers can manage projects",
+      );
     }
     return requester;
   }

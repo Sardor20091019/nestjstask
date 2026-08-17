@@ -24,7 +24,9 @@ export class TasksService {
     const requester = await db1("users").where({ id: userId }).first();
 
     if (!requester) {
-      throw new NotFoundException("Requester user not found via user_id header");
+      throw new NotFoundException(
+        "Requester user not found via user_id header",
+      );
     }
 
     if (requester.role !== 1 && requester.role !== 2) {
@@ -66,21 +68,23 @@ export class TasksService {
   async updateStatus(userId: number, id: number, status: TaskStatus) {
     const requester = await db1("users").where({ id: userId }).first();
     if (!requester) {
-      throw new NotFoundException("Requester user not found via user_id header");
+      throw new NotFoundException(
+        "Requester user not found via user_id header",
+      );
     }
 
     const task = await this.findOne(id);
 
-
     if (requester.role === 3) {
       if (task.worker_user_id !== userId) {
-        throw new ForbiddenException("Employees can only update their own assigned tasks");
+        throw new ForbiddenException(
+          "Employees can only update their own assigned tasks",
+        );
       }
     }
 
-
     const updateData: any = { status };
-    if (status === TaskStatus.DONE || status === ('COMPLETED' as any)) {
+    if (status === TaskStatus.DONE || status === ("COMPLETED" as any)) {
       updateData.done_at = new Date();
     } else {
       updateData.done_at = null;
@@ -92,7 +96,9 @@ export class TasksService {
   async remove(userId: number, id: number) {
     const requester = await db1("users").where({ id: userId }).first();
     if (!requester) {
-      throw new NotFoundException("Requester user not found via user_id header");
+      throw new NotFoundException(
+        "Requester user not found via user_id header",
+      );
     }
 
     if (requester.role !== 1 && requester.role !== 2) {
