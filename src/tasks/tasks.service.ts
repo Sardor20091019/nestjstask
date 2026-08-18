@@ -54,7 +54,7 @@ export class TasksService {
   async findOne(id: number) {
     const task = await this.tasksRepo.findById(id);
     if (!task) {
-      throw new NotFoundException(`Task with ID ${id} not found`);
+      throw new NotFoundException(`task you;re looking for, which is ${id}, isnt found in hte database, therefoer it either already deleted or hasnt created yet`);
     }
     return task;
   }
@@ -64,30 +64,6 @@ export class TasksService {
   }
 
   async updateStatus(userId: number, id: number, status: TaskStatus) {
-    const requester = await db1("users").where({ id: userId }).first();
-    if (!requester) {
-      throw new NotFoundException(
-        "Requester user not found via user_id header",
-      );
-    }
-
-    const task = await this.findOne(id);
-
-    if (requester.role === 3) {
-      if (task.worker_user_id !== userId) {
-        throw new ForbiddenException(
-          "Employees can only update their own assigned tasks",
-        );
-      }
-    } else if (requester.role === 2) {
-      throw new ForbiddenException(
-        "You are Manager, therefore you cant do tasks, tasks are only for employees, if you still have tasks attached to your account you should assign them to employees",
-      );
-    } else if (requester.role === 1) {
-      throw new ForbiddenException(
-        "Yuo are Admin, therefore you can't do tasks , tasks are only for empployees, if you still have tasks attached to your account you should assign them to employees",
-      );
-    }
 
     const updateData: any = { status };
     if (status === TaskStatus.DONE) {
@@ -116,7 +92,6 @@ export class TasksService {
       throw new ForbiddenException("Only admins and managers can delete tasks");
     }
 
-    await this.findOne(id);
     return this.tasksRepo.remove(id);
   }
 }
