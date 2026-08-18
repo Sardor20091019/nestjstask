@@ -29,7 +29,7 @@ export class TasksController {
     );
   }
 
-  @Post("findByStatus")
+  @Post("employee-tasks")
   getEmployeeTasksSummary(@Body() body: { worker_user_id?: number }) {
     return this.tasksService.getEmployeeTasksSummary(
       body.worker_user_id ? +body.worker_user_id : 0,
