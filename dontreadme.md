@@ -17,8 +17,3 @@ ENTITIES
 - Tashkilot kesmida statistika: (tashkilot nomi, loyihalar soni, umumiy vazifalar soni)
 - Tashkilotning loyihalari kesmida: (tashkilot nomi, loyiha nomi, loyiha vazifalari soni)
 - Umumiy statistika (umumiy tashkilotlar soni, umumiy loyihalar soni, umumiy vazifalar soni)
-
-
-
-
-BUGS: ERROR HANDLING HALI YAXSHIMAS
