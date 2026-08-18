@@ -66,7 +66,7 @@ HEADER user_id value = user id (1)
 
 http://localhost:3000/organizations/findall
 
-http://localhost:3000/organizations/update ❌🆘⛔️📛⛔️⛔️🆘🆘🆘🆘❌❌⭕️🛑
+http://localhost:3000/organizations/update
 
 HEADER user_id = value (1)
 {
@@ -74,7 +74,7 @@ HEADER user_id = value (1)
   "name": "e"
 }
 
-http://localhost:3000/organizations/findone 🆘🆘❌⛔️🛑📛☢️☢️
+http://localhost:3000/organizations/findone
 
 {
     "id": 1
