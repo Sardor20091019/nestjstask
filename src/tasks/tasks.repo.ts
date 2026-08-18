@@ -81,7 +81,6 @@ export class TasksRepo {
     }
 
     const tasks = await db1("tasks").where({ worker_user_id: workerUserId });
-    const currentDate = new Date();
 
     const categorized = {
       new: [],
@@ -92,6 +91,7 @@ export class TasksRepo {
 
     for (const task of tasks) {
       const dueDate = task.due_date;
+      const currentDate = new Date();
       const isOverdue = dueDate < currentDate && task.status !== "DONE";
 
       if (isOverdue) {
@@ -144,7 +144,6 @@ export class TasksRepo {
     }
 
     const tasks = await db1("tasks").where({ worker_user_id: workerUserId });
-    const currentDate = new Date();
 
     const counts = {
       new: 0,
@@ -155,6 +154,7 @@ export class TasksRepo {
 
     for (const task of tasks) {
       const dueDate = task.due_date;
+      const currentDate = new Date();
       const isOverdue =
         dueDate && dueDate < currentDate && task.status !== "DONE";
 
