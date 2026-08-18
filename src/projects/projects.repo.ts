@@ -20,7 +20,7 @@ export class ProjectsRepo {
 
   async findById(id: number) {
     return db1("projects").where({ id }).first();
-  }
+  }//
 
   async update(id: number, data: UpdateProjectsDto) {
     const [updated] = await db1("projects")

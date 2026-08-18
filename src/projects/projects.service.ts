@@ -60,4 +60,4 @@ export class ProjectsService {
     await this.findOne(id);
     return this.projectsRepo.remove(id);
   }
-}
+}//
