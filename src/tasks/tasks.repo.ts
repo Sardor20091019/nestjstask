@@ -128,9 +128,7 @@ export class TasksRepo {
       throw new NotFoundException("Valid worker_user_id is required");
     }
 
-    const employee = await db1("users")
-      .where({ id: workerUserId })
-      .first();
+    const employee = await db1("users").where({ id: workerUserId }).first();
     if (!employee) {
       throw new NotFoundException(`Employee with ID ${workerUserId} not found`);
     }
