@@ -79,6 +79,19 @@ export class TasksRepo {
     created_at?: Date;
     done_at?: Date;
   }) {
+    const createdAt = data.created_at ? new Date(data.created_at) : new Date()
+    const dueDate = new Date(data.due_date)
+    const mindifferenceinms = 60 * 60 * 24 * 1000
+    const differencebetweendays = dueDate.getTime() - createdAt.getTime()
+    const isdifferencemorethanaday = differencebetweendays >= mindifferenceinms
+    console.log(createdAt)
+    console.log(dueDate)
+    console.log(isdifferencemorethanaday)
+    console.log(differencebetweendays)
+    console.log(mindifferenceinms)
+    if(!isdifferencemorethanaday) {
+      throw new BadRequestException("minimum difference between due_date and createdat should be at least a day which is 86400 secs")
+    }
     const [task] = await db1("tasks")
       .insert({
         ...data,
