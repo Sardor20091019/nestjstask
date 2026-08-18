@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Query, Headers } from "@nestjs/common";
+import { Controller, Post, Body, Headers } from "@nestjs/common";
 import { ProjectsService } from "./projects.service";
 import { CreateProjectsDto } from "./dto/create-projects.dto";
 import { UpdateProjectsDto } from "./dto/update-projects.dto";
@@ -18,7 +18,7 @@ export class ProjectsController {
   }
 
   @Post("findByOrg")
-  findByOrg(@Query("org_id") orgId?: string) {
+  findByOrg(@Body("org_id") orgId?: string) {
     return this.projectsService.findByOrg(orgId ? +orgId : 0);
   }
 
