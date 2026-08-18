@@ -80,6 +80,7 @@ http://localhost:3000/organizations/findone
     "id": 1
 }
 
+
 http://localhost:3000/organizations/assign-user
 
 HEADER user_id = value(1)
