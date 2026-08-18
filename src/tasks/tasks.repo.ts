@@ -9,9 +9,13 @@ import { TaskStatus } from "../enum/task-status.enum";
 
 @Injectable()
 export class TasksRepo {
-  
-  async updateStatus(userId: number,id: number, status: TaskStatus, workerUserId: number) {
- const requester = await db1("users").where({ id: userId }).first();
+  async updateStatus(
+    userId: number,
+    id: number,
+    status: TaskStatus,
+    workerUserId: number,
+  ) {
+    const requester = await db1("users").where({ id: userId }).first();
     if (!requester) {
       throw new NotFoundException(
         "Requester user not found via user_id header",
@@ -36,13 +40,6 @@ export class TasksRepo {
       );
     }
 
-    const updateData: any = { status };
-    if (status === TaskStatus.DONE) {
-      updateData.done_at = new Date();
-    } else {
-      updateData.done_at = null;
-    }
-
     const done_at = status === "DONE";
 
     const [updated] = await db1("tasks")
@@ -52,7 +49,6 @@ export class TasksRepo {
 
     return updated;
   }
-
 
   async findById(id: number) {
     return db1("tasks").where({ id }).first();
@@ -106,16 +102,19 @@ export class TasksRepo {
   async findAll() {
     return db1("tasks").select("*");
   }
-  
+
   async remove(id: number) {
     await db1("tasks").where({ id }).delete();
     return { deleted: true };
-  }async getEmployeeTasksSummary(workerUserId: number) {
+  }
+  async getEmployeeTasksSummary(workerUserId: number) {
     if (!workerUserId || isNaN(workerUserId)) {
       throw new NotFoundException("Valid worker_user_id is required");
     }
 
-    const employee = await db1("users").where({ workerUserId: workerUserId }).first();
+    const employee = await db1("users")
+      .where({ workerUserId: workerUserId })
+      .first();
     if (!employee) {
       throw new NotFoundException(`Employee with ID ${workerUserId} not found`);
     }
@@ -132,7 +131,8 @@ export class TasksRepo {
     for (const task of tasks) {
       const dueDate = task.due_date;
       const currentDate = new Date();
-      const isOverdue = dueDate && dueDate < currentDate && task.status !== "DONE";
+      const isOverdue =
+        dueDate && dueDate < currentDate && task.status !== "DONE";
 
       if (isOverdue) {
         categorized.overdue.push({

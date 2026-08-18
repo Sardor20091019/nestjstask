@@ -92,6 +92,7 @@ export class TasksService {
       throw new ForbiddenException("Only admins and managers can delete tasks");
     }
 
+    await this.findOne(id);
     return this.tasksRepo.remove(id);
   }
 }
