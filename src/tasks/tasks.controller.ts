@@ -14,7 +14,7 @@ export class TasksController {
       project_id: body.project_id,
       worker_user_id: body.worker_user_id,
       due_date: new Date(body.due_date),
-    });
+    });//
   }
 
   @Post("findall")

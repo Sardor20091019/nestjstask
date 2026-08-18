@@ -96,7 +96,7 @@ export class TasksRepo {
       .insert({
         ...data,
         status: "CREATED",
-      })
+      })/
       .returning("*");
     return task;
   }

@@ -44,7 +44,7 @@ export class TasksService {
   }
 
   async findByStatus(status: TaskStatus) {
-    return this.tasksRepo.findByStatus(status);
+    return this.tasksRepo/.findByStatus(status);
   }
 
   async findAll() {
