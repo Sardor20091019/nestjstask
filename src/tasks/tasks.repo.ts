@@ -91,9 +91,8 @@ export class TasksRepo {
     };
 
     for (const task of tasks) {
-      const dueDate = task.due_date ? new Date(task.due_date) : null;
-      const isOverdue =
-        dueDate  < currentDate && task.status !== "DONE";
+      const dueDate = task.due_date;
+      const isOverdue = dueDate < currentDate && task.status !== "DONE";
 
       if (isOverdue) {
         categorized.overdue.push({
@@ -155,7 +154,7 @@ export class TasksRepo {
     };
 
     for (const task of tasks) {
-      const dueDate = task.due_date ? new Date(task.due_date) : null;
+      const dueDate = task.due_date;
       const isOverdue =
         dueDate && dueDate < currentDate && task.status !== "DONE";
 
@@ -163,7 +162,7 @@ export class TasksRepo {
         counts.overdue++;
       } else if (task.status === "DONE") {
         counts.completed++;
-      } else if (task.status === "IN_PROGRESS") {
+      } else if (task.status === "IN_PROCESS") {
         counts.in_progress++;
       } else {
         counts.new++;
