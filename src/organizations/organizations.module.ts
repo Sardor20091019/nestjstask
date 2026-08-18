@@ -9,4 +9,3 @@ import { OrganizationsRepo } from "./organizations.repo";
   exports: [OrganizationsService],
 })
 export class OrganizationsModule {}
-//

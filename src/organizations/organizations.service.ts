@@ -8,7 +8,7 @@ import { OrganizationsRepo } from "./organizations.repo";
 import { CreateOrganizationDto } from "./dto/create-organization.dto";
 import { UpdateOrganizationDto } from "./dto/update-organization.dto";
 import { db1 } from "../database/db";
-//
+
 @Injectable()
 export class OrganizationsService {
   constructor(private readonly organizationsRepo: OrganizationsRepo) {}
