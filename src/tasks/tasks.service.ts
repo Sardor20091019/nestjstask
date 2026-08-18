@@ -54,7 +54,9 @@ export class TasksService {
   async findOne(id: number) {
     const task = await this.tasksRepo.findById(id);
     if (!task) {
-      throw new NotFoundException(`task you;re looking for, which is ${id}, isnt found in hte database, therefoer it either already deleted or hasnt created yet`);
+      throw new NotFoundException(
+        `task you;re looking for, which is ${id}, isnt found in hte database, therefoer it either already deleted or hasnt created yet`,
+      );
     }
     return task;
   }
@@ -64,7 +66,6 @@ export class TasksService {
   }
 
   async updateStatus(userId: number, id: number, status: TaskStatus) {
-
     const updateData: any = { status };
     if (status === TaskStatus.DONE) {
       updateData.done_at = new Date();
