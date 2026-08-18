@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Query, Headers } from "@nestjs/common";
+import { Controller, Post, Body, Headers } from "@nestjs/common";
 import { TasksService } from "./tasks.service";
 import { TaskStatus } from "../enum/task-status.enum";
 import { CreateTaskDto } from "./dto/create-task.dto";
@@ -23,29 +23,36 @@ export class TasksController {
   }
 
   @Post("findByWorker")
-  findByWorker(@Query("worker_user_id") workerUserId?: string) {
-    return this.tasksService.findByWorker(workerUserId ? +workerUserId : 0);
+  findByWorker(@Body() body: { worker_user_id?: number }) {
+    return this.tasksService.findByWorker(
+      body.worker_user_id ? +body.worker_user_id : 0,
+    );
   }
+
   @Post("findByStatus")
-  getEmployeeTasksSummary(@Query("worker_user_id") workerUserId?: string) {
+  getEmployeeTasksSummary(@Body() body: { worker_user_id?: number }) {
     return this.tasksService.getEmployeeTasksSummary(
-      workerUserId ? +workerUserId : 0,
+      body.worker_user_id ? +body.worker_user_id : 0,
     );
   }
+
   @Post("employee-tasks-count")
-  getEmployeeTasksCountSummary(@Query("worker_user_id") workerUserId?: string) {
+  getEmployeeTasksCountSummary(@Body() body: { worker_user_id?: number }) {
     return this.tasksService.getEmployeeTasksCountSummary(
-      workerUserId ? +workerUserId : 0,
+      body.worker_user_id ? +body.worker_user_id : 0,
     );
   }
+
   @Post("findByProject")
-  findByProject(@Query("project_id") projectId?: string) {
-    return this.tasksService.findByProject(projectId ? +projectId : 0);
+  findByProject(@Body() body: { project_id?: number }) {
+    return this.tasksService.findByProject(
+      body.project_id ? +body.project_id : 0,
+    );
   }
 
   @Post("status")
-  status(@Query("status") status?: TaskStatus) {
-    return this.tasksService.findByStatus(status);
+  status(@Body() body: { status?: TaskStatus }) {
+    return this.tasksService.findByStatus(body.status);
   }
 
   @Post("update-status")

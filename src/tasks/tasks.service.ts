@@ -65,15 +65,8 @@ export class TasksService {
     return await this.tasksRepo.findByProject(projectId);
   }
 
-  async updateStatus(userId: number, id: number, status: TaskStatus) {
-    const updateData: any = { status };
-    if (status === TaskStatus.DONE) {
-      updateData.done_at = new Date();
-    } else {
-      updateData.done_at = null;
-    }
-
-    return db1("tasks").where({ id }).update(updateData).returning("*");
+  async updateStatus(id: number, workerUserId: number, status: TaskStatus) {
+    return this.tasksRepo.updateStatus(id, workerUserId, status);
   }
   async getEmployeeTasksSummary(workerUserId: number) {
     return this.tasksRepo.getEmployeeTasksSummary(workerUserId);

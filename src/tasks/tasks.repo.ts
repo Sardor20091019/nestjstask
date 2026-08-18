@@ -9,12 +9,7 @@ import { TaskStatus } from "../enum/task-status.enum";
 
 @Injectable()
 export class TasksRepo {
-  async updateStatus(
-    userId: number,
-    id: number,
-    status: TaskStatus,
-    workerUserId: number,
-  ) {
+  async updateStatus(userId: number, id: number, status: TaskStatus) {
     const requester = await db1("users").where({ id: userId }).first();
     if (!requester) {
       throw new NotFoundException(
@@ -40,16 +35,37 @@ export class TasksRepo {
       );
     }
 
-    const done_at = status === "DONE";
+    const tasktocheckdeadline = await db1("tasks")
+      .where({ id: id, worker_user_id: task.worker_user_id })
+      .first();
 
-    const [updated] = await db1("tasks")
-      .where({ id, worker_user_id: workerUserId })
-      .update({ status: status, done_at: done_at })
-      .returning("*");
+    const dueDate = tasktocheckdeadline.due_date;
+    const currentDate = new Date();
+    const isOverdue = dueDate < currentDate;
 
-    return updated;
+    if (isOverdue) {
+      throw new ForbiddenException(
+        "it is already passed a deadline, therefore you can't update its status, you should've tried earlier",
+      );
+    }
+    const updateData: any = { status };
+    if (
+      status !== TaskStatus.DONE &&
+      status !== TaskStatus.CREATED &&
+      status !== TaskStatus.IN_PROCESS
+    ) {
+      throw new ForbiddenException(
+        "status only can be DONE/CREATED/IN_PROCESS and nothing else",
+      );
+    }
+    if (status === TaskStatus.DONE) {
+      updateData.done_at = new Date();
+    } else {
+      updateData.done_at = null;
+    }
+
+    return db1("tasks").where({ id }).update(updateData).returning("*");
   }
-
   async findById(id: number) {
     return db1("tasks").where({ id }).first();
   }
@@ -113,7 +129,7 @@ export class TasksRepo {
     }
 
     const employee = await db1("users")
-      .where({ workerUserId: workerUserId })
+      .where({ id: workerUserId })
       .first();
     if (!employee) {
       throw new NotFoundException(`Employee with ID ${workerUserId} not found`);
