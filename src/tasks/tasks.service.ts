@@ -101,6 +101,9 @@ export class TasksService {
   async getEmployeeTasksSummary(workerUserId: number) {
     return this.tasksRepo.getEmployeeTasksSummary(workerUserId);
   }
+  async getEmployeeTasksCountSummary(workerUserId: number) {
+    return this.tasksRepo.getEmployeeTasksCountSummary(workerUserId);
+  }
   async remove(userId: number, id: number) {
     const requester = await db1("users").where({ id: userId }).first();
     if (!requester) {

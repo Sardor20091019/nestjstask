@@ -32,6 +32,12 @@ export class TasksController {
       workerUserId ? +workerUserId : 0,
     );
   }
+  @Post("employee-tasks-count")
+  getEmployeeTasksCountSummary(@Query("worker_user_id") workerUserId?: string) {
+    return this.tasksService.getEmployeeTasksCountSummary(
+      workerUserId ? +workerUserId : 0,
+    );
+  }
   @Post("findByProject")
   findByProject(@Query("project_id") projectId?: string) {
     return this.tasksService.findByProject(projectId ? +projectId : 0);

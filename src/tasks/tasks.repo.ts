@@ -134,4 +134,49 @@ export class TasksRepo {
     await db1("tasks").where({ id }).delete();
     return { deleted: true };
   }
+  async getEmployeeTasksCountSummary(workerUserId: number) {
+    if (!workerUserId || isNaN(workerUserId)) {
+      throw new NotFoundException("Valid worker_user_id is required");
+    }
+
+    const employee = await db1("users").where({ id: workerUserId }).first();
+    if (!employee) {
+      throw new NotFoundException(`Employee with ID ${workerUserId} not found`);
+    }
+
+    const tasks = await db1("tasks").where({ worker_user_id: workerUserId });
+    const currentDate = new Date();
+
+    const counts = {
+      new: 0,
+      in_progress: 0,
+      completed: 0,
+      overdue: 0,
+    };
+
+    for (const task of tasks) {
+      const dueDate = task.due_date ? new Date(task.due_date) : null;
+      const isOverdue =
+        dueDate && dueDate < currentDate && task.status !== "DONE";
+
+      if (isOverdue) {
+        counts.overdue++;
+      } else if (task.status === "DONE") {
+        counts.completed++;
+      } else if (task.status === "IN_PROGRESS") {
+        counts.in_progress++;
+      } else {
+        counts.new++;
+      }
+    }
+
+    const total =
+      counts.new + counts.in_progress + counts.completed + counts.overdue;
+
+    return {
+      employeeId: employee.id,
+      tasks: counts,
+      total,
+    };
+  }
 }
