@@ -26,7 +26,7 @@ export class UsersRepo {
       .update(data)
       .returning("*");
     return updatedUser;
-  }
+  }.
 
   async remove(id: number) {
     await db1("users").where({ id }).delete();
