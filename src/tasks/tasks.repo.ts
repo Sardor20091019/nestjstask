@@ -109,7 +109,7 @@ export class TasksRepo {
       .where({ project_id: projectId })
       .select("*");
 
-    if (!tasks || tasks.length === 0) {
+    if (!tasks) {
       throw new NotFoundException(`No tasks found for project ID ${projectId}`);
     }
 
@@ -145,8 +145,7 @@ export class TasksRepo {
     for (const task of tasks) {
       const dueDate = task.due_date;
       const currentDate = new Date();
-      const isOverdue =
-        dueDate && dueDate < currentDate && task.status !== "DONE";
+      const isOverdue = dueDate < currentDate && task.status !== "DONE";
 
       if (isOverdue) {
         categorized.overdue.push({
@@ -205,8 +204,7 @@ export class TasksRepo {
     for (const task of tasks) {
       const dueDate = task.due_date;
       const currentDate = new Date();
-      const isOverdue =
-        dueDate && new Date(dueDate) < currentDate && task.status !== "DONE";
+      const isOverdue = dueDate < currentDate && task.status !== "DONE";
 
       if (isOverdue) {
         counts.overdue++;

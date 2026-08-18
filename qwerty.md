@@ -194,11 +194,3 @@ HEADER user_id 1
 
 
 
-
-
-
-
-
-
-
-countlani alohifda, 
