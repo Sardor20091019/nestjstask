@@ -1,5 +1,5 @@
 {
-  "scripts": {d
+  "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
