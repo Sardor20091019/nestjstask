@@ -33,20 +33,15 @@ export class OrganizationsController {
     @Headers("user_id") userId: string,
     @Body() body: { id: number } & UpdateOrganizationDto,
   ) {
-    return this.organizationsService.update(
-      +userId,
-      body.id,
-      UpdateOrganizationDto,
-    );
+    const { id, ...updateData } = body;
+    return this.organizationsService.update(+userId, id, updateData);
   }
-
+  @Post("findone")
+  findOne(@Body() body: { id: number }) {
+    return this.organizationsService.findOne(body.id);
+  }
   @Post("remove")
   remove(@Headers("user_id") userId: string, @Body() body: { id: number }) {
     return this.organizationsService.remove(+userId, body.id);
-  }
-
-  @Post("findone")
-  findOne(@Body() id: number) {
-    return this.organizationsService.findOne(id);
   }
 }

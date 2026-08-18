@@ -172,7 +172,7 @@ http://localhost:3000/tasks/status
 http://localhost:3000/tasks/update-status
 
 
-user_id = qaysi userga task assign qilingan bosa osha user id = (2)
+HEADER user_id = qaysi userga task assign qilingan bosa osha user id = (2)
 {
     "id": 1,
     "status": "DONE",
