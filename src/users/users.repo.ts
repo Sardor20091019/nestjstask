@@ -25,7 +25,7 @@ export class UsersRepo {
       .where({ id })
       .update(data)
       .returning("*");
-    return updatedUser;//
+    return updatedUser;
   }
 
   async remove(id: number) {
