@@ -16,4 +16,3 @@ export class StatisticsService {
     return await this.statisticsRepo.getOverallstatistics();
   }
 }
-//

@@ -18,4 +18,3 @@ export class StatisticsController {
     return this.statisticsService.getOverallstatistics();
   }
 }
-//
