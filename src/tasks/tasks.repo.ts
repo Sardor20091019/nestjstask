@@ -93,7 +93,7 @@ export class TasksRepo {
     for (const task of tasks) {
       const dueDate = task.due_date ? new Date(task.due_date) : null;
       const isOverdue =
-        dueDate && dueDate < currentDate && task.status !== "DONE";
+        dueDate  < currentDate && task.status !== "DONE";
 
       if (isOverdue) {
         categorized.overdue.push({
