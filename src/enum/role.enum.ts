@@ -3,4 +3,3 @@ export enum Role {
   MANAGER = 2,
   EMPLOYEE = 3,
 }
-//
