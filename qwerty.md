@@ -145,11 +145,32 @@ http://localhost:3000/tasks/create
 
 http://localhost:3000/tasks/findall
 
-http://localhost:3000/tasks/findByWorker?worker_user_id=1
+http://localhost:3000/tasks/findByWorker
 
-http://localhost:3000/tasks/findByProject?project_id=1
+{
+    "worker_user_id":2
+}
 
-http://localhost:3000/tasks/update-status/2
+http://localhost:3000/tasks/employee-tasks
+
+{
+    "worker_user_id":2
+}
+
+http://localhost:3000/tasks/findByProject
+
+{
+    "project_id":1
+}
+
+http://localhost:3000/tasks/status
+
+{
+    "status":"DONE"
+}
+
+http://localhost:3000/tasks/update-status
+
 
 user_id = qaysi userga task assign qilingan bosa osha user id = (2)
 {
