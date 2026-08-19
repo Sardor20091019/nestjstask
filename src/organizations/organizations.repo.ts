@@ -38,7 +38,7 @@ export class OrganizationsRepo {
     return assign;
   }
 
-    async findbyitsname(name?: string) {
+  async findbyitsname(name?: string) {
     const findthem = db1("organizations");
 
     if (name) {

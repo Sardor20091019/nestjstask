@@ -45,8 +45,8 @@ export class OrganizationsController {
   remove(@Headers("user_id") userId: string, @Body() body: { id: number }) {
     return this.organizationsService.remove(+userId, body.id);
   }
-    @Post("findbyitsname")
-    findbyitsname(@Body() body: findbynameDTO) {
-      return this.organizationsService.findbyitsname(body.name);
-    }
+  @Post("findbyitsname")
+  findbyitsname(@Body() body: findbynameDTO) {
+    return this.organizationsService.findbyitsname(body.name);
+  }
 }
