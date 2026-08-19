@@ -47,8 +47,8 @@ export class TasksService {
     return this.tasksRepo.findByStatus(status);
   }
 
-  async findAll() {
-    return await this.tasksRepo.findAll();
+  async findAll(body: { name?: string; page?: number; limit?: number }) {
+    return this.tasksRepo.findAll(body);
   }
 
   async findOne(id: number) {

@@ -19,8 +19,8 @@ export class TasksController {
   }
 
   @Post("findall")
-  findAll() {
-    return this.tasksService.findAll();
+  findAll(@Body() body: { name?: string; page?: number; limit?: number }) {
+    return this.tasksService.findAll(body);
   }
 
   @Post("findByWorker")

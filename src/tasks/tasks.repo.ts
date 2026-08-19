@@ -125,8 +125,30 @@ export class TasksRepo {
 
     return tasks;
   }
-  async findAll() {
-    return db1("tasks").select("*");
+  async findAll(body: { name?: string; page?: number; limit?: number }) {
+    const page = body.page || 1;
+    const limit = body.limit || 10;
+    const offset = (page - 1) * limit;
+
+    const query = db1("tasks");
+
+    if (body.name) {
+      query.whereILike("name", `%${body.name}%`);
+    }
+
+    const data = await query.clone().limit(limit).offset(offset);
+    const countResult = await query.clone().count("id as count").first();
+    const total = countResult ? Number(countResult.count) : 0;
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 
   async remove(id: number) {
