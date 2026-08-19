@@ -34,4 +34,13 @@ export class ProjectsRepo {
     await db1("projects").where({ id }).delete();
     return { deleted: true };
   }
+  async findbyitsname(name?: string) {
+    const findthem = db1("users");
+
+    if (name) {
+      findthem.whereILike("name", `%${name}%`);
+    }
+
+    return findthem;
+  }
 }

@@ -2,6 +2,7 @@ import { Controller, Post, Body, Headers } from "@nestjs/common";
 import { ProjectsService } from "./projects.service";
 import { CreateProjectsDto } from "./dto/create-projects.dto";
 import { UpdateProjectsDto } from "./dto/update-projects.dto";
+import { findbynameDTO } from "./dto/find-by-name.dto";
 
 @Controller("projects")
 export class ProjectsController {
@@ -34,5 +35,9 @@ export class ProjectsController {
   @Post("remove")
   remove(@Headers("user_id") userId: string, @Body() body: { id: number }) {
     return this.projectsService.remove(+userId, body.id);
+  }
+  @Post("findbyitsname")
+  findbyitsname(@Body() body: findbynameDTO) {
+    return this.projectsService.findbyitsname(body.name);
   }
 }

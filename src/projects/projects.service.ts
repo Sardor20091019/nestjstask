@@ -60,4 +60,7 @@ export class ProjectsService {
     await this.findOne(id);
     return this.projectsRepo.remove(id);
   }
+  async findbyitsname(name?: string) {
+    return this.projectsRepo.findbyitsname(name);
+  }
 }
