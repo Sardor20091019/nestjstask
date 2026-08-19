@@ -1,14 +1,20 @@
-import { Controller, Post, Body, Headers } from "@nestjs/common";
+import { Controller, Post, Body, Headers, UseGuards } from "@nestjs/common";
 import { TasksService } from "./tasks.service";
 import { TaskStatus } from "../enum/task-status.enum";
 import { CreateTaskDto } from "./dto/create-task.dto";
 import { findbytitleDTO } from "./dto/find-by-title.dto";
+import { JwtAuthGuard } from "../auth/jwt-auth.guard";
+import { RolesGuard } from "../auth/roles.guard";
+import { Roles } from "../auth/roles.decorator";
+import { Role } from "../enum/role.enum";
 
 @Controller("tasks")
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Post("create")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.MANAGER)
   create(@Headers("user_id") userId: string, @Body() body: CreateTaskDto) {
     return this.tasksService.create(+userId, {
       title: body.title,
@@ -57,6 +63,8 @@ export class TasksController {
   }
 
   @Post("update-status")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.EMPLOYEE)
   updateStatus(
     @Headers("user_id") userId: string,
     @Body() body: { id: number; status: TaskStatus },
@@ -65,6 +73,8 @@ export class TasksController {
   }
 
   @Post("remove")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.MANAGER)
   remove(@Headers("user_id") userId: string, @Body() body: { id: number }) {
     return this.tasksService.remove(+userId, body.id);
   }

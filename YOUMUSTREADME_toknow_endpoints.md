@@ -7,8 +7,12 @@
 ```sql
 INSERT INTO users (name, role) VALUES ('SARDORADMIN', 1);
 
-```
 
+http://localhost:3000/auth/development-token
+```
+{
+  "user_id": 1
+}
 * **Body:**
 
 ```json

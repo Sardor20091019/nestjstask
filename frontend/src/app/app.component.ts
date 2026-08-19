@@ -42,6 +42,18 @@ import { AuthService } from "./core/auth.service";
                 min="1"
                 [value]="userInput()"
                 (input)="setUserId($any($event.target).value)" /></label
+            ><button
+              class="button-primary"
+              (click)="getToken()"
+              [disabled]="tokenLoading()"
+            >
+              {{
+                tokenLoading()
+                  ? "Getting token…"
+                  : auth.accessToken()
+                    ? "JWT ready"
+                    : "Get JWT"
+              }}</button
             ><button class="button-secondary" (click)="toggleTheme()">
               {{ dark() ? "Light" : "Dark" }}
             </button>
@@ -96,6 +108,7 @@ export class AppComponent {
   readonly auth = inject(AuthService);
   readonly userInput = signal(this.auth.getUserId()?.toString() ?? "");
   readonly dark = signal(document.documentElement.classList.contains("dark"));
+  readonly tokenLoading = signal(false);
   setUserId(value: string): void {
     this.userInput.set(value);
     const id = Number(value);
@@ -105,5 +118,12 @@ export class AppComponent {
   toggleTheme(): void {
     this.dark.update((isDark) => !isDark);
     document.documentElement.classList.toggle("dark", this.dark());
+  }
+  getToken(): void {
+    this.tokenLoading.set(true);
+    this.auth.requestDevelopmentToken().subscribe({
+      error: () => this.tokenLoading.set(false),
+      complete: () => this.tokenLoading.set(false),
+    });
   }
 }

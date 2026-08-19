@@ -1,14 +1,27 @@
-import { Controller, Post, Body, Headers, Param } from "@nestjs/common";
+import {
+  Controller,
+  Post,
+  Body,
+  Headers,
+  Param,
+  UseGuards,
+} from "@nestjs/common";
 import { ProjectsService } from "./projects.service";
 import { CreateProjectsDto } from "./dto/create-projects.dto";
 import { UpdateProjectsDto } from "./dto/update-projects.dto";
 import { findbynameDTO } from "./dto/find-by-name.dto";
+import { JwtAuthGuard } from "../auth/jwt-auth.guard";
+import { RolesGuard } from "../auth/roles.guard";
+import { Roles } from "../auth/roles.decorator";
+import { Role } from "../enum/role.enum";
 
 @Controller("projects")
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
   @Post("create")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.MANAGER)
   create(@Headers("user_id") userId: string, @Body() body: CreateProjectsDto) {
     return this.projectsService.create(+userId, body);
   }
@@ -24,6 +37,8 @@ export class ProjectsController {
   }
 
   @Post(["update", "update/:id"])
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.MANAGER)
   update(
     @Headers("user_id") userId: string,
     @Body() body: { id: number } & UpdateProjectsDto,
@@ -34,6 +49,8 @@ export class ProjectsController {
   }
 
   @Post("remove")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.MANAGER)
   remove(@Headers("user_id") userId: string, @Body() body: { id: number }) {
     return this.projectsService.remove(+userId, body.id);
   }
