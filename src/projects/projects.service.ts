@@ -33,8 +33,8 @@ export class ProjectsService {
     return this.projectsRepo.insert({ ...data, created_by: userId });
   }
 
-  async findAll() {
-    return this.projectsRepo.findAll();
+  async findAll(body: { name?: string; page?: number; limit?: number }) {
+    return this.projectsRepo.findAll(body);
   }
 
   async findByOrg(orgId: number) {

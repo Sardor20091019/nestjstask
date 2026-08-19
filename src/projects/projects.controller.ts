@@ -13,9 +13,9 @@ export class ProjectsController {
     return this.projectsService.create(+userId, body);
   }
 
-  @Post("findAll")
-  findAll() {
-    return this.projectsService.findAll();
+  @Post("findall")
+  findAll(@Body() body: { name?: string; page?: number; limit?: number }) {
+    return this.projectsService.findAll(body);
   }
 
   @Post("findByOrg")
