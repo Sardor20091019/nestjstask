@@ -14,7 +14,7 @@ export class UsersRepo {
     const limit = body.limit || 10;
     const offset = (page - 1) * limit;
 
-    const query = db1("projects");
+    const query = db1("users");
 
     if (body.name) {
       query.whereILike("name", `%${body.name}%`);
