@@ -22,7 +22,12 @@ export class TaskService {
     return this.api.post<any, any>("/tasks/employee-tasks", body);
   }
 
-  createTask(body: { title: string; project_id: number; worker_user_id: number; due_date: string }) {
+  createTask(body: {
+    title: string;
+    project_id: number;
+    worker_user_id: number;
+    due_date: string;
+  }) {
     return this.api.post<any, any>("/tasks/create", body);
   }
 
