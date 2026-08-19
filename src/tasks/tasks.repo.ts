@@ -236,11 +236,11 @@ export class TasksRepo {
       total,
     };
   }
-  async findbyitsname(name?: string) {
+  async findbyitstitle(title?: string) {
     const findthem = db1("tasks");
 
-    if (name) {
-      findthem.whereILike("title", `%${name}%`);
+    if (title) {
+      findthem.whereILike("title", `%${title}%`);
     }
 
     return findthem;

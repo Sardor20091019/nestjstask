@@ -89,7 +89,7 @@ export class TasksService {
     await this.findOne(id);
     return this.tasksRepo.remove(id);
   }
-  async findbyitsname(name?: string) {
-    return this.tasksRepo.findbyitsname(name);
+  async findbyitstitle(title?: string) {
+    return this.tasksRepo.findbyitstitle(title);
   }
 }

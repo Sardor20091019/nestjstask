@@ -2,6 +2,7 @@ import { Controller, Post, Body, Headers } from "@nestjs/common";
 import { TasksService } from "./tasks.service";
 import { TaskStatus } from "../enum/task-status.enum";
 import { CreateTaskDto } from "./dto/create-task.dto";
+import { findbytitleDTO } from "./dto/find-by-title.dto";
 
 @Controller("tasks")
 export class TasksController {
@@ -72,8 +73,8 @@ export class TasksController {
   findOne(@Body() body: { id: number }) {
     return this.tasksService.findOne(body.id);
   }
-  @Post("findbyitsname")
-  findbyitsname(@Body("title") name?: string) {
-    return this.tasksService.findbyitsname(name);
+  @Post("findbyitstitle")
+  findbyitstitle(@Body() body: findbytitleDTO) {
+    return this.tasksService.findbyitstitle(body.title);
   }
 }
