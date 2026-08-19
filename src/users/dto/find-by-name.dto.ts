@@ -1,7 +1,7 @@
 import { IsString, IsOptional } from "class-validator";
 
-export class findbytitleDTO {
+export class findbynameDTO {
   @IsString()
   @IsOptional()
-  title?: string;
+  name?: string;
 }

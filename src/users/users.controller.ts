@@ -1,6 +1,7 @@
 import { Controller, Post, Body, Headers } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { Role } from "../enum/role.enum";
+import { findbynameDTO } from "./dto/find-by-name.dto";
 
 @Controller("users")
 export class UsersController {
@@ -45,7 +46,7 @@ export class UsersController {
     return this.usersService.findOne(body.id);
   }
   @Post("findbyitsname")
-  findbyitsname(@Body("name") name?: string) {
-    return this.usersService.findbyitsname(name);
+  findbyitsname(@Body() body: findbynameDTO) {
+    return this.usersService.findbyitsname(body.name);
   }
 }
