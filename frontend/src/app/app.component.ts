@@ -22,8 +22,12 @@ import { AuthService } from "./core/auth.service";
           class="mx-auto flex max-w-[90rem] flex-wrap items-center justify-between gap-4 px-5 py-4 lg:px-8"
         >
           <a class="flex items-center gap-3" routerLink="/"
-            ><span class="grid size-10 place-items-center rounded-xl bg-linear-to-br from-brand-500 to-fuchsia-600 font-black text-white shadow-lg shadow-violet-600/25 scale-73"> zo'rlogo  </span>
-<span
+            ><span
+              class="grid size-10 place-items-center rounded-xl bg-linear-to-br from-brand-500 to-fuchsia-600 font-black text-white shadow-lg shadow-violet-600/25 scale-73"
+            >
+              zo'rlogo
+            </span>
+            <span
               ><span class="block font-bold tracking-tight">AstroSpectrum</span
               ><span class="block text-xs text-slate-500">website</span></span
             ></a
