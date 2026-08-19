@@ -20,6 +20,7 @@ export const routes: Routes = [
       ),
     title: "Tasks · Astro_Spectrum",
   },
+  { path: "", redirectTo: "users", pathMatch: "full" },
   {
     path: "users",
     title: "Users · Astro_Spectrum",
