@@ -6,6 +6,7 @@ export const db1 = knex({
   client: "pg",
   connection: {
     connectionString: env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false },
   },
   pool: {
     min: 2,
