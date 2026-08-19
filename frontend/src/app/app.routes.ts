@@ -13,14 +13,6 @@ const workbench = (
 
 export const routes: Routes = [
   {
-    path: "",
-    loadComponent: () =>
-      import("./features/dashboard/dashboard.component").then(
-        (m) => m.DashboardComponent,
-      ),
-    title: "Dashboard · Astro_Spectrum",
-  },
-  {
     path: "tasks/list",
     loadComponent: () =>
       import("./features/tasks/task-list.component").then(

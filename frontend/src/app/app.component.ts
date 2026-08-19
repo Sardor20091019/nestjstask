@@ -21,7 +21,7 @@ import { AuthService } from "./core/auth.service";
         <div
           class="mx-auto flex max-w-[90rem] flex-wrap items-center justify-between gap-4 px-5 py-4 lg:px-8"
         >
-          <a class="flex items-center gap-3" routerLink="/"
+          <a class="flex items-center gap-3" routerLink="/tasks"
             ><span
               class="grid size-10 place-items-center rounded-xl bg-linear-to-br from-brand-500 to-fuchsia-600 font-black text-white shadow-lg shadow-violet-600/25 scale-73"
             >
@@ -53,12 +53,6 @@ import { AuthService } from "./core/auth.service";
       >
         <nav class="sidebar-nav">
           <a
-            class="nav-item"
-            routerLink="/"
-            routerLinkActive="nav-item-active"
-            [routerLinkActiveOptions]="{ exact: true }"
-            >Overview</a
-          ><a
             class="nav-item"
             routerLink="/users"
             routerLinkActive="nav-item-active"
