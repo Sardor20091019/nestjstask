@@ -15,7 +15,7 @@ export class ProjectsRepo {
     const limit = body.limit || 10;
     const offset = (page - 1) * limit;
 
-    const query = db1("organizations");
+    const query = db1("projects");
 
     if (body.name) {
       query.whereILike("name", `%${body.name}%`);
