@@ -21,7 +21,7 @@ import { StatisticsModule } from "./statistics/statistics.module";
       throttlers: [
         {
           ttl: 2000,
-          limit: 1,
+          limit: 10,
         },
       ],
     }),
