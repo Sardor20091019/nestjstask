@@ -27,7 +27,7 @@ export class OrganizationsRepo {
 
     return {
       data,
-      meta: {
+      paginationinfo: {
         total,
         page,
         limit,

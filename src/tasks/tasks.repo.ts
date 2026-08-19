@@ -142,7 +142,7 @@ export class TasksRepo {
 
     return {
       data,
-      meta: {
+      paginationinfo: {
         total,
         page,
         limit,

@@ -27,7 +27,7 @@ export class ProjectsRepo {
 
     return {
       data,
-      meta: {
+      paginationinfo: {
         total,
         page,
         limit,

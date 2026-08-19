@@ -26,7 +26,7 @@ export class UsersRepo {
 
     return {
       data,
-      meta: {
+      paginationinfo: {
         total,
         page,
         limit,
