@@ -19,7 +19,7 @@ export class TasksController {
   }
 
   @Post("findall")
-  findAll(@Body() body: { name?: string; page?: number; limit?: number }) {
+  findAll(@Body() body: { title?: string; page?: number; limit?: number }) {
     return this.tasksService.findAll(body);
   }
 

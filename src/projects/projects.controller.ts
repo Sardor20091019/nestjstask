@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Headers } from "@nestjs/common";
+import { Controller, Post, Body, Headers, Param } from "@nestjs/common";
 import { ProjectsService } from "./projects.service";
 import { CreateProjectsDto } from "./dto/create-projects.dto";
 import { UpdateProjectsDto } from "./dto/update-projects.dto";
@@ -23,13 +23,14 @@ export class ProjectsController {
     return this.projectsService.findByOrg(orgId ? +orgId : 0);
   }
 
-  @Post("update")
+  @Post(["update", "update/:id"])
   update(
     @Headers("user_id") userId: string,
     @Body() body: { id: number } & UpdateProjectsDto,
+    @Param("id") idFromPath?: string,
   ) {
     const { id, ...updateData } = body;
-    return this.projectsService.update(+userId, id, updateData);
+    return this.projectsService.update(+userId, id ?? +idFromPath!, updateData);
   }
 
   @Post("remove")

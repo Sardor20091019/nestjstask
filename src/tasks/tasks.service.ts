@@ -47,7 +47,7 @@ export class TasksService {
     return this.tasksRepo.findByStatus(status);
   }
 
-  async findAll(body: { name?: string; page?: number; limit?: number }) {
+  async findAll(body: { title?: string; page?: number; limit?: number }) {
     return this.tasksRepo.findAll(body);
   }
 
@@ -65,8 +65,8 @@ export class TasksService {
     return await this.tasksRepo.findByProject(projectId);
   }
 
-  async updateStatus(id: number, workerUserId: number, status: TaskStatus) {
-    return this.tasksRepo.updateStatus(id, workerUserId, status);
+  async updateStatus(userId: number, taskId: number, status: TaskStatus) {
+    return this.tasksRepo.updateStatus(userId, taskId, status);
   }
   async getEmployeeTasksSummary(workerUserId: number) {
     return this.tasksRepo.getEmployeeTasksSummary(workerUserId);

@@ -1,0 +1,32 @@
+{
+  "name": "task-management-web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "ng serve --proxy-config proxy.conf.json",
+    "build": "ng build",
+    "test": "ng test",
+      "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
+  },
+  "dependencies": {
+    "@angular/common": "^21.0.0",
+    "@angular/compiler": "^21.0.0",
+    "@angular/core": "^21.0.0",
+    "@angular/forms": "^21.0.0",
+    "@angular/platform-browser": "^21.0.0",
+    "@angular/router": "^21.0.0",
+    "eslint": "^10.8.1",
+    "rxjs": "~7.8.2",
+    "tslib": "^2.8.1",
+    "zone.js": "~0.15.1"
+  },
+  "devDependencies": {
+    "@angular/build": "^21.0.0",
+    "@angular/cli": "^21.0.0",
+    "@angular/compiler-cli": "^21.0.0",
+    "@tailwindcss/postcss": "^4.1.0",
+    "postcss": "^8.5.0",
+    "tailwindcss": "^4.1.0",
+    "typescript": "~5.9.3"
+  }
+}

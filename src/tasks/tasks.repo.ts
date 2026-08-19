@@ -125,15 +125,15 @@ export class TasksRepo {
 
     return tasks;
   }
-  async findAll(body: { name?: string; page?: number; limit?: number }) {
+  async findAll(body: { title?: string; page?: number; limit?: number }) {
     const page = body.page || 1;
     const limit = body.limit || 10;
     const offset = (page - 1) * limit;
 
     const query = db1("tasks");
 
-    if (body.name) {
-      query.whereILike("name", `%${body.name}%`);
+    if (body.title) {
+      query.whereILike("title", `%${body.title}%`);
     }
 
     const data = await query.clone().limit(limit).offset(offset);
