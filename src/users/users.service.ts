@@ -27,8 +27,8 @@ export class UsersService {
     return this.usersRepo.create(body);
   }
 
-  async findAll() {
-    return this.usersRepo.findAll();
+  async findAll(body: { name?: string; page?: number; limit?: number }) {
+    return this.usersRepo.findAll(body);
   }
 
   async findOne(id: number) {

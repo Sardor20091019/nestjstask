@@ -20,8 +20,8 @@ export class UsersController {
   }
 
   @Post("findall")
-  findAll() {
-    return this.usersService.findAll();
+  findAll(@Body() body: { name?: string; page?: number; limit?: number }) {
+    return this.usersService.findAll(body);
   }
 
   @Post("update")
