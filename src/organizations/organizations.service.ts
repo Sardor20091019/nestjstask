@@ -32,8 +32,8 @@ export class OrganizationsService {
     return this.organizationsRepo.insert(data);
   }
 
-  async findAll() {
-    return this.organizationsRepo.findAll();
+  async findAll(body: { name?: string; page?: number; limit?: number }) {
+    return this.organizationsRepo.findAll(body);
   }
 
   async findOne(id: number) {

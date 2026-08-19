@@ -17,8 +17,8 @@ export class OrganizationsController {
   }
 
   @Post("findall")
-  findAll() {
-    return this.organizationsService.findAll();
+  findAll(@Body() body: { name?: string; page?: number; limit?: number }) {
+    return this.organizationsService.findAll(body);
   }
 
   @Post("assign-user")
