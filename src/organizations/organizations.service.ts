@@ -70,4 +70,8 @@ export class OrganizationsService {
     }
     return this.organizationsRepo.assignUser(orgId, userId);
   }
+
+    async findbyitsname(name?: string) {
+    return this.organizationsRepo.findbyitsname(name);
+  }
 }

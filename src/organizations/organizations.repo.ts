@@ -37,4 +37,14 @@ export class OrganizationsRepo {
       .returning("*");
     return assign;
   }
+
+    async findbyitsname(name?: string) {
+    const findthem = db1("organizations");
+
+    if (name) {
+      findthem.whereILike("name", `%${name}%`);
+    }
+
+    return findthem;
+  }
 }

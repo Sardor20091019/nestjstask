@@ -2,6 +2,7 @@ import { Controller, Post, Body, Headers } from "@nestjs/common";
 import { OrganizationsService } from "./organizations.service";
 import { CreateOrganizationDto } from "./dto/create-organization.dto";
 import { UpdateOrganizationDto } from "./dto/update-organization.dto";
+import { findbynameDTO } from "./dto/find-by-name.dto";
 //
 @Controller("organizations")
 export class OrganizationsController {
@@ -44,4 +45,8 @@ export class OrganizationsController {
   remove(@Headers("user_id") userId: string, @Body() body: { id: number }) {
     return this.organizationsService.remove(+userId, body.id);
   }
+    @Post("findbyitsname")
+    findbyitsname(@Body() body: findbynameDTO) {
+      return this.organizationsService.findbyitsname(body.name);
+    }
 }

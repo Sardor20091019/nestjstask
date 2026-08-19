@@ -35,7 +35,7 @@ export class ProjectsRepo {
     return { deleted: true };
   }
   async findbyitsname(name?: string) {
-    const findthem = db1("users");
+    const findthem = db1("projects");
 
     if (name) {
       findthem.whereILike("name", `%${name}%`);
