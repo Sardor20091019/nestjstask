@@ -32,4 +32,13 @@ export class UsersRepo {
     await db1("users").where({ id }).delete();
     return true;
   }
+  async findbyitsname(name?: string) {
+    const findthem = db1("users");
+
+    if (name) {
+      findthem.whereILike("name", `%${name}%`);
+    }
+
+    return findthem;
+  }
 }

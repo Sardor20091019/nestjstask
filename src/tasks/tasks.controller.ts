@@ -72,4 +72,8 @@ export class TasksController {
   findOne(@Body() body: { id: number }) {
     return this.tasksService.findOne(body.id);
   }
+  @Post("findbyitsname")
+  findbyitsname(@Body("title") name?: string) {
+    return this.tasksService.findbyitsname(name);
+  }
 }

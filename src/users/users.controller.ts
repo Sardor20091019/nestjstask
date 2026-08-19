@@ -44,4 +44,8 @@ export class UsersController {
   findOne(@Body() body: { id: number }) {
     return this.usersService.findOne(body.id);
   }
+  @Post("findbyitsname")
+  findbyitsname(@Body("name") name?: string) {
+    return this.usersService.findbyitsname(name);
+  }
 }

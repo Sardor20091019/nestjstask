@@ -38,7 +38,9 @@ export class UsersService {
   async update(id: number, body: { name?: string; role?: Role }) {
     return this.usersRepo.update(id, body);
   }
-
+  async findbyitsname(name?: string) {
+    return this.usersRepo.findbyitsname(name);
+  }
   async remove(id: number) {
     return this.usersRepo.remove(id);
   }

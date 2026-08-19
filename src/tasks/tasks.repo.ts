@@ -236,4 +236,13 @@ export class TasksRepo {
       total,
     };
   }
+  async findbyitsname(name?: string) {
+    const findthem = db1("tasks");
+
+    if (name) {
+      findthem.whereILike("title", `%${name}%`);
+    }
+
+    return findthem;
+  }
 }
