@@ -40,7 +40,11 @@ export class TaskService {
   }
 
   // Updated to match your backend body requirements: { id, status, worker_user_id }
-  updateStatus(body: { id: number; status: string; worker_user_id: string | number }) {
+  updateStatus(body: {
+    id: number;
+    status: string;
+    worker_user_id: string | number;
+  }) {
     return this.api.post<any, any>("/tasks/update-status", body);
   }
 
