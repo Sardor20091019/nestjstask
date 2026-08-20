@@ -7,6 +7,13 @@ import { HttpExceptionFilter } from "./shared/http-exception.filter";
 
 async function sardor() {
   const app = await NestFactory.create(AppModule);
+
+  // Enable CORS for your live Vercel frontend and local testing
+  app.enableCors({
+    origin: ["http://localhost:4200", "https://nestjstask-blush.vercel.app"],
+    credentials: true,
+  }); 
+
   const config = new DocumentBuilder()
     .setTitle("Users example")
     .setDescription("The users API description")
