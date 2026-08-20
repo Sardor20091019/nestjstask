@@ -7,6 +7,7 @@ import {
   signal,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import {
   NonNullableFormBuilder,
   ReactiveFormsModule,
@@ -14,7 +15,6 @@ import {
 } from "@angular/forms";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { catchError, of } from "rxjs";
-import { ApiService } from "../../core/api.service";
 
 interface Organization {
   id: number;
@@ -106,7 +106,30 @@ interface Organization {
                     </h3>
                   </div>
                   <div class="flex items-center gap-2">
-                    <!-- Remove / Delete Button -->
+                    <!-- Edit Button (Admin) -->
+                    <button
+                      type="button"
+                      class="p-2 text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-brand-50 dark:hover:bg-brand-950/30 rounded-xl transition-colors"
+                      title="Edit Organization"
+                      (click)="openEditModal(org)"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                        <path d="m15 5 4 4" />
+                      </svg>
+                    </button>
+
+                    <!-- Remove / Delete Button (Admin) -->
                     <button
                       type="button"
                       class="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl transition-colors"
@@ -129,30 +152,6 @@ interface Organization {
                         <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
                       </svg>
                     </button>
-                    <div
-                      class="p-2 bg-brand-50 dark:bg-brand-950/30 text-brand-600 dark:text-brand-400 rounded-xl"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      >
-                        <path d="M3 21h18" />
-                        <path d="M9 8h1" />
-                        <path d="M9 12h1" />
-                        <path d="M9 16h1" />
-                        <path d="M14 8h1" />
-                        <path d="M14 12h1" />
-                        <path d="M14 16h1" />
-                        <path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16" />
-                      </svg>
-                    </div>
                   </div>
                 </div>
 
@@ -248,7 +247,7 @@ interface Organization {
         }
       </div>
 
-      <!-- Create Organization Slide-over Drawer -->
+      <!-- Create / Edit Organization Slide-over Drawer -->
       @if (isDrawerOpen()) {
         <div
           class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 transition-opacity"
@@ -263,10 +262,10 @@ interface Organization {
           >
             <div>
               <h2 class="text-lg font-semibold text-slate-900 dark:text-white">
-                Create New Organization
+                {{ editingOrgId() ? "Edit Organization" : "Create New Organization" }}
               </h2>
               <p class="text-sm text-slate-500 dark:text-slate-400">
-                Set up a business unit or workspace.
+                {{ editingOrgId() ? "Update organization details." : "Set up a business unit or workspace." }}
               </p>
             </div>
             <button
@@ -320,19 +319,21 @@ interface Organization {
                 }
               </div>
 
-              <div>
-                <label
-                  for="created_by"
-                  class="label text-sm font-medium text-slate-700 dark:text-slate-300"
-                  >Created By ID <span class="text-rose-500">*</span></label
-                >
-                <input
-                  type="number"
-                  id="created_by"
-                  formControlName="created_by"
-                  class="input mt-1.5 w-full"
-                />
-              </div>
+              @if (!editingOrgId()) {
+                <div>
+                  <label
+                    for="created_by"
+                    class="label text-sm font-medium text-slate-700 dark:text-slate-300"
+                    >Created By ID <span class="text-rose-500">*</span></label
+                  >
+                  <input
+                    type="number"
+                    id="created_by"
+                    formControlName="created_by"
+                    class="input mt-1.5 w-full"
+                  />
+                </div>
+              }
             </form>
           </div>
 
@@ -354,9 +355,9 @@ interface Organization {
               [disabled]="form.invalid || submitting()"
             >
               @if (submitting()) {
-                Creating...
+                {{ editingOrgId() ? "Updating..." : "Creating..." }}
               } @else {
-                Create Organization
+                {{ editingOrgId() ? "Save Changes" : "Create Organization" }}
               }
             </button>
           </div>
@@ -366,13 +367,14 @@ interface Organization {
   `,
 })
 export class OrganizationListComponent implements OnInit {
-  private readonly api = inject(ApiService);
+  private readonly http = inject(HttpClient);
   private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(NonNullableFormBuilder);
 
   readonly loading = signal(true);
   readonly submitting = signal(false);
   readonly isDrawerOpen = signal(false);
+  readonly editingOrgId = signal<number | null>(null);
   readonly organizations = signal<Organization[]>([]);
 
   readonly form = this.fb.group({
@@ -387,8 +389,8 @@ export class OrganizationListComponent implements OnInit {
   private fetchOrganizations(): void {
     this.loading.set(true);
 
-    this.api
-      .post<any, any>("/organizations/findall", { limit: 20 })
+    this.http
+      .post<any>("http://localhost:3000/organizations/findall", { limit: 50, page: 1 })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError((err) => {
@@ -412,12 +414,23 @@ export class OrganizationListComponent implements OnInit {
   }
 
   openCreateModal(): void {
+    this.editingOrgId.set(null);
     this.form.reset({ name: "", created_by: 1 });
+    this.isDrawerOpen.set(true);
+  }
+
+  openEditModal(org: Organization): void {
+    this.editingOrgId.set(org.id);
+    this.form.patchValue({
+      name: org.name,
+      created_by: org.created_by || 1,
+    });
     this.isDrawerOpen.set(true);
   }
 
   closeDrawer(): void {
     this.isDrawerOpen.set(false);
+    this.editingOrgId.set(null);
   }
 
   submitOrganization(): void {
@@ -425,18 +438,23 @@ export class OrganizationListComponent implements OnInit {
 
     this.submitting.set(true);
     const raw = this.form.getRawValue();
+    const adminHeaders = new HttpHeaders({ user_id: "1" });
 
-    const payload = {
-      name: raw.name,
-      created_by: Number(raw.created_by),
-    };
+    const orgId = this.editingOrgId();
+    const url = orgId
+      ? "http://localhost:3000/organizations/update"
+      : "http://localhost:3000/organizations/create";
 
-    this.api
-      .post<any, any>("/organizations/create", payload)
+    const payload = orgId
+      ? { id: orgId, name: raw.name }
+      : { name: raw.name, created_by: Number(raw.created_by) };
+
+    this.http
+      .post<any>(url, payload, { headers: adminHeaders })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError((err) => {
-          console.error("Organization creation error:", err);
+          console.error("Organization operation error:", err);
           return of({ error: err });
         }),
       )
@@ -455,8 +473,10 @@ export class OrganizationListComponent implements OnInit {
   }
 
   removeOrganization(id: number): void {
-    this.api
-      .post<any, any>("/organizations/remove", { id })
+    const adminHeaders = new HttpHeaders({ user_id: "1" });
+
+    this.http
+      .post<any>("http://localhost:3000/organizations/remove", { id }, { headers: adminHeaders })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError((err) => {

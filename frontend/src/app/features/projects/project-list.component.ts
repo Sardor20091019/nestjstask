@@ -7,6 +7,7 @@ import {
   signal,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import {
   NonNullableFormBuilder,
   ReactiveFormsModule,
@@ -14,7 +15,6 @@ import {
 } from "@angular/forms";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { catchError, of } from "rxjs";
-import { ApiService } from "../../core/api.service";
 
 interface Project {
   id: number;
@@ -106,23 +106,53 @@ interface Project {
                       {{ project.name }}
                     </h3>
                   </div>
-                  <div
-                    class="p-2 bg-brand-50 dark:bg-brand-950/30 text-brand-600 dark:text-brand-400 rounded-xl"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+
+                  <!-- Action Buttons (Edit & Remove) -->
+                  <div class="flex items-center gap-2">
+                    <button
+                      type="button"
+                      class="p-2 text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-brand-50 dark:hover:bg-brand-950/30 rounded-xl transition-colors"
+                      title="Edit Project"
+                      (click)="openEditModal(project)"
                     >
-                      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-                    </svg>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                        <path d="m15 5 4 4" />
+                      </svg>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl transition-colors"
+                      title="Remove Project"
+                      (click)="removeProject(project.id)"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M3 6h18" />
+                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                      </svg>
+                    </button>
                   </div>
                 </div>
 
@@ -133,7 +163,7 @@ interface Project {
                   <p>Created By: {{ project.created_by || 1 }}</p>
                 </div>
 
-                <!-- Card Footer with Visible Delete Button -->
+                <!-- Card Footer -->
                 <div
                   class="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between"
                 >
@@ -157,30 +187,6 @@ interface Project {
                     </svg>
                     {{ project.taskCount || 0 }} tasks
                   </div>
-
-                  <!-- Prominent Remove Button -->
-                  <button
-                    type="button"
-                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 transition-colors"
-                    (click)="removeProject(project.id)"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <path d="M3 6h18" />
-                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-                    </svg>
-                    Remove
-                  </button>
                 </div>
               </div>
             }
@@ -239,7 +245,7 @@ interface Project {
         }
       </div>
 
-      <!-- Create Project Slide-over Drawer -->
+      <!-- Create / Edit Project Slide-over Drawer -->
       @if (isDrawerOpen()) {
         <div
           class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 transition-opacity"
@@ -254,10 +260,10 @@ interface Project {
           >
             <div>
               <h2 class="text-lg font-semibold text-slate-900 dark:text-white">
-                Create New Project
+                {{ editingProjectId() ? "Edit Project" : "Create New Project" }}
               </h2>
               <p class="text-sm text-slate-500 dark:text-slate-400">
-                Set up a new workspace for your team.
+                {{ editingProjectId() ? "Update project details." : "Set up a new workspace for your team." }}
               </p>
             </div>
             <button
@@ -311,34 +317,36 @@ interface Project {
                 }
               </div>
 
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <label
-                    for="org_id"
-                    class="label text-sm font-medium text-slate-700 dark:text-slate-300"
-                    >Org ID <span class="text-rose-500">*</span></label
-                  >
-                  <input
-                    type="number"
-                    id="org_id"
-                    formControlName="org_id"
-                    class="input mt-1.5 w-full"
-                  />
+              @if (!editingProjectId()) {
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label
+                      for="org_id"
+                      class="label text-sm font-medium text-slate-700 dark:text-slate-300"
+                      >Org ID <span class="text-rose-500">*</span></label
+                    >
+                    <input
+                      type="number"
+                      id="org_id"
+                      formControlName="org_id"
+                      class="input mt-1.5 w-full"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      for="created_by"
+                      class="label text-sm font-medium text-slate-700 dark:text-slate-300"
+                      >Created By <span class="text-rose-500">*</span></label
+                    >
+                    <input
+                      type="number"
+                      id="created_by"
+                      formControlName="created_by"
+                      class="input mt-1.5 w-full"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label
-                    for="created_by"
-                    class="label text-sm font-medium text-slate-700 dark:text-slate-300"
-                    >Created By <span class="text-rose-500">*</span></label
-                  >
-                  <input
-                    type="number"
-                    id="created_by"
-                    formControlName="created_by"
-                    class="input mt-1.5 w-full"
-                  />
-                </div>
-              </div>
+              }
             </form>
           </div>
 
@@ -360,9 +368,9 @@ interface Project {
               [disabled]="form.invalid || submitting()"
             >
               @if (submitting()) {
-                Creating...
+                {{ editingProjectId() ? "Updating..." : "Creating..." }}
               } @else {
-                Create Project
+                {{ editingProjectId() ? "Save Changes" : "Create Project" }}
               }
             </button>
           </div>
@@ -372,13 +380,14 @@ interface Project {
   `,
 })
 export class ProjectListComponent implements OnInit {
-  private readonly api = inject(ApiService);
+  private readonly http = inject(HttpClient);
   private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(NonNullableFormBuilder);
 
   readonly loading = signal(true);
   readonly submitting = signal(false);
   readonly isDrawerOpen = signal(false);
+  readonly editingProjectId = signal<number | null>(null);
   readonly projects = signal<Project[]>([]);
 
   readonly form = this.fb.group({
@@ -394,8 +403,8 @@ export class ProjectListComponent implements OnInit {
   private fetchProjects(): void {
     this.loading.set(true);
 
-    this.api
-      .post<any, any>("/projects/findall", { limit: 20 })
+    this.http
+      .post<any>("http://localhost:3000/projects/findall", { limit: 50, page: 1 })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError(() => of(null)),
@@ -414,12 +423,24 @@ export class ProjectListComponent implements OnInit {
   }
 
   openCreateModal(): void {
+    this.editingProjectId.set(null);
     this.form.reset({ name: "", org_id: 1, created_by: 1 });
+    this.isDrawerOpen.set(true);
+  }
+
+  openEditModal(project: Project): void {
+    this.editingProjectId.set(project.id);
+    this.form.patchValue({
+      name: project.name,
+      org_id: project.org_id || 1,
+      created_by: project.created_by || 1,
+    });
     this.isDrawerOpen.set(true);
   }
 
   closeDrawer(): void {
     this.isDrawerOpen.set(false);
+    this.editingProjectId.set(null);
   }
 
   submitProject(): void {
@@ -427,19 +448,23 @@ export class ProjectListComponent implements OnInit {
 
     this.submitting.set(true);
     const raw = this.form.getRawValue();
+    const adminHeaders = new HttpHeaders({ user_id: "1" });
 
-    const payload = {
-      name: raw.name,
-      org_id: Number(raw.org_id),
-      created_by: Number(raw.created_by),
-    };
+    const projectId = this.editingProjectId();
+    const url = projectId
+      ? `http://localhost:3000/projects/update/${projectId}`
+      : "http://localhost:3000/projects/create";
 
-    this.api
-      .post<any, any>("/projects/create", payload)
+    const payload = projectId
+      ? { id: projectId, name: raw.name }
+      : { name: raw.name, org_id: Number(raw.org_id), created_by: Number(raw.created_by) };
+
+    this.http
+      .post<any>(url, payload, { headers: adminHeaders })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError((err) => {
-          console.error("Project creation error:", err);
+          console.error("Project operation error:", err);
           return of({ error: err });
         }),
       )
@@ -458,8 +483,10 @@ export class ProjectListComponent implements OnInit {
   }
 
   removeProject(id: number): void {
-    this.api
-      .post<any, any>("/projects/remove", { id })
+    const adminHeaders = new HttpHeaders({ user_id: "1" });
+
+    this.http
+      .post<any>("http://localhost:3000/projects/remove", { id }, { headers: adminHeaders })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError((err) => {

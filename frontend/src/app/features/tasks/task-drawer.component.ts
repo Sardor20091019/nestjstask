@@ -4,19 +4,18 @@ import {
   EventEmitter,
   Input,
   Output,
+  OnChanges,
+  SimpleChanges,
   inject,
   signal,
-  effect,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import {
   NonNullableFormBuilder,
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { TaskService } from "../../core/task.service";
-import { ProjectService } from "../../core/project.service";
-import { UserService } from "../../core/user.service";
 import { NotificationService } from "../../shared/services/notification.service";
 
 interface ProjectOption {
@@ -162,37 +161,6 @@ interface UserOption {
                 }
               </select>
             </div>
-
-            <!-- Priority Mock (Disabled visual) -->
-            <div>
-              <label class="label">Priority (Simulated)</label>
-              <div class="flex gap-2">
-                <button
-                  type="button"
-                  class="flex-1 rounded-lg border border-slate-200 bg-white py-2 px-3 text-sm font-medium text-slate-500 shadow-sm transition-colors hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 cursor-not-allowed opacity-70"
-                  disabled
-                >
-                  Low
-                </button>
-                <button
-                  type="button"
-                  class="flex-1 rounded-lg border border-brand-200 bg-brand-50 py-2 px-3 text-sm font-medium text-brand-700 shadow-sm ring-1 ring-brand-500/20 dark:border-brand-900/50 dark:bg-brand-950/30 dark:text-brand-400 dark:ring-brand-500/30 cursor-not-allowed opacity-70"
-                  disabled
-                >
-                  Medium
-                </button>
-                <button
-                  type="button"
-                  class="flex-1 rounded-lg border border-slate-200 bg-white py-2 px-3 text-sm font-medium text-slate-500 shadow-sm transition-colors hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 cursor-not-allowed opacity-70"
-                  disabled
-                >
-                  High
-                </button>
-              </div>
-              <p class="mt-1.5 text-xs text-slate-400">
-                Priority is currently not supported by the backend.
-              </p>
-            </div>
           </form>
         </div>
 
@@ -245,19 +213,16 @@ interface UserOption {
     </div>
   `,
 })
-export class TaskDrawerComponent {
+export class TaskDrawerComponent implements OnChanges {
   @Input() isOpen = false;
   @Output() close = new EventEmitter<void>();
   @Output() saved = new EventEmitter<void>();
 
   private readonly fb = inject(NonNullableFormBuilder);
-  private readonly taskService = inject(TaskService);
-  private readonly projectService = inject(ProjectService);
-  private readonly userService = inject(UserService);
+  private readonly http = inject(HttpClient);
   private readonly notifications = inject(NotificationService);
 
   readonly submitting = signal(false);
-
   readonly projects = signal<ProjectOption[]>([]);
   readonly users = signal<UserOption[]>([]);
 
@@ -277,27 +242,27 @@ export class TaskDrawerComponent {
     due_date: [this.getDefaultDate(), Validators.required],
   });
 
-  constructor() {
-    effect(() => {
-      if (this.isOpen) {
-        this.form.reset({
-          title: "",
-          project_id: "",
-          worker_user_id: "",
-          due_date: this.getDefaultDate(),
-        });
-        this.fetchWorkspaceEntities();
-      }
-    });
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes["isOpen"] && changes["isOpen"].currentValue === true) {
+      this.form.reset({
+        title: "",
+        project_id: "",
+        worker_user_id: "",
+        due_date: this.getDefaultDate(),
+      });
+      this.fetchWorkspaceEntities();
+    }
   }
 
   private fetchWorkspaceEntities() {
-    // 1. Fetch projects passing the required arguments (name and page request)
-    this.projectService.findAll("", { page: 1, limit: 50 } as any).subscribe({
+    const body = { name: "", limit: 50, page: 1 };
+
+    // 1. Fetch Projects
+    this.http.post<any>("http://localhost:3000/projects/findall", body).subscribe({
       next: (res: any) => {
         const items = Array.isArray(res)
           ? res
-          : res?.data || res?.items || res?.result || [];
+          : res?.data || res?.items || res?.result || res?.data?.data || [];
         this.projects.set(
           items.map((p: any) => ({
             id: p.id,
@@ -305,15 +270,15 @@ export class TaskDrawerComponent {
           })),
         );
       },
-      error: (err) => console.error("Failed to load projects:", err),
+      error: (err: any) => console.error("Failed to load projects:", err),
     });
 
-    // 2. Fetch users using UserService
-    this.userService.findAll().subscribe({
+    // 2. Fetch Users
+    this.http.post<any>("http://localhost:3000/users/findall", body).subscribe({
       next: (res: any) => {
         const items = Array.isArray(res)
           ? res
-          : res?.data || res?.items || res?.result || [];
+          : res?.data || res?.items || res?.result || res?.data?.data || [];
         this.users.set(
           items.map((u: any) => ({
             id: u.id,
@@ -321,7 +286,7 @@ export class TaskDrawerComponent {
           })),
         );
       },
-      error: (err) => console.error("Failed to load users:", err),
+      error: (err: any) => console.error("Failed to load users:", err),
     });
   }
 
@@ -332,13 +297,19 @@ export class TaskDrawerComponent {
     const formValue = this.form.getRawValue();
 
     const payload = {
-      ...formValue,
+      title: formValue.title,
       project_id: Number(formValue.project_id),
       worker_user_id: Number(formValue.worker_user_id),
       due_date: new Date(formValue.due_date).toISOString(),
     };
 
-    this.taskService.createTask(payload).subscribe({
+    const headers = new HttpHeaders({
+      user_id: "1",
+    });
+
+    console.log("Sending Task Payload:", payload);
+
+    this.http.post("http://localhost:3000/tasks/create", payload, { headers }).subscribe({
       next: () => {
         this.submitting.set(false);
         this.notifications.success(
@@ -348,12 +319,13 @@ export class TaskDrawerComponent {
         this.saved.emit();
         this.close.emit();
       },
-      error: (err) => {
+      error: (err: any) => {
         this.submitting.set(false);
-        this.notifications.error(
-          err?.error?.message || "Failed to create task",
-          "Error",
-        );
+        console.error("Task Creation Error Details:", err?.error);
+        const serverMessage = Array.isArray(err?.error?.message)
+          ? err.error.message.join(", ")
+          : err?.error?.message || "Failed to create task";
+        this.notifications.error(serverMessage, "Error");
       },
     });
   }
