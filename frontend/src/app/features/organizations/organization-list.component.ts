@@ -161,7 +161,7 @@ interface Organization {
                   <span
                     class="text-brand-600 dark:text-brand-400 text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity"
                   >
-                    View &rarr;
+           
                   </span>
                 </div>
               </div>
