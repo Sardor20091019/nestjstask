@@ -51,7 +51,7 @@ import { ToastContainerComponent } from "./shared/components/toast-container.com
             </div>
             <span
               class="font-display text-lg font-bold tracking-tight text-slate-900 dark:text-white"
-              >Astro<span class="text-brand-500">Dash</span></span
+              >Astro<span class="text-brand-500">Spectrum</span></span
             >
           </a>
         </div>
