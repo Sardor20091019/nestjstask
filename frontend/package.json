@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "ng serve --proxy-config proxy.conf.json",
+    "start:dev": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
     "test": "ng test",
       "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
