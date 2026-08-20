@@ -257,7 +257,6 @@ export class TaskDrawerComponent {
 
   readonly submitting = signal(false);
 
-  // Initialized as empty arrays (no fake data)
   readonly projects = signal<ProjectOption[]>([]);
   readonly users = signal<UserOption[]>([]);
 
@@ -294,32 +293,36 @@ export class TaskDrawerComponent {
   private fetchWorkspaceEntities() {
     this.api.post<any, any>("/projects/findall", { limit: 50 }).subscribe({
       next: (res) => {
-        if (res && res.data) {
-          this.projects.set(
-            res.data.map((p: any) => ({
-              id: p.id,
-              name: p.name || `Project #${p.id}`,
-            })),
-          );
-        }
+        const items = Array.isArray(res)
+          ? res
+          : res?.data || res?.items || res?.result || [];
+        this.projects.set(
+          items.map((p: any) => ({
+            id: p.id,
+            name: p.name || p.title || `Project #${p.id}`,
+          })),
+        );
       },
-      error: () => {
+      error: (err) => {
+        console.error("Failed to fetch projects:", err);
         this.projects.set([]);
       },
     });
 
     this.api.post<any, any>("/users/findall", { limit: 50 }).subscribe({
       next: (res) => {
-        if (res && res.data) {
-          this.users.set(
-            res.data.map((u: any) => ({
-              id: u.id,
-              name: u.name || `User #${u.id}`,
-            })),
-          );
-        }
+        const items = Array.isArray(res)
+          ? res
+          : res?.data || res?.items || res?.result || [];
+        this.users.set(
+          items.map((u: any) => ({
+            id: u.id,
+            name: u.name || u.username || u.full_name || `User #${u.id}`,
+          })),
+        );
       },
-      error: () => {
+      error: (err) => {
+        console.error("Failed to fetch users:", err);
         this.users.set([]);
       },
     });
