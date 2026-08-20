@@ -11,7 +11,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post("create")
-  // @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   create(
     @Headers() headers: any,

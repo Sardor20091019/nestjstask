@@ -13,7 +13,7 @@ export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Post("create")
-  // @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN, Role.MANAGER)
   create(@Headers("user_id") userId: string, @Body() body: CreateTaskDto) {
     return this.tasksService.create(+userId, {

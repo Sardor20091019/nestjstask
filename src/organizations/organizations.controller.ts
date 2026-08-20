@@ -13,7 +13,7 @@ export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}
 
   @Post("create")
-  // @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   create(
     @Headers("user_id") userId: string,

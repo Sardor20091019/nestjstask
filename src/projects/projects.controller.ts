@@ -20,7 +20,7 @@ export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
   @Post("create")
-  // @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN, Role.MANAGER)
   create(@Headers("user_id") userId: string, @Body() body: CreateProjectsDto) {
     return this.projectsService.create(+userId, body);
