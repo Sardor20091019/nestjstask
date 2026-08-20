@@ -14,9 +14,9 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { HttpClient } from "@angular/common/http";
 import { TaskService } from "../../core/task.service";
-import { ApiService } from "../../core/api.service";
+import { ProjectService } from "../../core/project.service";
+import { UserService } from "../../core/user.service";
 import { NotificationService } from "../../shared/services/notification.service";
 
 interface ProjectOption {
@@ -252,8 +252,9 @@ export class TaskDrawerComponent {
 
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly taskService = inject(TaskService);
+  private readonly projectService = inject(ProjectService);
+  private readonly userService = inject(UserService);
   private readonly notifications = inject(NotificationService);
-  private readonly api = inject(ApiService);
 
   readonly submitting = signal(false);
 
@@ -291,8 +292,9 @@ export class TaskDrawerComponent {
   }
 
   private fetchWorkspaceEntities() {
-    this.api.post<any, any>("/projects/findall", { limit: 50 }).subscribe({
-      next: (res) => {
+    // 1. Fetch projects passing the required arguments (name and page request)
+    this.projectService.findAll("", { page: 1, limit: 50 } as any).subscribe({
+      next: (res: any) => {
         const items = Array.isArray(res)
           ? res
           : res?.data || res?.items || res?.result || [];
@@ -303,14 +305,12 @@ export class TaskDrawerComponent {
           })),
         );
       },
-      error: (err) => {
-        console.error("Failed to fetch projects:", err);
-        this.projects.set([]);
-      },
+      error: (err) => console.error("Failed to load projects:", err),
     });
 
-    this.api.post<any, any>("/users/findall", { limit: 50 }).subscribe({
-      next: (res) => {
+    // 2. Fetch users using UserService
+    this.userService.findAll().subscribe({
+      next: (res: any) => {
         const items = Array.isArray(res)
           ? res
           : res?.data || res?.items || res?.result || [];
@@ -321,10 +321,7 @@ export class TaskDrawerComponent {
           })),
         );
       },
-      error: (err) => {
-        console.error("Failed to fetch users:", err);
-        this.users.set([]);
-      },
+      error: (err) => console.error("Failed to load users:", err),
     });
   }
 
