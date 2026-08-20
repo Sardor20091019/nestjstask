@@ -16,10 +16,6 @@ export class TaskService {
     };
 
     if (options?.status && options.status.length > 0) {
-      body.status = options.status; // Assumes backend supports an array or we send the first item. If the backend only supports a single status string, we can adapt:
-      // If the API only supports one status: body.status = options.status[0];
-      // For now, we will pass it. If the API expects a single string, we pass the first selected.
-      // Based on app.routes.ts, it expects `{ status: "DONE" }`.
       body.status = options.status[0];
     }
 
@@ -43,7 +39,8 @@ export class TaskService {
     return this.api.post<any, any>("/tasks/create", body);
   }
 
-  updateStatus(body: { id: number; status: string }) {
+  // Updated to match your backend body requirements: { id, status, worker_user_id }
+  updateStatus(body: { id: number; status: string; worker_user_id: string | number }) {
     return this.api.post<any, any>("/tasks/update-status", body);
   }
 

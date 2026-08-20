@@ -18,7 +18,7 @@ import {
   tap,
 } from "rxjs";
 import { TaskService } from "../../core/task.service";
-import { PageResponse, Task, TaskStatus } from "../../core/models";
+import { PageResponse, Task } from "../../core/models";
 import { TaskStatusBadgeComponent } from "../../shared/task-status-badge.component";
 import { TaskDrawerComponent } from "./task-drawer.component";
 
@@ -105,7 +105,7 @@ const EMPTY_PAGE: PageResponse<Task> = {
           />
         </div>
 
-        <!-- Status Dropdown (Simulated via Select) -->
+        <!-- Status Filter Dropdown -->
         <div class="w-full sm:w-48 shrink-0">
           <select
             class="input appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-[length:16px_16px] bg-no-repeat bg-[position:right_12px_center]"
@@ -117,35 +117,6 @@ const EMPTY_PAGE: PageResponse<Task> = {
             <option value="IN_PROGRESS">In Progress</option>
             <option value="DONE">Completed</option>
           </select>
-        </div>
-
-        <!-- Priority Chips (Mocked Visuals) -->
-        <div
-          class="hidden md:flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 ml-auto opacity-70 cursor-not-allowed"
-          title="Priority sorting is simulated"
-        >
-          <span
-            class="text-xs font-semibold text-slate-500 pl-2 pr-1 uppercase tracking-wider"
-            >Priority:</span
-          >
-          <button
-            class="px-3 py-1 rounded-lg text-sm font-medium bg-white shadow-sm text-slate-700 dark:bg-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700"
-            disabled
-          >
-            All
-          </button>
-          <button
-            class="px-3 py-1 rounded-lg text-sm font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400"
-            disabled
-          >
-            High
-          </button>
-          <button
-            class="px-3 py-1 rounded-lg text-sm font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400"
-            disabled
-          >
-            Low
-          </button>
         </div>
       </div>
 
@@ -168,10 +139,11 @@ const EMPTY_PAGE: PageResponse<Task> = {
                 class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400"
               >
                 <th class="px-6 py-4 font-semibold">Task Title</th>
-                <th class="px-6 py-4 font-semibold">Status</th>
+                <th class="px-6 py-4 font-semibold">Status (Change)</th>
                 <th class="px-6 py-4 font-semibold">Due Date</th>
                 <th class="px-6 py-4 font-semibold">Project</th>
-                <th class="px-6 py-4 font-semibold text-right">Assignee</th>
+                <th class="px-6 py-4 font-semibold">Assignee (Worker ID)</th>
+                <th class="px-6 py-4 font-semibold text-right">Actions</th>
               </tr>
             </thead>
 
@@ -187,7 +159,7 @@ const EMPTY_PAGE: PageResponse<Task> = {
                       <div class="skeleton h-5 w-48"></div>
                     </td>
                     <td class="px-6 py-4">
-                      <div class="skeleton h-6 w-24 rounded-full"></div>
+                      <div class="skeleton h-6 w-28 rounded-md"></div>
                     </td>
                     <td class="px-6 py-4">
                       <div class="skeleton h-5 w-24"></div>
@@ -195,15 +167,18 @@ const EMPTY_PAGE: PageResponse<Task> = {
                     <td class="px-6 py-4">
                       <div class="skeleton h-5 w-16"></div>
                     </td>
+                    <td class="px-6 py-4">
+                      <div class="skeleton h-8 w-8 rounded-full"></div>
+                    </td>
                     <td class="px-6 py-4 text-right">
-                      <div class="skeleton h-8 w-8 rounded-full ml-auto"></div>
+                      <div class="skeleton h-8 w-8 rounded-xl ml-auto"></div>
                     </td>
                   </tr>
                 }
               } @else {
                 @for (task of page().data; track task.id) {
                   <tr
-                    class="group hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors cursor-pointer"
+                    class="group hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors"
                   >
                     <td class="px-6 py-4">
                       <div
@@ -216,7 +191,16 @@ const EMPTY_PAGE: PageResponse<Task> = {
                       </div>
                     </td>
                     <td class="px-6 py-4">
-                      <app-task-status-badge [status]="task.status" />
+                      <!-- Interactive Status Selector (Calls /tasks/update-status) -->
+                      <select
+                        class="input text-xs py-1 px-2 w-36 bg-slate-50 dark:bg-slate-800"
+                        [ngModel]="task.status"
+                        (ngModelChange)="onStatusChange(task, $event)"
+                      >
+                        <option value="CREATED">New</option>
+                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="DONE">Completed</option>
+                      </select>
                     </td>
                     <td class="px-6 py-4">
                       <div
@@ -254,17 +238,42 @@ const EMPTY_PAGE: PageResponse<Task> = {
                         Project #{{ task.project_id }}
                       </span>
                     </td>
-                    <td class="px-6 py-4 text-right">
+                    <td class="px-6 py-4">
                       <div
                         class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-brand-100 to-brand-200 text-brand-700 ring-2 ring-white dark:from-brand-900 dark:to-brand-800 dark:text-brand-300 dark:ring-slate-900 font-bold text-xs shadow-sm"
+                        title="Assigned Worker User ID"
                       >
                         {{ task.worker_user_id }}
                       </div>
                     </td>
+                    <td class="px-6 py-4 text-right">
+                      <button
+                        type="button"
+                        class="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl transition-colors inline-flex items-center justify-center"
+                        title="Remove Task"
+                        (click)="removeTask(task.id)"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path d="M3 6h18" />
+                          <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                          <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                        </svg>
+                      </button>
+                    </td>
                   </tr>
                 } @empty {
                   <tr>
-                    <td colspan="5" class="px-6 py-16 text-center">
+                    <td colspan="6" class="px-6 py-16 text-center">
                       <div class="flex flex-col items-center justify-center">
                         <div
                           class="rounded-full bg-slate-100 dark:bg-slate-800 p-4 mb-4"
@@ -370,7 +379,7 @@ const EMPTY_PAGE: PageResponse<Task> = {
   `,
 })
 export class TaskListComponent {
-  private readonly tasks = inject(TaskService);
+  private readonly taskService = inject(TaskService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly search = signal("");
@@ -421,19 +430,66 @@ export class TaskListComponent {
     }
   }
 
+  onStatusChange(task: Task, newStatus: string): void {
+    this.taskService
+      .updateStatus({
+        id: task.id,
+        status: newStatus,
+        worker_user_id: task.worker_user_id,
+      })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError((err) => {
+          console.error("Status update error:", err);
+          return of({ error: err });
+        }),
+      )
+      .subscribe({
+        next: (res) => {
+          if (res && !res.error) {
+            this.refresh();
+          }
+        },
+      });
+  }
+
+  removeTask(id: number): void {
+    this.taskService
+      .remove(id)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError((err) => {
+          console.error("Task removal error:", err);
+          return of({ error: err });
+        }),
+      )
+      .subscribe({
+        next: (res) => {
+          if (res && !res.error) {
+            this.refresh();
+          }
+        },
+      });
+  }
+
   private fetch() {
     this.loading.set(true);
     this.error.set(null);
 
     const filters = this.filterState();
     const options: any = { page: this.pageNumber(), limit: 10 };
-    if (filters.status) {
-      options.status = [filters.status];
-    }
 
-    return this.tasks.findAll(filters.search.trim(), options).pipe(
+    return this.taskService.findAll(filters.search.trim(), options).pipe(
       tap((response) => {
-        this.page.set(response);
+        let items = response?.data || [];
+        // Optional frontend filter for status dropdown if needed
+        if (filters.status) {
+          items = items.filter((t: Task) => t.status === filters.status);
+        }
+        this.page.set({
+          ...response,
+          data: items,
+        });
         this.loading.set(false);
       }),
       catchError(() => {
