@@ -2,21 +2,14 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  computed,
   inject,
   signal,
-  computed,
 } from "@angular/core";
 import { DatePipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { takeUntilDestroyed, toObservable } from "@angular/core/rxjs-interop";
-import {
-  catchError,
-  debounceTime,
-  distinctUntilChanged,
-  of,
-  switchMap,
-  tap,
-} from "rxjs";
+import { catchError, debounceTime, distinctUntilChanged, of, switchMap, tap } from "rxjs";
 import { TaskService } from "../../core/task.service";
 import { PageResponse, Task } from "../../core/models";
 import { TaskDrawerComponent } from "./task-drawer.component";
@@ -28,10 +21,11 @@ const EMPTY_PAGE: PageResponse<Task> = {
 
 @Component({
   selector: "app-task-list",
+  standalone: true,
   imports: [
     FormsModule,
     DatePipe,
-    TaskDrawerComponent, // Removed unused TaskStatusBadgeComponent
+    TaskDrawerComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -46,9 +40,7 @@ const EMPTY_PAGE: PageResponse<Task> = {
       <div class="page-header">
         <div>
           <h1 class="page-title">Tasks</h1>
-          <p class="page-subtitle">
-            Manage and track your organization's work.
-          </p>
+          <p class="page-subtitle">Manage and track your organization's work.</p>
         </div>
 
         <div class="flex items-center gap-3">
@@ -121,9 +113,7 @@ const EMPTY_PAGE: PageResponse<Task> = {
       <!-- Main Content -->
       <div class="card flex-1 flex flex-col min-h-0 overflow-hidden mt-6">
         @if (error()) {
-          <div
-            class="p-4 border-b border-slate-200/60 dark:border-slate-800/60"
-          >
+          <div class="p-4 border-b border-slate-200/60 dark:border-slate-800/60">
             <div class="notice notice-error">{{ error() }}</div>
           </div>
         }
@@ -145,32 +135,18 @@ const EMPTY_PAGE: PageResponse<Task> = {
               </tr>
             </thead>
 
-            <tbody
-              class="divide-y divide-slate-100/80 dark:divide-slate-800/80"
-            >
+            <tbody class="divide-y divide-slate-100/80 dark:divide-slate-800/80">
               @if (loading()) {
                 @for (i of [1, 2, 3, 4, 5]; track i) {
                   <tr
                     class="group hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors"
                   >
-                    <td class="px-6 py-4">
-                      <div class="skeleton h-5 w-48"></div>
-                    </td>
-                    <td class="px-6 py-4">
-                      <div class="skeleton h-6 w-28 rounded-md"></div>
-                    </td>
-                    <td class="px-6 py-4">
-                      <div class="skeleton h-5 w-24"></div>
-                    </td>
-                    <td class="px-6 py-4">
-                      <div class="skeleton h-5 w-16"></div>
-                    </td>
-                    <td class="px-6 py-4">
-                      <div class="skeleton h-8 w-8 rounded-full"></div>
-                    </td>
-                    <td class="px-6 py-4 text-right">
-                      <div class="skeleton h-8 w-8 rounded-xl ml-auto"></div>
-                    </td>
+                    <td class="px-6 py-4"><div class="skeleton h-5 w-48"></div></td>
+                    <td class="px-6 py-4"><div class="skeleton h-6 w-28 rounded-md"></div></td>
+                    <td class="px-6 py-4"><div class="skeleton h-5 w-24"></div></td>
+                    <td class="px-6 py-4"><div class="skeleton h-5 w-16"></div></td>
+                    <td class="px-6 py-4"><div class="skeleton h-8 w-8 rounded-full"></div></td>
+                    <td class="px-6 py-4 text-right"><div class="skeleton h-8 w-8 rounded-xl ml-auto"></div></td>
                   </tr>
                 }
               } @else {
@@ -179,14 +155,10 @@ const EMPTY_PAGE: PageResponse<Task> = {
                     class="group hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors"
                   >
                     <td class="px-6 py-4">
-                      <div
-                        class="font-medium text-slate-900 dark:text-slate-100"
-                      >
+                      <div class="font-medium text-slate-900 dark:text-slate-100">
                         {{ task.title }}
                       </div>
-                      <div class="text-xs text-slate-500 mt-0.5">
-                        ID: #{{ task.id }}
-                      </div>
+                      <div class="text-xs text-slate-500 mt-0.5">ID: #{{ task.id }}</div>
                     </td>
                     <td class="px-6 py-4">
                       <select
@@ -200,45 +172,20 @@ const EMPTY_PAGE: PageResponse<Task> = {
                       </select>
                     </td>
                     <td class="px-6 py-4">
-                      <div
-                        class="flex items-center gap-1.5 text-slate-600 dark:text-slate-400"
-                      >
-                        <svg
-                          class="h-4 w-4 opacity-70"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        >
-                          <rect
-                            width="18"
-                            height="18"
-                            x="3"
-                            y="4"
-                            rx="2"
-                            ry="2"
-                          />
-                          <line x1="16" x2="16" y1="2" y2="6" />
-                          <line x1="8" x2="8" y1="2" y2="6" />
-                          <line x1="3" x2="21" y1="10" y2="10" />
-                        </svg>
+                      <div class="flex items-center gap-1.5 text-slate-600 dark:text-slate-400">
                         {{ task.due_date | date: "MMM d, y" }}
                       </div>
                     </td>
                     <td class="px-6 py-4">
                       <span
-                        class="inline-flex items-center rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-400 ring-1 ring-inset ring-slate-500/10 dark:ring-slate-400/20"
+                        class="inline-flex items-center rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-400"
                       >
                         Project #{{ task.project_id }}
                       </span>
                     </td>
                     <td class="px-6 py-4">
                       <div
-                        class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-brand-100 to-brand-200 text-brand-700 ring-2 ring-white dark:from-brand-900 dark:to-brand-800 dark:text-brand-300 dark:ring-slate-900 font-bold text-xs shadow-sm"
-                        title="Assigned Worker User ID"
+                        class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-brand-100 text-brand-700 font-bold text-xs shadow-sm"
                       >
                         {{ task.worker_user_id }}
                       </div>
@@ -246,63 +193,17 @@ const EMPTY_PAGE: PageResponse<Task> = {
                     <td class="px-6 py-4 text-right">
                       <button
                         type="button"
-                        class="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl transition-colors inline-flex items-center justify-center"
-                        title="Remove Task"
+                        class="p-2 text-slate-400 hover:text-rose-600 rounded-xl transition-colors"
                         (click)="removeTask(task.id)"
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="18"
-                          height="18"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        >
-                          <path d="M3 6h18" />
-                          <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-                          <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-                        </svg>
+                        🗑️
                       </button>
                     </td>
                   </tr>
                 } @empty {
                   <tr>
-                    <td colspan="6" class="px-6 py-16 text-center">
-                      <div class="flex flex-col items-center justify-center">
-                        <div
-                          class="rounded-full bg-slate-100 dark:bg-slate-800 p-4 mb-4"
-                        >
-                          <svg
-                            class="h-8 w-8 text-slate-400"
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          >
-                            <path
-                              d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"
-                            />
-                            <path d="m9 12 2 2 4-4" />
-                          </svg>
-                        </div>
-                        <h3
-                          class="text-sm font-semibold text-slate-900 dark:text-slate-100"
-                        >
-                          No tasks found
-                        </h3>
-                        <p
-                          class="mt-1 text-sm text-slate-500 dark:text-slate-400"
-                        >
-                          Try adjusting your search filters or create a new
-                          task.
-                        </p>
-                      </div>
+                    <td colspan="6" class="px-6 py-16 text-center text-slate-500">
+                      No tasks found
                     </td>
                   </tr>
                 }
@@ -315,20 +216,8 @@ const EMPTY_PAGE: PageResponse<Task> = {
         <div
           class="flex items-center justify-between border-t border-slate-200/60 bg-slate-50/50 px-6 py-4 dark:border-slate-800/60 dark:bg-slate-900/50"
         >
-          <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">
-            Showing page
-            <span class="text-slate-900 dark:text-slate-200">{{
-              page().paginationinfo.page
-            }}</span>
-            of
-            <span class="text-slate-900 dark:text-slate-200">{{
-              maxPages()
-            }}</span>
-            <span class="mx-2 text-slate-300 dark:text-slate-700">|</span>
-            <span class="text-slate-900 dark:text-slate-200">{{
-              page().paginationinfo.total
-            }}</span>
-            total tasks
+          <p class="text-sm text-slate-500 font-medium">
+            Showing page {{ page().paginationinfo.page }} of {{ maxPages() }}
           </p>
           <div class="flex gap-2">
             <button
@@ -336,18 +225,6 @@ const EMPTY_PAGE: PageResponse<Task> = {
               (click)="previousPage()"
               [disabled]="pageNumber() === 1 || loading()"
             >
-              <svg
-                class="h-4 w-4"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="m15 18-6-6 6-6" />
-              </svg>
               Prev
             </button>
             <button
@@ -356,18 +233,6 @@ const EMPTY_PAGE: PageResponse<Task> = {
               [disabled]="pageNumber() >= maxPages() || loading()"
             >
               Next
-              <svg
-                class="h-4 w-4"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="m9 18 6-6-6-6" />
-              </svg>
             </button>
           </div>
         </div>
@@ -399,8 +264,7 @@ export class TaskListComponent {
       .pipe(
         debounceTime(300),
         distinctUntilChanged(
-          (prev, curr) =>
-            prev.search === curr.search && prev.status === curr.status,
+          (prev, curr) => prev.search === curr.search && prev.status === curr.status,
         ),
         tap(() => this.pageNumber.set(1)),
         switchMap(() => this.fetch()),
@@ -429,44 +293,16 @@ export class TaskListComponent {
 
   onStatusChange(task: Task, newStatus: string): void {
     this.taskService
-      .updateStatus({
-        id: task.id,
-        status: newStatus,
-        worker_user_id: task.worker_user_id,
-      } as any)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        catchError((err) => {
-          console.error("Status update error:", err);
-          return of({ error: err });
-        }),
-      )
-      .subscribe({
-        next: (res) => {
-          if (res && !res.error) {
-            this.refresh();
-          }
-        },
-      });
+      .updateStatus({ id: task.id, status: newStatus, worker_user_id: task.worker_user_id } as any)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({ next: () => this.refresh() });
   }
 
   removeTask(id: number): void {
     this.taskService
-      .remove({ id }) // Fixed to pass an object matching TaskService remove signature
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        catchError((err) => {
-          console.error("Task removal error:", err);
-          return of({ error: err });
-        }),
-      )
-      .subscribe({
-        next: (res) => {
-          if (res && !res.error) {
-            this.refresh();
-          }
-        },
-      });
+      .remove({ id })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({ next: () => this.refresh() });
   }
 
   private fetch() {
@@ -486,7 +322,7 @@ export class TaskListComponent {
       }),
       catchError(() => {
         this.page.set(EMPTY_PAGE);
-        this.error.set("Could not load tasks. Check that the API is running.");
+        this.error.set("Could not load tasks.");
         this.loading.set(false);
         return of(EMPTY_PAGE);
       }),

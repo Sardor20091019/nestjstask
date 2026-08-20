@@ -259,7 +259,6 @@ export class TaskDrawerComponent implements OnChanges {
   private fetchWorkspaceEntities() {
     const body = { name: "", limit: 50, page: 1 };
 
-    // 1. Fetch Projects
     this.http.post<any>(`${API_BASE_URL}/projects/findall`, body).subscribe({
       next: (res: any) => {
         const items = Array.isArray(res)
@@ -275,14 +274,18 @@ export class TaskDrawerComponent implements OnChanges {
       error: (err: any) => console.error("Failed to load projects:", err),
     });
 
-    // 2. Fetch Users
     this.http.post<any>(`${API_BASE_URL}/users/findall`, body).subscribe({
       next: (res: any) => {
         const items = Array.isArray(res)
           ? res
           : res?.data || res?.items || res?.result || res?.data?.data || [];
+        
+        const validWorkers = items.filter(
+          (u: any) => Number(u.role) !== 1 && Number(u.role) !== 2
+        );
+
         this.users.set(
-          items.map((u: any) => ({
+          validWorkers.map((u: any) => ({
             id: u.id,
             name: u.name || u.username || u.full_name || `User #${u.id}`,
           })),
@@ -305,25 +308,17 @@ export class TaskDrawerComponent implements OnChanges {
       due_date: new Date(formValue.due_date).toISOString(),
     };
 
-    const headers = new HttpHeaders({
-      user_id: "1",
-    });
-
-    console.log("Sending Task Payload:", payload);
+    const headers = new HttpHeaders({ user_id: "1" });
 
     this.http.post(`${API_BASE_URL}/tasks/create`, payload, { headers }).subscribe({
       next: () => {
         this.submitting.set(false);
-        this.notifications.success(
-          "Task created successfully",
-          formValue.title,
-        );
+        this.notifications.success("Task created successfully", formValue.title);
         this.saved.emit();
         this.close.emit();
       },
       error: (err: any) => {
         this.submitting.set(false);
-        console.error("Task Creation Error Details:", err?.error);
         const serverMessage = Array.isArray(err?.error?.message)
           ? err.error.message.join(", ")
           : err?.error?.message || "Failed to create task";
