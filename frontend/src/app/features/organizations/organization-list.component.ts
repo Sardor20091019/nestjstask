@@ -1,4 +1,4 @@
-now for organizations add remove import {
+import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
@@ -90,7 +90,7 @@ interface Organization {
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @for (org of organizations(); track org.id) {
               <div
-                class="card p-6 card-hover cursor-pointer flex flex-col group bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xs transition-all hover:shadow-md"
+                class="card p-6 card-hover flex flex-col group bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xs transition-all hover:shadow-md relative"
               >
                 <div class="flex items-start justify-between mb-4">
                   <div>
@@ -105,29 +105,54 @@ interface Organization {
                       {{ org.name }}
                     </h3>
                   </div>
-                  <div
-                    class="p-2 bg-brand-50 dark:bg-brand-950/30 text-brand-600 dark:text-brand-400 rounded-xl"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                  <div class="flex items-center gap-2">
+                    <!-- Remove / Delete Button -->
+                    <button
+                      type="button"
+                      class="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl transition-colors"
+                      title="Remove Organization"
+                      (click)="removeOrganization(org.id)"
                     >
-                      <path d="M3 21h18" />
-                      <path d="M9 8h1" />
-                      <path d="M9 12h1" />
-                      <path d="M9 16h1" />
-                      <path d="M14 8h1" />
-                      <path d="M14 12h1" />
-                      <path d="M14 16h1" />
-                      <path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16" />
-                    </svg>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M3 6h18" />
+                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                      </svg>
+                    </button>
+                    <div
+                      class="p-2 bg-brand-50 dark:bg-brand-950/30 text-brand-600 dark:text-brand-400 rounded-xl"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M3 21h18" />
+                        <path d="M9 8h1" />
+                        <path d="M9 12h1" />
+                        <path d="M9 16h1" />
+                        <path d="M14 8h1" />
+                        <path d="M14 12h1" />
+                        <path d="M14 16h1" />
+                        <path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16" />
+                      </svg>
+                    </div>
                   </div>
                 </div>
 
@@ -425,6 +450,25 @@ export class OrganizationListComponent implements OnInit {
         },
         error: () => {
           this.submitting.set(false);
+        },
+      });
+  }
+
+  removeOrganization(id: number): void {
+    this.api
+      .post<any, any>("/organizations/remove", { id })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError((err) => {
+          console.error("Organization removal error:", err);
+          return of({ error: err });
+        }),
+      )
+      .subscribe({
+        next: (res) => {
+          if (res && !res.error) {
+            this.fetchOrganizations();
+          }
         },
       });
   }
