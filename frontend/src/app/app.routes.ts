@@ -19,7 +19,7 @@ export const routes: Routes = [
       import("./features/tasks/task-list.component").then(
         (m) => m.TaskListComponent,
       ),
-    title: "Tasks · AstroDash",
+    title: "Tasks · astro_spectrum",
   },
   {
     path: "projects",
@@ -27,7 +27,7 @@ export const routes: Routes = [
       import("./features/projects/project-list.component").then(
         (m) => m.ProjectListComponent,
       ),
-    title: "Projects · AstroDash",
+    title: "Projects · astro_spectrum",
   },
   {
     path: "organizations",
@@ -35,7 +35,7 @@ export const routes: Routes = [
       import("./features/organizations/organization-list.component").then(
         (m) => m.OrganizationListComponent,
       ),
-    title: "Organizations · AstroDash",
+    title: "Organizations · astro_spectrum",
   },
   {
     path: "statistics",
@@ -43,7 +43,7 @@ export const routes: Routes = [
       import("./features/statistics/statistics-dashboard.component").then(
         (m) => m.StatisticsDashboardComponent,
       ),
-    title: "Statistics · AstroDash",
+    title: "Statistics · astro_spectrum",
   },
   {
     path: "users",
@@ -51,11 +51,11 @@ export const routes: Routes = [
       import("./features/users/user-list.component").then(
         (m) => m.UserListComponent,
       ),
-    title: "Users · AstroDash",
+    title: "Users · astro_spectrum",
   },
   {
     path: "users/workbench",
-    title: "Users API Workbench · AstroDash",
+    title: "Users API Workbench · astro_spectrum",
     ...workbench(
       "Users API Workbench",
       "Test raw user endpoints directly with custom payloads.",

@@ -492,7 +492,7 @@ export class StatisticsDashboardComponent implements OnInit {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "astrodash-executive-summary.json";
+    a.download = "astro_spectrum-executive-summary.json";
     a.click();
     URL.revokeObjectURL(url);
   }
