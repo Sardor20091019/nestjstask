@@ -19,7 +19,6 @@ import {
 } from "rxjs";
 import { TaskService } from "../../core/task.service";
 import { PageResponse, Task } from "../../core/models";
-import { TaskStatusBadgeComponent } from "../../shared/task-status-badge.component";
 import { TaskDrawerComponent } from "./task-drawer.component";
 
 const EMPTY_PAGE: PageResponse<Task> = {
@@ -32,8 +31,7 @@ const EMPTY_PAGE: PageResponse<Task> = {
   imports: [
     FormsModule,
     DatePipe,
-    TaskStatusBadgeComponent,
-    TaskDrawerComponent,
+    TaskDrawerComponent, // Removed unused TaskStatusBadgeComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -191,7 +189,6 @@ const EMPTY_PAGE: PageResponse<Task> = {
                       </div>
                     </td>
                     <td class="px-6 py-4">
-                      <!-- Interactive Status Selector (Calls /tasks/update-status) -->
                       <select
                         class="input text-xs py-1 px-2 w-36 bg-slate-50 dark:bg-slate-800"
                         [ngModel]="task.status"
@@ -436,7 +433,7 @@ export class TaskListComponent {
         id: task.id,
         status: newStatus,
         worker_user_id: task.worker_user_id,
-      })
+      } as any)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError((err) => {
@@ -455,7 +452,7 @@ export class TaskListComponent {
 
   removeTask(id: number): void {
     this.taskService
-      .remove(id)
+      .remove({ id }) // Fixed to pass an object matching TaskService remove signature
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError((err) => {
@@ -478,18 +475,13 @@ export class TaskListComponent {
 
     const filters = this.filterState();
     const options: any = { page: this.pageNumber(), limit: 10 };
+    if (filters.status) {
+      options.status = [filters.status];
+    }
 
     return this.taskService.findAll(filters.search.trim(), options).pipe(
       tap((response) => {
-        let items = response?.data || [];
-        // Optional frontend filter for status dropdown if needed
-        if (filters.status) {
-          items = items.filter((t: Task) => t.status === filters.status);
-        }
-        this.page.set({
-          ...response,
-          data: items,
-        });
+        this.page.set(response);
         this.loading.set(false);
       }),
       catchError(() => {

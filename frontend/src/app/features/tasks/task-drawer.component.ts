@@ -128,7 +128,7 @@ interface UserOption {
               />
             </div>
 
-            <!-- Project Dropdown (Human Friendly) -->
+            <!-- Project Dropdown -->
             <div>
               <label for="project_id" class="label"
                 >Project <span class="text-rose-500">*</span></label
@@ -145,7 +145,7 @@ interface UserOption {
               </select>
             </div>
 
-            <!-- Assignee Dropdown (Human Friendly) -->
+            <!-- Assignee Dropdown -->
             <div>
               <label for="worker_user_id" class="label"
                 >Assignee <span class="text-rose-500">*</span></label
@@ -256,19 +256,10 @@ export class TaskDrawerComponent {
 
   readonly submitting = signal(false);
 
-  // Human-friendly options (automatically fetched or safely defaulted)
-  readonly projects = signal<ProjectOption[]>([
-    { id: 1, name: "Astrospectrum Gallery Platform" },
-    { id: 2, name: "Task Management Engine" },
-  ]);
+  // Initialized as empty arrays (no fake data)
+  readonly projects = signal<ProjectOption[]>([]);
+  readonly users = signal<UserOption[]>([]);
 
-  readonly users = signal<UserOption[]>([
-    { id: 1, name: "Sardor Sunatullayev" },
-    { id: 2, name: "Otabek" },
-    { id: 3, name: "Muhammad" },
-  ]);
-
-  // Initialize with tomorrow's date at noon
   private getDefaultDate(): string {
     const d = new Date();
     d.setDate(d.getDate() + 1);
@@ -280,19 +271,18 @@ export class TaskDrawerComponent {
 
   readonly form = this.fb.group({
     title: ["", Validators.required],
-    project_id: [1, [Validators.required, Validators.min(1)]],
-    worker_user_id: [1, [Validators.required, Validators.min(1)]],
+    project_id: ["", Validators.required],
+    worker_user_id: ["", Validators.required],
     due_date: [this.getDefaultDate(), Validators.required],
   });
 
   constructor() {
     effect(() => {
-      // Reset form and fetch live lists when drawer opens
       if (this.isOpen) {
         this.form.reset({
           title: "",
-          project_id: 1,
-          worker_user_id: 1,
+          project_id: "",
+          worker_user_id: "",
           due_date: this.getDefaultDate(),
         });
         this.fetchWorkspaceEntities();
@@ -301,10 +291,9 @@ export class TaskDrawerComponent {
   }
 
   private fetchWorkspaceEntities() {
-    // Gracefully try to load real projects from backend, falling back to defaults if endpoint differs
     this.http.post<any>("/projects/findAll", { limit: 50 }).subscribe({
       next: (res) => {
-        if (res && res.data && res.data.length > 0) {
+        if (res && res.data) {
           this.projects.set(
             res.data.map((p: any) => ({
               id: p.id,
@@ -313,13 +302,14 @@ export class TaskDrawerComponent {
           );
         }
       },
-      error: () => {},
+      error: () => {
+        this.projects.set([]);
+      },
     });
 
-    // Gracefully try to load real users
     this.http.post<any>("/users/findAll", { limit: 50 }).subscribe({
       next: (res) => {
-        if (res && res.data && res.data.length > 0) {
+        if (res && res.data) {
           this.users.set(
             res.data.map((u: any) => ({
               id: u.id,
@@ -328,7 +318,9 @@ export class TaskDrawerComponent {
           );
         }
       },
-      error: () => {},
+      error: () => {
+        this.users.set([]);
+      },
     });
   }
 
