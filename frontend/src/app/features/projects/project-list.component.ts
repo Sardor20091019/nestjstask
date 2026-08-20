@@ -14,7 +14,7 @@ import {
 } from "@angular/forms";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { catchError, of } from "rxjs";
-import { ApiService } from "../../services/api.service";
+import { ApiService } from "../../core/api.service";
 
 interface Project {
   id: number;
