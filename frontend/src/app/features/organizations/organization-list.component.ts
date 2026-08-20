@@ -12,9 +12,9 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { HttpClient } from "@angular/common/http";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { catchError, of } from "rxjs";
+import { ApiService } from "../../core/api.service";
 
 interface Organization {
   id: number;
@@ -158,11 +158,6 @@ interface Organization {
                     </svg>
                     {{ org.memberCount || 1 }} members
                   </div>
-                  <span
-                    class="text-brand-600 dark:text-brand-400 text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-           
-                  </span>
                 </div>
               </div>
             }
@@ -288,7 +283,7 @@ interface Organization {
                   id="name"
                   formControlName="name"
                   class="input mt-1.5 w-full"
-                  placeholder="e.g. somethinadgintefrestinghere"
+                  placeholder="e.g. Engineering Team"
                 />
                 @if (
                   form.controls.name.touched &&
@@ -346,7 +341,7 @@ interface Organization {
   `,
 })
 export class OrganizationListComponent implements OnInit {
-  private readonly http = inject(HttpClient);
+  private readonly api = inject(ApiService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(NonNullableFormBuilder);
 
@@ -367,45 +362,25 @@ export class OrganizationListComponent implements OnInit {
   private fetchOrganizations(): void {
     this.loading.set(true);
 
-    this.http
-      .post<any>("/organizations/findAll", { limit: 20 })
+    this.api
+      .post<any, any>("/organizations/findAll", { limit: 20 })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        catchError(() => of(null)),
+        catchError((err) => {
+          console.error("Error fetching organizations:", err);
+          return of(null);
+        }),
       )
       .subscribe({
         next: (res) => {
           const fetchedData = res?.data || res || [];
-
-          if (fetchedData.length > 0) {
-            this.organizations.set(fetchedData);
-          } else {
-            this.organizations.set([
-              {
-                id: 1,
-                name: "Astrospectrum Workspace",
-                created_by: 1,
-                memberCount: 3,
-              },
-              {
-                id: 2,
-                name: "Qibray Operations",
-                created_by: 1,
-                memberCount: 6,
-              },
-            ]);
-          }
+          this.organizations.set(
+            Array.isArray(fetchedData) ? fetchedData : []
+          );
           this.loading.set(false);
         },
         error: () => {
-          this.organizations.set([
-            {
-              id: 1,
-              name: "Astrospectrum Workspace",
-              created_by: 1,
-              memberCount: 3,
-            },
-          ]);
+          this.organizations.set([]);
           this.loading.set(false);
         },
       });
@@ -431,8 +406,8 @@ export class OrganizationListComponent implements OnInit {
       created_by: Number(raw.created_by),
     };
 
-    this.http
-      .post<any>("/organizations/create", payload)
+    this.api
+      .post<any, any>("/organizations/create", payload)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError((err) => {
