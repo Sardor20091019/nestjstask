@@ -15,14 +15,21 @@ export class ApiService {
     path: string,
     body: TBody,
   ): Observable<TResponse> {
-    // Grab the token from localStorage
-    const token = localStorage.getItem("token");
+    // Grab the token and user id from localStorage
+    const token = localStorage.getItem("task-manager.access_token");
+    const userId = localStorage.getItem("task-manager.user_id");
 
     // Build headers dynamically, attaching Bearer token if it exists
-    const headers = new HttpHeaders({
+    let headers = new HttpHeaders({
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     });
+
+    if (token) {
+      headers = headers.set("Authorization", `Bearer ${token}`);
+    }
+    if (userId) {
+      headers = headers.set("user_id", userId);
+    }
 
     return this.http.post<TResponse>(`${this.apiUrl}${path}`, body, {
       headers,

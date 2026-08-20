@@ -388,7 +388,7 @@ export class OrganizationListComponent implements OnInit {
     this.loading.set(true);
 
     this.api
-      .post<any, any>("/organizations/findAll", { limit: 20 })
+      .post<any, any>("/organizations/findall", { limit: 20 })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError((err) => {

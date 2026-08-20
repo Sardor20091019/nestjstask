@@ -395,7 +395,7 @@ export class ProjectListComponent implements OnInit {
     this.loading.set(true);
 
     this.api
-      .post<any, any>("/projects/findAll", { limit: 20 })
+      .post<any, any>("/projects/findall", { limit: 20 })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError(() => of(null)),

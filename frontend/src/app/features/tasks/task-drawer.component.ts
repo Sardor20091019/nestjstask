@@ -16,6 +16,7 @@ import {
 } from "@angular/forms";
 import { HttpClient } from "@angular/common/http";
 import { TaskService } from "../../core/task.service";
+import { ApiService } from "../../core/api.service";
 import { NotificationService } from "../../shared/services/notification.service";
 
 interface ProjectOption {
@@ -252,7 +253,7 @@ export class TaskDrawerComponent {
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly taskService = inject(TaskService);
   private readonly notifications = inject(NotificationService);
-  private readonly http = inject(HttpClient);
+  private readonly api = inject(ApiService);
 
   readonly submitting = signal(false);
 
@@ -291,7 +292,7 @@ export class TaskDrawerComponent {
   }
 
   private fetchWorkspaceEntities() {
-    this.http.post<any>("/projects/findAll", { limit: 50 }).subscribe({
+    this.api.post<any, any>("/projects/findall", { limit: 50 }).subscribe({
       next: (res) => {
         if (res && res.data) {
           this.projects.set(
@@ -307,7 +308,7 @@ export class TaskDrawerComponent {
       },
     });
 
-    this.http.post<any>("/users/findAll", { limit: 50 }).subscribe({
+    this.api.post<any, any>("/users/findall", { limit: 50 }).subscribe({
       next: (res) => {
         if (res && res.data) {
           this.users.set(

@@ -33,12 +33,17 @@ export class AuthService {
     return this.userId();
   }
 
+  private readonly apiUrl =
+    window.location.hostname === "localhost"
+      ? "http://localhost:3000"
+      : "https://nestjstask-1.onrender.com";
+
   requestDevelopmentToken() {
     const userId = this.getUserId();
     if (userId === null)
       throw new Error("Set a user ID before requesting a token.");
     return this.http
-      .post<{ access_token: string }>("/auth/development-token", {
+      .post<{ access_token: string }>(`${this.apiUrl}/auth/development-token`, {
         user_id: userId,
       })
       .pipe(
