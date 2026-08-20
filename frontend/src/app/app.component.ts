@@ -179,125 +179,127 @@ import { ToastContainerComponent } from "./shared/components/toast-container.com
           </a>
         </nav>
 
-        <!-- Main Content Area -->
-        <div class="flex flex-1 flex-col overflow-hidden">
-          <!-- Top Header -->
-          <header
-            class="flex h-16 flex-shrink-0 items-center justify-between border-b border-slate-200/60 bg-white/70 px-6 backdrop-blur-md dark:border-slate-800/60 dark:bg-slate-900/40"
-          >
-            <div class="flex flex-1">
-              <!-- Breadcrumbs / Page Title space -->
-            </div>
+        <
+      </aside>
 
-            <div class="flex items-center gap-4">
-              <div
-                class="flex items-center gap-3 rounded-full border border-slate-200 bg-white px-3 py-1.5 shadow-sm dark:border-slate-800 dark:bg-slate-950"
+      <!-- Main Content Area -->
+      <div class="flex flex-1 flex-col overflow-hidden">
+        <!-- Top Header -->
+        <header
+          class="flex h-16 flex-shrink-0 items-center justify-between border-b border-slate-200/60 bg-white/70 px-6 backdrop-blur-md dark:border-slate-800/60 dark:bg-slate-900/40"
+        >
+          <div class="flex flex-1">
+            <!-- Breadcrumbs / Page Title space -->
+          </div>
+
+          <div class="flex items-center gap-4">
+            <div
+              class="flex items-center gap-3 rounded-full border border-slate-200 bg-white px-3 py-1.5 shadow-sm dark:border-slate-800 dark:bg-slate-950"
+            >
+              <span
+                class="text-xs font-medium text-slate-500 dark:text-slate-400"
+                >User ID:</span
               >
-                <span
-                  class="text-xs font-medium text-slate-500 dark:text-slate-400"
-                  >User ID:</span
-                >
-                <input
-                  class="w-12 bg-transparent text-center text-sm font-semibold text-slate-900 outline-none dark:text-slate-100"
-                  type="number"
-                  min="1"
-                  placeholder="ID"
-                  [value]="userInput()"
-                  (input)="setUserId($any($event.target).value)"
-                />
-                <div class="h-4 w-px bg-slate-200 dark:bg-slate-700"></div>
-                <button
-                  class="flex items-center gap-1.5 text-xs font-semibold"
-                  [class.text-brand-600]="!tokenLoading() && auth.accessToken()"
-                  [class.dark:text-brand-400]="
-                    !tokenLoading() && auth.accessToken()
-                  "
-                  [class.text-slate-500]="tokenLoading() || !auth.accessToken()"
-                  (click)="getToken()"
-                  [disabled]="tokenLoading()"
-                >
-                  @if (tokenLoading()) {
-                    <svg
-                      class="h-3 w-3 animate-spin"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        class="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        stroke-width="4"
-                      ></circle>
-                      <path
-                        class="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    <span>Syncing</span>
-                  } @else if (auth.accessToken()) {
-                    <div class="size-1.5 rounded-full bg-brand-500"></div>
-                    <span>Ready</span>
-                  } @else {
-                    <span>Set JWT</span>
-                  }
-                </button>
-              </div>
-
+              <input
+                class="w-12 bg-transparent text-center text-sm font-semibold text-slate-900 outline-none dark:text-slate-100"
+                type="number"
+                min="1"
+                placeholder="ID"
+                [value]="userInput()"
+                (input)="setUserId($any($event.target).value)"
+              />
+              <div class="h-4 w-px bg-slate-200 dark:bg-slate-700"></div>
               <button
-                class="flex size-9 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
-                (click)="toggleTheme()"
+                class="flex items-center gap-1.5 text-xs font-semibold"
+                [class.text-brand-600]="!tokenLoading() && auth.accessToken()"
+                [class.dark:text-brand-400]="
+                  !tokenLoading() && auth.accessToken()
+                "
+                [class.text-slate-500]="tokenLoading() || !auth.accessToken()"
+                (click)="getToken()"
+                [disabled]="tokenLoading()"
               >
-                @if (dark()) {
+                @if (tokenLoading()) {
                   <svg
+                    class="h-3 w-3 animate-spin"
                     xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
                     fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    viewBox="0 0 24 24"
                   >
-                    <circle cx="12" cy="12" r="4" />
-                    <path d="M12 2v2" />
-                    <path d="M12 20v2" />
-                    <path d="m4.93 4.93 1.41 1.41" />
-                    <path d="m17.66 17.66 1.41 1.41" />
-                    <path d="M2 12h2" />
-                    <path d="M20 12h2" />
-                    <path d="m6.34 17.66-1.41 1.41" />
-                    <path d="m19.07 4.93-1.41 1.41" />
+                    <circle
+                      class="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      stroke-width="4"
+                    ></circle>
+                    <path
+                      class="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
                   </svg>
+                  <span>Syncing</span>
+                } @else if (auth.accessToken()) {
+                  <div class="size-1.5 rounded-full bg-brand-500"></div>
+                  <span>Ready</span>
                 } @else {
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-                  </svg>
+                  <span>Set JWT</span>
                 }
               </button>
             </div>
-          </header>
 
-          <!-- Main Router Outlet -->
-          <main class="flex-1 overflow-y-auto">
-            <router-outlet />
-          </main>
-        </div>
-      </aside>
+            <button
+              class="flex size-9 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+              (click)="toggleTheme()"
+            >
+              @if (dark()) {
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="12" cy="12" r="4" />
+                  <path d="M12 2v2" />
+                  <path d="M12 20v2" />
+                  <path d="m4.93 4.93 1.41 1.41" />
+                  <path d="m17.66 17.66 1.41 1.41" />
+                  <path d="M2 12h2" />
+                  <path d="M20 12h2" />
+                  <path d="m6.34 17.66-1.41 1.41" />
+                  <path d="m19.07 4.93-1.41 1.41" />
+                </svg>
+              } @else {
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+                </svg>
+              }
+            </button>
+          </div>
+        </header>
+
+        <!-- Main Router Outlet -->
+        <main class="flex-1 overflow-y-auto">
+          <router-outlet />
+        </main>
+      </div>
     </div>
   `,
 })
