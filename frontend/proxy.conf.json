@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "http://localhost:3000",
+    "target": "https://nestjstask-1.onrender.com",
     "secure": false,
     "changeOrigin": true,
     "pathRewrite": {
@@ -8,32 +8,32 @@
     }
   },
   "/auth": {
-    "target": "http://localhost:3000",
+    "target": "https://nestjstask-1.onrender.com",
     "secure": false,
     "changeOrigin": true
   },
   "/users": {
-    "target": "http://localhost:3000",
+    "target": "https://nestjstask-1.onrender.com",
     "secure": false,
     "changeOrigin": true
   },
   "/organizations": {
-    "target": "http://localhost:3000",
+    "target": "https://nestjstask-1.onrender.com",
     "secure": false,
     "changeOrigin": true
   },
   "/projects": {
-    "target": "http://localhost:3000",
+    "target": "https://nestjstask-1.onrender.com",
     "secure": false,
     "changeOrigin": true
   },
   "/tasks": {
-    "target": "http://localhost:3000",
+    "target": "https://nestjstask-1.onrender.com",
     "secure": false,
     "changeOrigin": true
   },
   "/statistics": {
-    "target": "http://localhost:3000",
+    "target": "https://nestjstask-1.onrender.com",
     "secure": false,
     "changeOrigin": true
   }

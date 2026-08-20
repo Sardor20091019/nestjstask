@@ -145,16 +145,19 @@ export class ApiWorkbenchComponent {
   readonly loading = signal(false);
   readonly parseError = signal<string | null>(null);
   readonly requestError = signal<string | null>(null);
+
   select(operation: Operation): void {
     this.selected.set(operation);
     this.reset();
     this.result.set(null);
     this.requestError.set(null);
   }
+
   reset(): void {
     this.body.set(this.selected().body);
     this.parseError.set(null);
   }
+
   send(): void {
     let body: Record<string, unknown>;
     try {
@@ -170,18 +173,20 @@ export class ApiWorkbenchComponent {
     this.api
       .post<unknown, Record<string, unknown>>(this.selected().path, body)
       .subscribe({
-        next: (value) => this.result.set(value),
+        next: (value) => {
+          this.result.set(value);
+          this.loading.set(false);
+        },
         error: (error: HttpErrorResponse) => {
           this.requestError.set(this.formatError(error));
           this.loading.set(false);
         },
-        complete: () => this.loading.set(false),
       });
   }
 
   private formatError(error: HttpErrorResponse): string {
     if (error.status === 0) {
-      return "Cannot reach the API at localhost:3000. Start NestJS with npm run start:dev from the repository root.";
+      return "Cannot reach the API at https://nestjstask-1.onrender.com. Please check your network connection or backend status.";
     }
     const message = error.error?.message;
     return Array.isArray(message)

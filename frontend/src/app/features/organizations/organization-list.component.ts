@@ -23,6 +23,8 @@ interface Organization {
   memberCount?: number;
 }
 
+const API_BASE_URL = "https://nestjstask-1.onrender.com";
+
 @Component({
   selector: "app-organization-list",
   standalone: true,
@@ -390,7 +392,7 @@ export class OrganizationListComponent implements OnInit {
     this.loading.set(true);
 
     this.http
-      .post<any>("http://localhost:3000/organizations/findall", { limit: 50, page: 1 })
+      .post<any>(`${API_BASE_URL}/organizations/findall`, { limit: 50, page: 1 })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError((err) => {
@@ -442,8 +444,8 @@ export class OrganizationListComponent implements OnInit {
 
     const orgId = this.editingOrgId();
     const url = orgId
-      ? "http://localhost:3000/organizations/update"
-      : "http://localhost:3000/organizations/create";
+      ? `${API_BASE_URL}/organizations/update`
+      : `${API_BASE_URL}/organizations/create`;
 
     const payload = orgId
       ? { id: orgId, name: raw.name }
@@ -476,7 +478,7 @@ export class OrganizationListComponent implements OnInit {
     const adminHeaders = new HttpHeaders({ user_id: "1" });
 
     this.http
-      .post<any>("http://localhost:3000/organizations/remove", { id }, { headers: adminHeaders })
+      .post<any>(`${API_BASE_URL}/organizations/remove`, { id }, { headers: adminHeaders })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError((err) => {

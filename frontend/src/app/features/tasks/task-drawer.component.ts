@@ -28,6 +28,8 @@ interface UserOption {
   name: string;
 }
 
+const API_BASE_URL = "https://nestjstask-1.onrender.com";
+
 @Component({
   selector: "app-task-drawer",
   standalone: true,
@@ -258,7 +260,7 @@ export class TaskDrawerComponent implements OnChanges {
     const body = { name: "", limit: 50, page: 1 };
 
     // 1. Fetch Projects
-    this.http.post<any>("http://localhost:3000/projects/findall", body).subscribe({
+    this.http.post<any>(`${API_BASE_URL}/projects/findall`, body).subscribe({
       next: (res: any) => {
         const items = Array.isArray(res)
           ? res
@@ -274,7 +276,7 @@ export class TaskDrawerComponent implements OnChanges {
     });
 
     // 2. Fetch Users
-    this.http.post<any>("http://localhost:3000/users/findall", body).subscribe({
+    this.http.post<any>(`${API_BASE_URL}/users/findall`, body).subscribe({
       next: (res: any) => {
         const items = Array.isArray(res)
           ? res
@@ -309,7 +311,7 @@ export class TaskDrawerComponent implements OnChanges {
 
     console.log("Sending Task Payload:", payload);
 
-    this.http.post("http://localhost:3000/tasks/create", payload, { headers }).subscribe({
+    this.http.post(`${API_BASE_URL}/tasks/create`, payload, { headers }).subscribe({
       next: () => {
         this.submitting.set(false);
         this.notifications.success(

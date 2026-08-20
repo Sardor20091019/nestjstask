@@ -4,6 +4,7 @@ import { map, tap } from "rxjs";
 
 const USER_ID_KEY = "task-manager.user_id";
 const ACCESS_TOKEN_KEY = "task-manager.access_token";
+const API_BASE_URL = "https://nestjstask-1.onrender.com";
 
 @Injectable({ providedIn: "root" })
 export class AuthService {
@@ -33,10 +34,7 @@ export class AuthService {
     return this.userId();
   }
 
-  private readonly apiUrl =
-    window.location.hostname === "localhost"
-      ? "http://localhost:3000"
-      : "https://nestjstask-1.onrender.com";
+  private readonly apiUrl = API_BASE_URL;
 
   requestDevelopmentToken() {
     const userId = this.getUserId();

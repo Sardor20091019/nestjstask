@@ -16,16 +16,17 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { catchError, of } from "rxjs";
 
-interface Project {
+interface Organization {
   id: number;
   name: string;
-  org_id?: number;
   created_by?: number;
-  taskCount?: number;
+  memberCount?: number;
 }
 
+const API_BASE_URL = "https://nestjstask-1.onrender.com";
+
 @Component({
-  selector: "app-project-list",
+  selector: "app-organization-list",
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,10 +40,10 @@ interface Project {
           <h1
             class="page-title text-2xl font-bold tracking-tight text-slate-900 dark:text-white"
           >
-            Projects
+            Organizations
           </h1>
           <p class="page-subtitle text-sm text-slate-500 dark:text-slate-400">
-            Manage and track your organization's work.
+            Manage business units and organizational structures.
           </p>
         </div>
         <button
@@ -63,7 +64,7 @@ interface Project {
             <path d="M5 12h14" />
             <path d="M12 5v14" />
           </svg>
-          <span class="hidden sm:inline">New Project</span>
+          <span class="hidden sm:inline">New Organization</span>
         </button>
       </div>
 
@@ -71,7 +72,7 @@ interface Project {
       <div class="flex-1 mt-8">
         @if (loading()) {
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+            @for (i of [1, 2, 3]; track i) {
               <div
                 class="card p-6 min-h-[160px] flex flex-col gap-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xs"
               >
@@ -87,33 +88,32 @@ interface Project {
               </div>
             }
           </div>
-        } @else if (projects().length > 0) {
+        } @else if (organizations().length > 0) {
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            @for (project of projects(); track project.id) {
+            @for (org of organizations(); track org.id) {
               <div
-                class="card p-6 card-hover flex flex-col group bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xs transition-all hover:shadow-md"
+                class="card p-6 card-hover flex flex-col group bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xs transition-all hover:shadow-md relative"
               >
                 <div class="flex items-start justify-between mb-4">
                   <div>
                     <span
                       class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 mb-1.5"
                     >
-                      ID: #{{ project.id }}
+                      ID: #{{ org.id }}
                     </span>
                     <h3
                       class="text-lg font-semibold text-slate-900 dark:text-slate-100 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors"
                     >
-                      {{ project.name }}
+                      {{ org.name }}
                     </h3>
                   </div>
-
-                  <!-- Action Buttons (Edit & Remove) -->
                   <div class="flex items-center gap-2">
+                    <!-- Edit Button (Admin) -->
                     <button
                       type="button"
                       class="p-2 text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-brand-50 dark:hover:bg-brand-950/30 rounded-xl transition-colors"
-                      title="Edit Project"
-                      (click)="openEditModal(project)"
+                      title="Edit Organization"
+                      (click)="openEditModal(org)"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -131,11 +131,12 @@ interface Project {
                       </svg>
                     </button>
 
+                    <!-- Remove / Delete Button (Admin) -->
                     <button
                       type="button"
                       class="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl transition-colors"
-                      title="Remove Project"
-                      (click)="removeProject(project.id)"
+                      title="Remove Organization"
+                      (click)="removeOrganization(org.id)"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -156,14 +157,10 @@ interface Project {
                   </div>
                 </div>
 
-                <div
-                  class="text-xs text-slate-500 dark:text-slate-400 space-y-1 mb-4"
-                >
-                  <p>Org ID: {{ project.org_id || 1 }}</p>
-                  <p>Created By: {{ project.created_by || 1 }}</p>
+                <div class="text-xs text-slate-500 dark:text-slate-400 mb-4">
+                  <p>Created By ID: {{ org.created_by || 1 }}</p>
                 </div>
 
-                <!-- Card Footer -->
                 <div
                   class="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between"
                 >
@@ -180,12 +177,12 @@ interface Project {
                       stroke-linecap="round"
                       stroke-linejoin="round"
                     >
-                      <path
-                        d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"
-                      />
-                      <path d="m9 12 2 2 4-4" />
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                     </svg>
-                    {{ project.taskCount || 0 }} tasks
+                    {{ org.memberCount || 1 }} members
                   </div>
                 </div>
               </div>
@@ -209,17 +206,24 @@ interface Project {
                 stroke-linecap="round"
                 stroke-linejoin="round"
               >
-                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                <path d="M3 21h18" />
+                <path d="M9 8h1" />
+                <path d="M9 12h1" />
+                <path d="M9 16h1" />
+                <path d="M14 8h1" />
+                <path d="M14 12h1" />
+                <path d="M14 16h1" />
+                <path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16" />
               </svg>
             </div>
             <h2
               class="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2"
             >
-              No projects found
+              No organizations found
             </h2>
             <p class="text-sm text-slate-500 dark:text-slate-400 mb-8 max-w-md">
-              Get started by creating a new project.
+              Get started by setting up your first business unit or
+              organization.
             </p>
             <button
               class="btn btn-primary shadow-brand-500/25 px-6 py-2.5 inline-flex items-center gap-2"
@@ -239,13 +243,13 @@ interface Project {
                 <path d="M5 12h14" />
                 <path d="M12 5v14" />
               </svg>
-              Create New Project
+              Create New Organization
             </button>
           </div>
         }
       </div>
 
-      <!-- Create / Edit Project Slide-over Drawer -->
+      <!-- Create / Edit Organization Slide-over Drawer -->
       @if (isDrawerOpen()) {
         <div
           class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 transition-opacity"
@@ -260,10 +264,10 @@ interface Project {
           >
             <div>
               <h2 class="text-lg font-semibold text-slate-900 dark:text-white">
-                {{ editingProjectId() ? "Edit Project" : "Create New Project" }}
+                {{ editingOrgId() ? "Edit Organization" : "Create New Organization" }}
               </h2>
               <p class="text-sm text-slate-500 dark:text-slate-400">
-                {{ editingProjectId() ? "Update project details." : "Set up a new workspace for your team." }}
+                {{ editingOrgId() ? "Update organization details." : "Set up a business unit or workspace." }}
               </p>
             </div>
             <button
@@ -290,61 +294,46 @@ interface Project {
           <div class="flex-1 overflow-y-auto px-6 py-6 sm:px-8">
             <form
               [formGroup]="form"
-              id="project-form"
-              (ngSubmit)="submitProject()"
+              id="org-form"
+              (ngSubmit)="submitOrganization()"
               class="space-y-6"
             >
               <div>
                 <label
                   for="name"
                   class="label text-sm font-medium text-slate-700 dark:text-slate-300"
-                  >Project Name <span class="text-rose-500">*</span></label
+                  >Organization Name <span class="text-rose-500">*</span></label
                 >
                 <input
                   type="text"
                   id="name"
                   formControlName="name"
                   class="input mt-1.5 w-full"
-                  placeholder="e.g. Website Revamp"
+                  placeholder="e.g. Engineering Team"
                 />
                 @if (
                   form.controls.name.touched &&
                   form.controls.name.errors?.["required"]
                 ) {
                   <p class="mt-1 text-xs text-rose-500">
-                    Project name is required.
+                    Organization name is required.
                   </p>
                 }
               </div>
 
-              @if (!editingProjectId()) {
-                <div class="grid grid-cols-2 gap-4">
-                  <div>
-                    <label
-                      for="org_id"
-                      class="label text-sm font-medium text-slate-700 dark:text-slate-300"
-                      >Org ID <span class="text-rose-500">*</span></label
-                    >
-                    <input
-                      type="number"
-                      id="org_id"
-                      formControlName="org_id"
-                      class="input mt-1.5 w-full"
-                    />
-                  </div>
-                  <div>
-                    <label
-                      for="created_by"
-                      class="label text-sm font-medium text-slate-700 dark:text-slate-300"
-                      >Created By <span class="text-rose-500">*</span></label
-                    >
-                    <input
-                      type="number"
-                      id="created_by"
-                      formControlName="created_by"
-                      class="input mt-1.5 w-full"
-                    />
-                  </div>
+              @if (!editingOrgId()) {
+                <div>
+                  <label
+                    for="created_by"
+                    class="label text-sm font-medium text-slate-700 dark:text-slate-300"
+                    >Created By ID <span class="text-rose-500">*</span></label
+                  >
+                  <input
+                    type="number"
+                    id="created_by"
+                    formControlName="created_by"
+                    class="input mt-1.5 w-full"
+                  />
                 </div>
               }
             </form>
@@ -363,14 +352,14 @@ interface Project {
             </button>
             <button
               type="submit"
-              form="project-form"
+              form="org-form"
               class="btn btn-primary"
               [disabled]="form.invalid || submitting()"
             >
               @if (submitting()) {
-                {{ editingProjectId() ? "Updating..." : "Creating..." }}
+                {{ editingOrgId() ? "Updating..." : "Creating..." }}
               } @else {
-                {{ editingProjectId() ? "Save Changes" : "Create Project" }}
+                {{ editingOrgId() ? "Save Changes" : "Create Organization" }}
               }
             </button>
           </div>
@@ -379,7 +368,7 @@ interface Project {
     </div>
   `,
 })
-export class ProjectListComponent implements OnInit {
+export class OrganizationListComponent implements OnInit {
   private readonly http = inject(HttpClient);
   private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(NonNullableFormBuilder);
@@ -387,84 +376,87 @@ export class ProjectListComponent implements OnInit {
   readonly loading = signal(true);
   readonly submitting = signal(false);
   readonly isDrawerOpen = signal(false);
-  readonly editingProjectId = signal<number | null>(null);
-  readonly projects = signal<Project[]>([]);
+  readonly editingOrgId = signal<number | null>(null);
+  readonly organizations = signal<Organization[]>([]);
 
   readonly form = this.fb.group({
     name: ["", Validators.required],
-    org_id: [1, Validators.required],
     created_by: [1, Validators.required],
   });
 
   ngOnInit(): void {
-    this.fetchProjects();
+    this.fetchOrganizations();
   }
 
-  private fetchProjects(): void {
+  private fetchOrganizations(): void {
     this.loading.set(true);
 
     this.http
-      .post<any>("http://localhost:3000/projects/findall", { limit: 50, page: 1 })
+      .post<any>(`${API_BASE_URL}/organizations/findall`, { limit: 50, page: 1 })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        catchError(() => of(null)),
+        catchError((err) => {
+          console.error("Error fetching organizations:", err);
+          return of(null);
+        }),
       )
       .subscribe({
         next: (res) => {
           const fetchedData = res?.data || res || [];
-          this.projects.set(Array.isArray(fetchedData) ? fetchedData : []);
+          this.organizations.set(
+            Array.isArray(fetchedData) ? fetchedData : []
+          );
           this.loading.set(false);
         },
         error: () => {
-          this.projects.set([]);
+          this.organizations.set([]);
           this.loading.set(false);
         },
       });
   }
 
   openCreateModal(): void {
-    this.editingProjectId.set(null);
-    this.form.reset({ name: "", org_id: 1, created_by: 1 });
+    this.editingOrgId.set(null);
+    this.form.reset({ name: "", created_by: 1 });
     this.isDrawerOpen.set(true);
   }
 
-  openEditModal(project: Project): void {
-    this.editingProjectId.set(project.id);
+  openEditModal(org: Organization): void {
+    this.editingOrgId.set(org.id);
     this.form.patchValue({
-      name: project.name,
-      org_id: project.org_id || 1,
-      created_by: project.created_by || 1,
+      name: org.name,
+      created_by: org.created_by || 1,
     });
     this.isDrawerOpen.set(true);
   }
 
   closeDrawer(): void {
     this.isDrawerOpen.set(false);
-    this.editingProjectId.set(null);
+    this.editingOrgId.set(null);
   }
 
-  submitProject(): void {
+  submitOrganization(): void {
     if (this.form.invalid) return;
 
     this.submitting.set(true);
     const raw = this.form.getRawValue();
     const adminHeaders = new HttpHeaders({ user_id: "1" });
 
-    const projectId = this.editingProjectId();
-    const url = projectId
-      ? `http://localhost:3000/projects/update/${projectId}`
-      : "http://localhost:3000/projects/create";
+    const orgId = this.editingOrgId();
+    const url = orgId
+      ? `${API_BASE_URL}/organizations/update`
+      : `${API_BASE_URL}/organizations/create`;
 
-    const payload = projectId
-      ? { id: projectId, name: raw.name }
-      : { name: raw.name, org_id: Number(raw.org_id), created_by: Number(raw.created_by) };
+    const payload = orgId
+      ? { id: orgId, name: raw.name }
+      : { name: raw.name, created_by: Number(raw.created_by) };
 
     this.http
       .post<any>(url, payload, { headers: adminHeaders })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError((err) => {
-          console.error("Project operation error:", err);
+          console.error("Organization operation error:", err);
           return of({ error: err });
         }),
       )
@@ -473,7 +465,7 @@ export class ProjectListComponent implements OnInit {
           this.submitting.set(false);
           if (res && !res.error) {
             this.closeDrawer();
-            this.fetchProjects();
+            this.fetchOrganizations();
           }
         },
         error: () => {
@@ -482,22 +474,22 @@ export class ProjectListComponent implements OnInit {
       });
   }
 
-  removeProject(id: number): void {
+  removeOrganization(id: number): void {
     const adminHeaders = new HttpHeaders({ user_id: "1" });
 
     this.http
-      .post<any>("http://localhost:3000/projects/remove", { id }, { headers: adminHeaders })
+      .post<any>(`${API_BASE_URL}/organizations/remove`, { id }, { headers: adminHeaders })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError((err) => {
-          console.error("Project removal error:", err);
+          console.error("Organization removal error:", err);
           return of({ error: err });
         }),
       )
       .subscribe({
         next: (res) => {
           if (res && !res.error) {
-            this.fetchProjects();
+            this.fetchOrganizations();
           }
         },
       });

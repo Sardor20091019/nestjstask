@@ -2,14 +2,12 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
 import { Observable } from "rxjs";
 
+const API_BASE_URL = "https://nestjstask-1.onrender.com";
+
 @Injectable({ providedIn: "root" })
 export class ApiService {
   private readonly http = inject(HttpClient);
-
-  private readonly apiUrl =
-    window.location.hostname === "localhost"
-      ? "http://localhost:3000"
-      : "https://nestjstask-1.onrender.com";
+  private readonly apiUrl = API_BASE_URL;
 
   post<TResponse, TBody extends object>(
     path: string,
