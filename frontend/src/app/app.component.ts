@@ -179,21 +179,7 @@ import { ToastContainerComponent } from "./shared/components/toast-container.com
           </a>
         </nav>
 
-        <div class="p-4">
-          <div
-            class="rounded-xl border border-brand-200 bg-brand-50/50 p-4 dark:border-brand-900/50 dark:bg-brand-950/20"
-          >
-            <h4
-              class="font-display font-semibold text-brand-900 dark:text-brand-100"
-            >
-              API Testing Mode
-            </h4>
-            <p class="mt-1 text-xs text-brand-700 dark:text-brand-300">
-              All data operations are simulated directly via POST body.
-            </p>
-          </div>
-        </div>
-      </aside>
+
 
       <!-- Main Content Area -->
       <div class="flex flex-1 flex-col overflow-hidden">
@@ -313,7 +299,6 @@ import { ToastContainerComponent } from "./shared/components/toast-container.com
           <router-outlet />
         </main>
       </div>
-    </div>
   `,
 })
 export class AppComponent {
