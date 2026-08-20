@@ -12,9 +12,9 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { HttpClient } from "@angular/common/http";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { catchError, of } from "rxjs";
+import { ApiService } from "../../core/api.service"; 
 
 interface Project {
   id: number;
@@ -91,7 +91,7 @@ interface Project {
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @for (project of projects(); track project.id) {
               <div
-                class="card p-6 card-hover cursor-pointer flex flex-col group bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xs transition-all hover:shadow-md"
+                class="card p-6 card-hover flex flex-col group bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xs transition-all hover:shadow-md relative"
               >
                 <div class="flex items-start justify-between mb-4">
                   <div>
@@ -106,23 +106,48 @@ interface Project {
                       {{ project.name }}
                     </h3>
                   </div>
-                  <div
-                    class="p-2 bg-brand-50 dark:bg-brand-950/30 text-brand-600 dark:text-brand-400 rounded-xl"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                  <div class="flex items-center gap-2">
+                    <!-- Delete / Remove Button -->
+                    <button
+                      type="button"
+                      class="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl transition-colors"
+                      title="Remove Project"
+                      (click)="removeProject(project.id)"
                     >
-                      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-                    </svg>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M3 6h18" />
+                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                      </svg>
+                    </button>
+                    <div
+                      class="p-2 bg-brand-50 dark:bg-brand-950/30 text-brand-600 dark:text-brand-400 rounded-xl"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                      </svg>
+                    </div>
                   </div>
                 </div>
 
@@ -156,11 +181,6 @@ interface Project {
                     </svg>
                     {{ project.taskCount || 0 }} tasks
                   </div>
-                  <span
-                    class="text-brand-600 dark:text-brand-400 text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    
-                  </span>
                 </div>
               </div>
             }
@@ -352,7 +372,7 @@ interface Project {
   `,
 })
 export class ProjectListComponent implements OnInit {
-  private readonly http = inject(HttpClient);
+  private readonly api = inject(ApiService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(NonNullableFormBuilder);
 
@@ -374,8 +394,8 @@ export class ProjectListComponent implements OnInit {
   private fetchProjects(): void {
     this.loading.set(true);
 
-    this.http
-      .post<any>("/projects/findAll", { limit: 20 })
+    this.api
+      .post<any, any>("/projects/findAll", { limit: 20 })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError(() => of(null)),
@@ -414,8 +434,8 @@ export class ProjectListComponent implements OnInit {
       created_by: Number(raw.created_by),
     };
 
-    this.http
-      .post<any>("/projects/create", payload)
+    this.api
+      .post<any, any>("/projects/create", payload)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError((err) => {
@@ -428,6 +448,28 @@ export class ProjectListComponent implements OnInit {
           this.submitting.set(false);
           if (res && !res.error) {
             this.closeDrawer();
+            this.fetchProjects();
+          }
+        },
+        error: () => {
+          this.submitting.set(false);
+        },
+      });
+  }
+
+  removeProject(id: number): void {
+    this.api
+      .post<any, any>("/projects/remove", { id })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError((err) => {
+          console.error("Project removal error:", err);
+          return of({ error: err });
+        }),
+      )
+      .subscribe({
+        next: (res) => {
+          if (res && !res.error) {
             this.fetchProjects();
           }
         },
