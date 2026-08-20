@@ -87,7 +87,7 @@ export const routes: Routes = [
           body: '{\n  "id": 4\n}',
         },
       ],
-      "/users"
+      "/users",
     ),
   },
   { path: "**", redirectTo: "" },
