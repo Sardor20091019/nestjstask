@@ -14,6 +14,14 @@ const workbench = (
 export const routes: Routes = [
   { path: "", redirectTo: "tasks", pathMatch: "full" },
   {
+    path: "users/:id",
+    loadComponent: () =>
+      import("./features/users/user-detail.component").then(
+        (m) => m.UserDetailComponent,
+      ),
+    title: "User Details · astro_spectrum",
+  },
+  {
     path: "tasks",
     loadComponent: () =>
       import("./features/tasks/task-list.component").then(
@@ -52,6 +60,14 @@ export const routes: Routes = [
         (m) => m.OrganizationListComponent,
       ),
     title: "Organizations · astro_spectrum",
+  },
+  {
+    path: "organizations/:id",
+    loadComponent: () =>
+      import("./features/organizations/organization-detail.component").then(
+        (m) => m.OrganizationDetailComponent,
+      ),
+    title: "Organization Details · astro_spectrum",
   },
   {
     path: "statistics",
@@ -102,6 +118,7 @@ export const routes: Routes = [
           path: "/users/remove",
           body: '{\n  "id": 4\n}',
         },
+        
       ],
       "/users",
     ),

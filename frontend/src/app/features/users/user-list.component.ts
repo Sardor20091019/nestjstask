@@ -13,10 +13,11 @@ import {
   Validators,
   FormsModule,
 } from "@angular/forms";
+import { Router } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { catchError, debounceTime, distinctUntilChanged, of } from "rxjs";
+import { catchError, of } from "rxjs";
 import { UserService } from "../../core/user.service";
-import { User, CreateUser, UpdateUser } from "../../core/models";
+import { User } from "../../core/models";
 
 @Component({
   selector: "app-user-list",
@@ -121,8 +122,11 @@ import { User, CreateUser, UpdateUser } from "../../core/models";
                         {{ user.name.charAt(0).toUpperCase() }}
                       </div>
                       <div>
+                        <!-- Clickable User Name -->
                         <h3
-                          class="text-base font-semibold text-slate-900 dark:text-slate-100"
+                          class="text-base font-semibold text-slate-900 dark:text-slate-100 cursor-pointer hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+                          (click)="viewUser(user.id)"
+                          title="Click to view details"
                         >
                           {{ user.name }}
                         </h3>
@@ -347,6 +351,7 @@ import { User, CreateUser, UpdateUser } from "../../core/models";
 })
 export class UserListComponent implements OnInit {
   private readonly userService = inject(UserService);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(NonNullableFormBuilder);
 
@@ -368,6 +373,10 @@ export class UserListComponent implements OnInit {
     this.fetchUsers();
   }
 
+  viewUser(id: number): void {
+    this.router.navigate(["/users", id]);
+  }
+
   fetchUsers(query = ""): void {
     this.loading.set(true);
 
@@ -383,7 +392,6 @@ export class UserListComponent implements OnInit {
           if (Array.isArray(fetchedData) && fetchedData.length > 0) {
             this.users.set(fetchedData);
           } else if (!query) {
-            // Graceful fallback sample data
             this.users.set([
               { id: 1, name: "SARDORADMIN", role: 1 },
               { id: 2, name: "sardor", role: 3 },
