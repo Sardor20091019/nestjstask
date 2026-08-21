@@ -1,42 +1,62 @@
-import { ChangeDetectionStrategy, Component, input } from "@angular/core";
-import { TaskStatus } from "../core/models";
+import { Injectable, inject } from "@angular/core";
+import { ApiService } from "./api.service";
 
-@Component({
-  selector: "app-task-status-badge",
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<span [class]="classes()">{{ label() }}</span>`,
-})
-export class TaskStatusBadgeComponent {
-  readonly status = input.required<TaskStatus>();
+@Injectable({ providedIn: "root" })
+export class TaskService {
+  private readonly api = inject(ApiService);
 
-  label = () =>
-    ({
-      CREATED: "New",
-      IN_PROCESS: "In progress",
-      IN_PROGRESS: "In progress",
-      DONE: "Completed",
-      COMPLETED: "Completed",
-    })[this.status()];
-  classes = () => {
-    const base =
-      "inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ";
-    switch (this.status()) {
-      case "DONE":
-      case "COMPLETED":
-        return (
-          base +
-          "bg-emerald-500/10 text-emerald-700 ring-emerald-600/20 dark:text-emerald-300"
-        );
-      case "IN_PROCESS":
-      case "IN_PROGRESS":
-        return (
-          base + "bg-sky-500/10 text-sky-700 ring-sky-600/20 dark:text-sky-300"
-        );
-      default:
-        return (
-          base +
-          "bg-violet-500/10 text-violet-700 ring-violet-600/20 dark:text-violet-300"
-        );
+  findAll(
+    title?: string,
+    options?: { page?: number; limit?: number; status?: string | string[] },
+  ) {
+    const body: any = {
+      title: title || "",
+      page: options?.page || 1,
+      limit: options?.limit || 10,
+    };
+
+    if (options?.status) {
+      if (typeof options.status === "string" && options.status.trim() !== "") {
+        // Wrap the status string in an array so the backend query builder receives ["IN_PROGRESS"]
+        body.status = [options.status];
+      } else if (Array.isArray(options.status) && options.status.length > 0) {
+        body.status = options.status;
+      }
     }
-  };
+
+    return this.api.post<any, any>("/tasks/findall", body);
+  }
+
+  getEmployeeTasksCountSummary(body: { worker_user_id?: number }) {
+    return this.api.post<any, any>("/tasks/employee-tasks-count", body);
+  }
+
+  getEmployeeTasksSummary(body: { worker_user_id?: number }) {
+    return this.api.post<any, any>("/tasks/employee-tasks", body);
+  }
+
+  createTask(body: {
+    title: string;
+    project_id: number;
+    worker_user_id: number;
+    due_date: string;
+  }) {
+    return this.api.post<any, any>("/tasks/create", body);
+  }
+
+  updateStatus(body: {
+    id: number;
+    status: string;
+    worker_user_id: string | number;
+  }) {
+    return this.api.post<any, any>("/tasks/update-status", body);
+  }
+
+  remove(body: { id: number }) {
+    return this.api.post<any, any>("/tasks/remove", body);
+  }
+
+  findOne(body: { id: number }) {
+    return this.api.post<any, any>("/tasks/findone", body);
+  }
 }

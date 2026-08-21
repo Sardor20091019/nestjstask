@@ -6,8 +6,9 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { DatePipe } from "@angular/common";
+import { DatePipe, CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
+import { Router } from "@angular/router";
 import { takeUntilDestroyed, toObservable } from "@angular/core/rxjs-interop";
 import { catchError, debounceTime, distinctUntilChanged, of, switchMap, tap } from "rxjs";
 import { TaskService } from "../../core/task.service";
@@ -23,6 +24,7 @@ const EMPTY_PAGE: PageResponse<Task> = {
   selector: "app-task-list",
   standalone: true,
   imports: [
+    CommonModule,
     FormsModule,
     DatePipe,
     TaskDrawerComponent,
@@ -155,7 +157,11 @@ const EMPTY_PAGE: PageResponse<Task> = {
                     class="group hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors"
                   >
                     <td class="px-6 py-4">
-                      <div class="font-medium text-slate-900 dark:text-slate-100">
+                      <div 
+                        class="font-medium text-slate-900 dark:text-slate-100 cursor-pointer hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+                        (click)="viewTask(task.id)"
+                        title="Click to view details"
+                      >
                         {{ task.title }}
                       </div>
                       <div class="text-xs text-slate-500 mt-0.5">ID: #{{ task.id }}</div>
@@ -193,17 +199,54 @@ const EMPTY_PAGE: PageResponse<Task> = {
                     <td class="px-6 py-4 text-right">
                       <button
                         type="button"
-                        class="p-2 text-slate-400 hover:text-rose-600 rounded-xl transition-colors"
+                        class="p-2 text-slate-400 hover:text-rose-600 rounded-xl transition-colors inline-flex items-center justify-center"
+                        title="Remove Task"
                         (click)="removeTask(task.id)"
                       >
-                        🗑️
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path d="M3 6h18" />
+                          <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                          <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                        </svg>
                       </button>
                     </td>
                   </tr>
                 } @empty {
                   <tr>
-                    <td colspan="6" class="px-6 py-16 text-center text-slate-500">
-                      No tasks found
+                    <td colspan="6" class="px-6 py-16 text-center">
+                      <div class="flex flex-col items-center justify-center">
+                        <div class="rounded-full bg-slate-100 dark:bg-slate-800 p-4 mb-4">
+                          <svg
+                            class="h-8 w-8 text-slate-400"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          >
+                            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+                            <path d="m9 12 2 2 4-4" />
+                          </svg>
+                        </div>
+                        <h3 class="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                          No tasks found
+                        </h3>
+                        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                          Try adjusting your search filters or create a new task.
+                        </p>
+                      </div>
                     </td>
                   </tr>
                 }
@@ -216,8 +259,14 @@ const EMPTY_PAGE: PageResponse<Task> = {
         <div
           class="flex items-center justify-between border-t border-slate-200/60 bg-slate-50/50 px-6 py-4 dark:border-slate-800/60 dark:bg-slate-900/50"
         >
-          <p class="text-sm text-slate-500 font-medium">
-            Showing page {{ page().paginationinfo.page }} of {{ maxPages() }}
+          <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">
+            Showing page
+            <span class="text-slate-900 dark:text-slate-200">{{ page().paginationinfo.page }}</span>
+            of
+            <span class="text-slate-900 dark:text-slate-200">{{ maxPages() }}</span>
+            <span class="mx-2 text-slate-300 dark:text-slate-700">|</span>
+            <span class="text-slate-900 dark:text-slate-200">{{ page().paginationinfo.total }}</span>
+            total tasks
           </p>
           <div class="flex gap-2">
             <button
@@ -242,6 +291,7 @@ const EMPTY_PAGE: PageResponse<Task> = {
 })
 export class TaskListComponent {
   private readonly taskService = inject(TaskService);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly search = signal("");
@@ -277,6 +327,10 @@ export class TaskListComponent {
     this.fetch().subscribe();
   }
 
+  viewTask(id: number): void {
+    this.router.navigate(["/tasks", id]);
+  }
+
   previousPage(): void {
     if (this.pageNumber() > 1) {
       this.pageNumber.update((page) => page - 1);
@@ -294,15 +348,39 @@ export class TaskListComponent {
   onStatusChange(task: Task, newStatus: string): void {
     this.taskService
       .updateStatus({ id: task.id, status: newStatus, worker_user_id: task.worker_user_id } as any)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: () => this.refresh() });
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError((err: any) => {
+          console.error("Status update error:", err);
+          return of({ error: err });
+        }),
+      )
+      .subscribe({
+        next: (res: any) => {
+          if (res && !res.error) {
+            this.refresh();
+          }
+        },
+      });
   }
 
   removeTask(id: number): void {
     this.taskService
       .remove({ id })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: () => this.refresh() });
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError((err: any) => {
+          console.error("Task removal error:", err);
+          return of({ error: err });
+        }),
+      )
+      .subscribe({
+        next: (res: any) => {
+          if (res && !res.error) {
+            this.refresh();
+          }
+        },
+      });
   }
 
   private fetch() {
@@ -311,18 +389,19 @@ export class TaskListComponent {
 
     const filters = this.filterState();
     const options: any = { page: this.pageNumber(), limit: 10 };
+    
     if (filters.status) {
-      options.status = [filters.status];
+      options.status = filters.status;
     }
 
     return this.taskService.findAll(filters.search.trim(), options).pipe(
-      tap((response) => {
+      tap((response: PageResponse<Task>) => {
         this.page.set(response);
         this.loading.set(false);
       }),
       catchError(() => {
         this.page.set(EMPTY_PAGE);
-        this.error.set("Could not load tasks.");
+        this.error.set("Could not load tasks. Check that the API is running.");
         this.loading.set(false);
         return of(EMPTY_PAGE);
       }),

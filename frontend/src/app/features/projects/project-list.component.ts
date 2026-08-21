@@ -13,6 +13,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
+import { Router } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { catchError, of } from "rxjs";
 
@@ -101,8 +102,11 @@ const API_BASE_URL = "https://nestjstask-1.onrender.com";
                     >
                       ID: #{{ project.id }}
                     </span>
+                    <!-- Clickable Project Title -->
                     <h3
-                      class="text-lg font-semibold text-slate-900 dark:text-slate-100 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors"
+                      class="text-lg font-semibold text-slate-900 dark:text-slate-100 cursor-pointer hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+                      (click)="viewProject(project.id)"
+                      title="Click to view details"
                     >
                       {{ project.name }}
                     </h3>
@@ -354,6 +358,7 @@ const API_BASE_URL = "https://nestjstask-1.onrender.com";
 })
 export class ProjectListComponent implements OnInit {
   private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(NonNullableFormBuilder);
 
@@ -371,6 +376,10 @@ export class ProjectListComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchProjects();
+  }
+
+  viewProject(id: number): void {
+    this.router.navigate(["/projects", id]);
   }
 
   private fetchProjects(): void {

@@ -125,31 +125,46 @@ export class TasksRepo {
 
     return tasks;
   }
-  async findAll(body: { title?: string; page?: number; limit?: number }) {
-    const page = body.page || 1;
-    const limit = body.limit || 10;
-    const offset = (page - 1) * limit;
+async findAll(body: { 
+  title?: string; 
+  status?: string | string[]; 
+  page?: number; 
+  limit?: number 
+}) {
+  const page = body.page || 1;
+  const limit = body.limit || 10;
+  const offset = (page - 1) * limit;
 
-    const query = db1("tasks");
+  const query = db1("tasks");
 
-    if (body.title) {
-      query.whereILike("title", `%${body.title}%`);
-    }
-
-    const data = await query.clone().limit(limit).offset(offset);
-    const countResult = await query.clone().count("id as count").first();
-    const total = countResult ? Number(countResult.count) : 0;
-
-    return {
-      data,
-      paginationinfo: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      },
-    };
+  // 1. Title filter
+  if (body.title && body.title.trim() !== "") {
+    query.whereILike("title", `%${body.title}%`);
   }
+
+  // 2. CRITICAL: Status filter must be inside the repository query!
+  if (body.status) {
+    if (Array.isArray(body.status) && body.status.length > 0) {
+      query.whereIn("status", body.status);
+    } else if (typeof body.status === "string" && body.status.trim() !== "") {
+      query.where("status", body.status);
+    }
+  }
+
+  const data = await query.clone().limit(limit).offset(offset);
+  const countResult = await query.clone().count("id as count").first();
+  const total = countResult ? Number(countResult.count) : 0;
+
+  return {
+    data,
+    paginationinfo: {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit) || 1,
+    },
+  };
+}
 
   async remove(id: number) {
     await db1("tasks").where({ id }).delete();

@@ -31,6 +31,11 @@ export class ProjectsController {
     return this.projectsService.findAll(body);
   }
 
+  @Post("findone")
+  findOne(@Body() body: { id: number }) {
+    return this.projectsService.findOne(body.id);
+  }
+
   @Post("findByOrg")
   findByOrg(@Body("org_id") orgId?: string) {
     return this.projectsService.findByOrg(orgId ? +orgId : 0);
@@ -54,6 +59,7 @@ export class ProjectsController {
   remove(@Headers("user_id") userId: string, @Body() body: { id: number }) {
     return this.projectsService.remove(+userId, body.id);
   }
+
   @Post("findbyitsname")
   findbyitsname(@Body() body: findbynameDTO) {
     return this.projectsService.findbyitsname(body.name);

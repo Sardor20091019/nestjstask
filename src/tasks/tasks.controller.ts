@@ -24,8 +24,16 @@ export class TasksController {
     });
   }
 
-  @Post("findall")
-  findAll(@Body() body: { title?: string; page?: number; limit?: number }) {
+@Post("findall")
+  findAll(
+    @Body()
+    body: {
+      title?: string;
+      status?: TaskStatus | string | string[];
+      page?: number;
+      limit?: number;
+    },
+  ) {
     return this.tasksService.findAll(body);
   }
 

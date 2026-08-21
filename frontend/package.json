@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "ng serve --proxy-config proxy.conf.json",
-    "start:dev": "ng serve --proxy-config proxy.conf.json",
+"start": "ng serve --proxy-config proxy.conf.js",
+"start:dev": "ng serve --proxy-config proxy.conf.js",
+"dev": "ng serve --proxy-config proxy.conf.js",
     "build": "ng build",
     "test": "ng test",
       "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"

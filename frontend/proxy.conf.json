@@ -30,7 +30,12 @@
   "/tasks": {
     "target": "https://nestjstask-1.onrender.com",
     "secure": false,
-    "changeOrigin": true
+    "changeOrigin": true,
+    "bypass": function (req, res, proxyOptions) {
+      if (req.headers.accept && req.headers.accept.includes("html")) {
+        return "/index.html";
+      }
+    }
   },
   "/statistics": {
     "target": "https://nestjstask-1.onrender.com",

@@ -22,12 +22,28 @@ export const routes: Routes = [
     title: "Tasks · astro_spectrum",
   },
   {
+    path: "tasks/:id",
+    loadComponent: () =>
+      import("./features/tasks/task-detail.component").then(
+        (m) => m.TaskDetailComponent,
+      ),
+    title: "Task Details · astro_spectrum",
+  },
+  {
     path: "projects",
     loadComponent: () =>
       import("./features/projects/project-list.component").then(
         (m) => m.ProjectListComponent,
       ),
     title: "Projects · astro_spectrum",
+  },
+  {
+    path: "projects/:id",
+    loadComponent: () =>
+      import("./features/projects/project-detail.component").then(
+        (m) => m.ProjectDetailComponent,
+      ),
+    title: "Project Details · astro_spectrum",
   },
   {
     path: "organizations",
