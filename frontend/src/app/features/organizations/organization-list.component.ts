@@ -13,14 +13,14 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
+import { Router } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { catchError, of } from "rxjs";
 
 interface Organization {
   id: number;
   name: string;
-  created_by?: number;
-  memberCount?: number;
+  [key: string]: any;
 }
 
 const API_BASE_URL = "https://nestjstask-1.onrender.com";
@@ -43,7 +43,7 @@ const API_BASE_URL = "https://nestjstask-1.onrender.com";
             Organizations
           </h1>
           <p class="page-subtitle text-sm text-slate-500 dark:text-slate-400">
-            Manage business units and organizational structures.
+            Manage company structures, tenant units, and administration.
           </p>
         </div>
         <button
@@ -101,14 +101,17 @@ const API_BASE_URL = "https://nestjstask-1.onrender.com";
                     >
                       ID: #{{ org.id }}
                     </span>
+                    <!-- Clickable Organization Title -->
                     <h3
-                      class="text-lg font-semibold text-slate-900 dark:text-slate-100 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors"
+                      class="text-lg font-semibold text-slate-900 dark:text-slate-100 cursor-pointer hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+                      (click)="viewOrganization(org.id)"
+                      title="Click to view details"
                     >
                       {{ org.name }}
                     </h3>
                   </div>
                   <div class="flex items-center gap-2">
-                    <!-- Edit Button (Admin) -->
+                    <!-- Edit Button -->
                     <button
                       type="button"
                       class="p-2 text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-brand-50 dark:hover:bg-brand-950/30 rounded-xl transition-colors"
@@ -131,7 +134,7 @@ const API_BASE_URL = "https://nestjstask-1.onrender.com";
                       </svg>
                     </button>
 
-                    <!-- Remove / Delete Button (Admin) -->
+                    <!-- Remove Button -->
                     <button
                       type="button"
                       class="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl transition-colors"
@@ -157,33 +160,12 @@ const API_BASE_URL = "https://nestjstask-1.onrender.com";
                   </div>
                 </div>
 
-                <div class="text-xs text-slate-500 dark:text-slate-400 mb-4">
-                  <p>Created By ID: {{ org.created_by || 1 }}</p>
-                </div>
-
-                <div
-                  class="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between"
-                >
-                  <div
-                    class="flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400"
-                  >
-                    <svg
-                      class="h-4 w-4"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                      <circle cx="9" cy="7" r="4" />
-                      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                    </svg>
-                    {{ org.memberCount || 1 }} members
-                  </div>
+                <div class="text-xs text-slate-500 dark:text-slate-400 mb-4 space-y-1">
+                  @for (key of objectKeys(org); track key) {
+                    @if (key !== 'id' && key !== 'name') {
+                      <p class="capitalize">{{ key }}: {{ org[key] !== null ? org[key] : 'N/A' }}</p>
+                    }
+                  }
                 </div>
               </div>
             }
@@ -207,13 +189,12 @@ const API_BASE_URL = "https://nestjstask-1.onrender.com";
                 stroke-linejoin="round"
               >
                 <path d="M3 21h18" />
-                <path d="M9 8h1" />
-                <path d="M9 12h1" />
-                <path d="M9 16h1" />
-                <path d="M14 8h1" />
-                <path d="M14 12h1" />
-                <path d="M14 16h1" />
-                <path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16" />
+                <path d="M5 21V7l8-4v18" />
+                <path d="M19 21V11l-6-4" />
+                <path d="M9 9v.01" />
+                <path d="M9 12v.01" />
+                <path d="M9 15v.01" />
+                <path d="M9 18v.01" />
               </svg>
             </div>
             <h2
@@ -222,8 +203,7 @@ const API_BASE_URL = "https://nestjstask-1.onrender.com";
               No organizations found
             </h2>
             <p class="text-sm text-slate-500 dark:text-slate-400 mb-8 max-w-md">
-              Get started by setting up your first business unit or
-              organization.
+              Get started by creating your first organization unit.
             </p>
             <button
               class="btn btn-primary shadow-brand-500/25 px-6 py-2.5 inline-flex items-center gap-2"
@@ -249,7 +229,7 @@ const API_BASE_URL = "https://nestjstask-1.onrender.com";
         }
       </div>
 
-      <!-- Create / Edit Organization Slide-over Drawer -->
+      <!-- Create / Edit Slide-over Drawer -->
       @if (isDrawerOpen()) {
         <div
           class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 transition-opacity"
@@ -267,7 +247,7 @@ const API_BASE_URL = "https://nestjstask-1.onrender.com";
                 {{ editingOrgId() ? "Edit Organization" : "Create New Organization" }}
               </h2>
               <p class="text-sm text-slate-500 dark:text-slate-400">
-                {{ editingOrgId() ? "Update organization details." : "Set up a business unit or workspace." }}
+                {{ editingOrgId() ? "Update organization details." : "Configure a new organization." }}
               </p>
             </div>
             <button
@@ -309,7 +289,7 @@ const API_BASE_URL = "https://nestjstask-1.onrender.com";
                   id="name"
                   formControlName="name"
                   class="input mt-1.5 w-full"
-                  placeholder="e.g. Engineering Team"
+                  placeholder="e.g. Acme Corp"
                 />
                 @if (
                   form.controls.name.touched &&
@@ -320,22 +300,6 @@ const API_BASE_URL = "https://nestjstask-1.onrender.com";
                   </p>
                 }
               </div>
-
-              @if (!editingOrgId()) {
-                <div>
-                  <label
-                    for="created_by"
-                    class="label text-sm font-medium text-slate-700 dark:text-slate-300"
-                    >Created By ID <span class="text-rose-500">*</span></label
-                  >
-                  <input
-                    type="number"
-                    id="created_by"
-                    formControlName="created_by"
-                    class="input mt-1.5 w-full"
-                  />
-                </div>
-              }
             </form>
           </div>
 
@@ -370,6 +334,7 @@ const API_BASE_URL = "https://nestjstask-1.onrender.com";
 })
 export class OrganizationListComponent implements OnInit {
   private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(NonNullableFormBuilder);
 
@@ -381,11 +346,18 @@ export class OrganizationListComponent implements OnInit {
 
   readonly form = this.fb.group({
     name: ["", Validators.required],
-    created_by: [1, Validators.required],
   });
 
   ngOnInit(): void {
     this.fetchOrganizations();
+  }
+
+  viewOrganization(id: number): void {
+    this.router.navigate(["/organizations", id]);
+  }
+
+  objectKeys(obj: any): string[] {
+    return obj ? Object.keys(obj) : [];
   }
 
   private fetchOrganizations(): void {
@@ -417,7 +389,7 @@ export class OrganizationListComponent implements OnInit {
 
   openCreateModal(): void {
     this.editingOrgId.set(null);
-    this.form.reset({ name: "", created_by: 1 });
+    this.form.reset({ name: "" });
     this.isDrawerOpen.set(true);
   }
 
@@ -425,7 +397,6 @@ export class OrganizationListComponent implements OnInit {
     this.editingOrgId.set(org.id);
     this.form.patchValue({
       name: org.name,
-      created_by: org.created_by || 1,
     });
     this.isDrawerOpen.set(true);
   }
@@ -449,7 +420,7 @@ export class OrganizationListComponent implements OnInit {
 
     const payload = orgId
       ? { id: orgId, name: raw.name }
-      : { name: raw.name, created_by: Number(raw.created_by) };
+      : { name: raw.name };
 
     this.http
       .post<any>(url, payload, { headers: adminHeaders })
@@ -462,7 +433,7 @@ export class OrganizationListComponent implements OnInit {
       )
       .subscribe({
         next: (res) => {
-          this.submitting.set(false);
+            this.submitting.set(false);
           if (res && !res.error) {
             this.closeDrawer();
             this.fetchOrganizations();
